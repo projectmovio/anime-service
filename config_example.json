@@ -2,6 +2,7 @@
   "api": {
     "anidb": {
       "base_url": "http://api.anidb.net:9001/httpapi",
+      "pictures_url": "http://img7.anidb.net/pics/anime/",
       "client": "<CLIENT_NAME>",
       "client_version": "<CLIENT_VERSION>",
       "client_protocol_version": "<CLIENT_PROTOCOL_VERSION>"
