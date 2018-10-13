@@ -7,4 +7,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
-- `/animes` route
+- Extend `/anime` route adding support for getting detailed anime information by id `?id=<anime_id>`
+- `/anime` including getting all anime and searching for anime using the `?search=<STRING>` query parameter.
