@@ -9,10 +9,6 @@
 * `python run_flask.py`
 * API base URL: `http://localhost:8085/`
 
-# API docs
-
-For api docs go to http://localhost:5000/apidocs
-
 # Formatting
 
 * bash format.sh
