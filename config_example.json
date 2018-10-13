@@ -1,0 +1,10 @@
+{
+  "api": {
+    "anidb": {
+      "base_url": "http://api.anidb.net:9001/httpapi",
+      "client": "<CLIENT_NAME>",
+      "client_version": "<CLIENT_VERSION>",
+      "client_protocol_version": "<CLIENT_PROTOCOL_VERSION>"
+    }
+  }
+}
