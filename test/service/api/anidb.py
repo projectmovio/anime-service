@@ -16,4 +16,3 @@ class TestAniDb(unittest.TestCase):
 
     def test_parse_anime(self):
         self.anidb._parse_anime(open('test_anime.xml').read())
-

@@ -46,10 +46,7 @@ class AniDbApi:
         return jsonify(anime=result)
 
     def get_anime(self, anime_id):
-        url_params = {
-            "request": "anime",
-            "aid": anime_id
-        }
+        url_params = {"request": "anime", "aid": anime_id}
 
         url = "{}&{}".format(self.base_url, urlencode(url_params))
         log.debug("Sending get request to: %s", url)
@@ -114,4 +111,3 @@ class AniDbApi:
         if prop is not None:
             return prop.text
         return None
-
