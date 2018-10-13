@@ -35,7 +35,7 @@ class AniDbApi:
     def search(self, search_string):
         result = []
 
-        for anime in self._find_anime_id(search_string):
+        for anime in self._find_anime_ids(search_string):
             result.append(anime["title"])
 
         return jsonify(anime=result)
@@ -43,7 +43,7 @@ class AniDbApi:
     def get_all_anime(self):
         result = []
 
-        for anime in self._find_anime_id(""):
+        for anime in self._find_anime_ids(""):
             result.append(anime["title"])
 
         return jsonify(anime=result)
@@ -96,7 +96,7 @@ class AniDbApi:
 
         return res
 
-    def _find_anime_id(self, search_string):
+    def _find_anime_ids(self, search_string):
         now = datetime.datetime.now()
 
         res = []
