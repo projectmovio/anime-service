@@ -12,8 +12,7 @@ class TestAniDb(unittest.TestCase):
         self.anidb._find_anime_ids("naruto")
 
     def test_find_anime_id_all(self):
-        res = self.anidb._find_anime_ids("")
-        print(len(res))
+        self.anidb._find_anime_ids("")
 
     def test_parse_anime(self):
         self.anidb._parse_anime(open('test_anime.xml').read())

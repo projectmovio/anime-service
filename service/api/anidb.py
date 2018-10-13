@@ -41,7 +41,7 @@ class AniDbApi:
         return jsonify(anime=result)
 
     def get_all_anime(self):
-        result = map(lambda anime: anime["title"], self._find_anime_ids(""))
+        result = list(map(lambda anime: anime["title"], self._find_anime_ids("")))
 
         return jsonify(anime=result)
 
