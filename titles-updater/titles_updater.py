@@ -7,6 +7,8 @@ import requests
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 CACHE_DIR = os.path.join(CURRENT_DIR, "..", "cache")
+titles_path = os.path.join(CACHE_DIR, "titles")
+os.makedirs(titles_path)
 
 now = datetime.datetime.now()
 current_filename = os.path.join(CACHE_DIR, "titles", "{}.xml".format(now.strftime("%Y-%m-%d")))

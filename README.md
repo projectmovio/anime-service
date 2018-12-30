@@ -15,6 +15,7 @@
 
 # Running in docker
 
-* docker build -t anime-service:latest .
-* docker run -p 8085:8085 -d -t anime-service:latest
+* `python titles-updater/titles_updater.py`
+* `docker build -t anime-service:latest .`
+* `docker run -p 8085:8085 -d -t anime-service:latest`
 
