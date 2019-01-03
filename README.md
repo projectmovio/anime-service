@@ -15,7 +15,11 @@
 
 # Running in docker
 
-* `python titles-updater/titles_updater.py`
+## titles-updater
+* `docker build -t titles-updater:latest -f titles-updater/Dockerfile titles-updater`
+* `docker run -v "<ABS_PATH_TO_TITLES>":"/cache/titles" -it titles-updater:latest`
+
+## anime-servi ce
 * `docker build -t anime-service:latest .`
 * `docker run -p 8085:8085 -d -t anime-service:latest`
 

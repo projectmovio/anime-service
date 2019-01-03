@@ -1,14 +1,12 @@
 import datetime
-import gzip
 import os
-import shutil
 
 import requests
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 CACHE_DIR = os.path.join(CURRENT_DIR, "..", "cache")
 titles_path = os.path.join(CACHE_DIR, "titles")
-os.makedirs(titles_path)
+os.makedirs(titles_path, exist_ok=True)
 
 now = datetime.datetime.now()
 current_filename = os.path.join(CACHE_DIR, "titles", "{}.xml".format(now.strftime("%Y-%m-%d")))
@@ -32,12 +30,4 @@ else:
     print("Title file for today already exists")
 
 # A normal xml file not even gunzipped!
-"""
-final_file = current_filename.replace(".gz", "")
-with gzip.open(current_filename, 'rb') as f_in:
-    with open(final_file, 'wb') as f_out:
-        shutil.copyfileobj(f_in, f_out)
-
-print("Current titles: {}".format(os.path.abspath(final_file)))
-"""
 print("Current titles: {}".format(os.path.abspath(current_filename)))
