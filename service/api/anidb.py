@@ -17,16 +17,16 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class AniDbApi:
     def __init__(self):
-        self.config = Config().cfg["api"]["anidb"]
+        self.config = Config()
 
         base_url_params = {
-            "client": self.config["client"],
-            "clientver": self.config["client_version"],
-            "protover": self.config["client_protocol_version"],
+            "client": self.config.client_name,
+            "clientver": self.config.client_version,
+            "protover": self.config.client_protocol_version,
         }
 
-        self.base_url = "{}?{}".format(self.config["base_url"], urlencode(base_url_params))
-        self.pictures_url = self.config["pictures_url"]
+        self.base_url = "{}?{}".format(self.config.base_url, urlencode(base_url_params))
+        self.pictures_url = self.config.pictures_url
 
         log.debug("AniDB base_url: {}".format(self.base_url))
 
