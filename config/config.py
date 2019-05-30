@@ -11,7 +11,7 @@ class Config(object):
         current_dir = os.path.dirname(os.path.abspath(__file__))
         self.base_url = "http://api.anidb.net:9001/httpapi"
         self.pictures_url = "http://img7.anidb.net/pics/anime/"
-        self.cache_dir = os.path.abspath(os.path.join(current_dir, "..", "..", "cache"))
+        self.cache_dir = os.path.abspath(os.path.join(current_dir, "..", "cache"))
         self.client_name = ""
         self.client_version = ""
         self.client_protocol_version = ""
