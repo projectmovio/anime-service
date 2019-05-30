@@ -12,4 +12,4 @@ ADD ./titles-updater/run.sh ./titles-updater/run.sh
 ADD ./titles-updater/titles_updater.py ./titles-updater/titles_updater.py
 ADD ./config ./config
 
-ENTRYPOINT ["bash", ",/titles-updater/run.sh"]
+ENTRYPOINT ["bash", "./titles-updater/run.sh"]
