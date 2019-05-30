@@ -90,12 +90,19 @@ class AniDbApi:
 
     def _find_anime_ids(self, search_string):
         now = datetime.datetime.now()
+        today_date = "{}.xml".format(now.strftime("%Y-%m-%d"))
+        titles_file = os.path.join(self.config.cache_dir, "titles", "{}.xml".format(today_date))
+        if not os.path.isfile(titles_file):
+            log.warning("Titles file: [%s] doesn't exist, try fallback to yesterday", titles_file)
+            yesterday_date = (now - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+            titles_file = os.path.join(self.config.cache_dir, "titles", "{}.xml".format(yesterday_date))
+
+            if not os.path.isfile(titles_file):
+                raise RuntimeError("No titles file for today: [%s] or yesterday: [%s]", today_date, yesterday_date)
 
         res = []
 
-        element_tree = ElementTree.parse(
-            os.path.join(self.config.cache_dir, "titles",
-                         "{}.xml".format(now.strftime("%Y-%m-%d")))).getroot()
+        element_tree = ElementTree.parse(titles_file).getroot()
         for anime in element_tree:
             anime_id = anime.attrib.get("aid")
             title = anime.find("./title[@type='main']", namespaces=self.nsmap)
