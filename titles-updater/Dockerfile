@@ -11,4 +11,4 @@ RUN pip install -r ./requirements.txt
 ADD ./titles-updater/titles_updater.py ./titles_updater.py
 ADD ./config ./config
 
-ENTRYPOINT ["python", "titles_updater.py"]
+ENTRYPOINT ["python", "-u", "titles_updater.py"]
