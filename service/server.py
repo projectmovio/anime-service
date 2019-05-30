@@ -11,9 +11,12 @@ log = logging.getLogger("service")
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logging.getLogger("urllib3").setLevel("WARNING")
 
+flask_cache = os.path.join(Config().cache_dir, "flask")
+os.makedirs(flask_cache, exist_ok=True)
+
 cache = Cache(config={
     "CACHE_TYPE": "filesystem",
-    "CACHE_DIR": os.path.join(Config().cache_dir, "flask"),
+    "CACHE_DIR": flask_cache,
     "CACHE_THRESHOLD": 1000000
 })
 
