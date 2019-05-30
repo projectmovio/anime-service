@@ -34,6 +34,9 @@ spec:
               value: 1
             - name: ANIME_SERVICE_CLIENT_PROTOCOL_VERSION
               value: 1
+          volumeMounts:
+            - mountPath: "/var/cache/anime_service/"
+              name: cache
         - name: titles-updater
           image: projectmovio/anime-titles-updater:0.0.1
           resources:
@@ -44,7 +47,7 @@ spec:
               memory: "10Mi"
               cpu: "20m"
           volumeMounts:
-            - mountPath: "/titles-updater"
+            - mountPath: "/var/cache/anime_service/"
               name: cache
       volumes:
         - name: cache
