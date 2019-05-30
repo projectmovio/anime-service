@@ -8,7 +8,6 @@ log = logging.getLogger(__name__)
 class Config(object):
     def __init__(self):
         self.config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "config.json")
-        self._read_config()
         current_dir = os.path.dirname(os.path.abspath(__file__))
         self.base_url = "http://api.anidb.net:9001/httpapi"
         self.pictures_url = "http://img7.anidb.net/pics/anime/"
@@ -16,6 +15,7 @@ class Config(object):
         self.client_name = ""
         self.client_version = ""
         self.client_protocol_version = ""
+        self._read_config()
 
     def _read_config(self):
         if os.path.isfile(self.config_path):
