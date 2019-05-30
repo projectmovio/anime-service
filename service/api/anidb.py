@@ -12,8 +12,6 @@ from service.utils.config import Config
 
 log = logging.getLogger(__name__)
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-
 
 class AniDbApi:
     def __init__(self):
@@ -96,7 +94,7 @@ class AniDbApi:
         res = []
 
         element_tree = ElementTree.parse(
-            os.path.join(CURRENT_DIR, "..", "..", "cache", "titles",
+            os.path.join(self.config.cache_dir, "titles",
                          "{}.xml".format(now.strftime("%Y-%m-%d")))).getroot()
         for anime in element_tree:
             anime_id = anime.attrib.get("aid")

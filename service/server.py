@@ -5,8 +5,7 @@ from flask import Flask, request
 from flask_caching import Cache
 
 from service.api.anidb import AniDbApi
-
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+from service.utils.config import Config
 
 log = logging.getLogger("service")
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -14,7 +13,7 @@ logging.getLogger("urllib3").setLevel("WARNING")
 
 cache = Cache(config={
     "CACHE_TYPE": "filesystem",
-    "CACHE_DIR": os.path.join(CURRENT_DIR, "..", "cache", "flask"),
+    "CACHE_DIR": os.path.join(Config().cache_dir, "flask"),
     "CACHE_THRESHOLD": 1000000
 })
 
