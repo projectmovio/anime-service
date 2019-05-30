@@ -1,8 +1,11 @@
 import datetime
+import gzip
 import os
+import shutil
 import time
 
 import requests
+from fake_useragent import UserAgent
 
 from config.config import Config
 
@@ -19,19 +22,17 @@ while True:
 
     if not os.path.isfile(current_filename):
         print("Downloading new titles file")
-        r = requests.get("http://anidb.net/api/anime-titles.xml.gz", stream=True)
+        r = requests.get("http://anidb.net/api/anime-titles.xml.gz", headers={"User-Agent": UserAgent().chrome})
 
-        total_size = int(r.headers.get('content-length', 0))
-        count = 0
-        with open(current_filename, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=1024):
-                if chunk:  # filter out keep-alive new chunks
-                    f.write(chunk)
-                    count += 1
-                    if count % 100 == 0:
-                        print("Progress in percentage: {}".format((1024 * count) / float(total_size)))
+        gzip_file = "{}.gz".format(current_filename)
+        with open(gzip_file, 'wb') as f:
+            f.write(r.content)
 
-        print("Progress in percentage: 1")
+        # Unzip file
+        with gzip.open(gzip_file, 'rb') as f_in:
+            with open(current_filename, 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
+        os.remove(gzip_file)
     else:
         print("Title file for today already exists")
 
