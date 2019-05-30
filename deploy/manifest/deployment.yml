@@ -40,7 +40,7 @@ spec:
             - mountPath: "/var/cache/anime_service/"
               name: cache
         - name: titles-updater
-          image: projectmovio/anime-titles-updater:0.0.4
+          image: projectmovio/anime-titles-updater:0.0.5
           resources:
             requests:
               memory: "10Mi"
