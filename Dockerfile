@@ -2,11 +2,20 @@ FROM python:3.7-alpine3.8
 
 EXPOSE 8085
 
-ADD requirements.txt /usr/local/src/anime-service/requirements.txt
-RUN pip install -r /usr/local/src/anime-service/requirements.txt
+RUN apk add --no-cache nginx uwsgi gcc libc-dev linux-headers bash
+RUN pip install uwsgi
 
-ADD /service /usr/local/src/anime-service/service
-ADD /config /usr/local/src/anime-service/config
+ADD nginx.conf /etc/nginx/conf.d
+RUN mkdir /run/nginx
 
-WORKDIR /usr/local/src/anime-service
-CMD ["python", "run_flask.py"]
+WORKDIR /usr/local/src
+
+ADD requirements.txt ./requirements.txt
+RUN pip install -r requirements.txt
+
+ADD ./service ./service
+ADD ./config ./config
+ADD ./uwsgi.ini ./
+ADD ./start.sh ./
+
+CMD ["bash", "start.sh"]
