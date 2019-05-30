@@ -17,7 +17,8 @@ spec:
     spec:
       containers:
         - name: anime
-          image: projectmovio/anime-service:0.0.1
+#          image: projectmovio/anime-service:0.0.1
+          image: anime-service
           ports:
             - containerPort: 8085
           resources:
@@ -29,18 +30,19 @@ spec:
               cpu: "100m"
           env:
             - name: ANIME_SERVICE_CLIENT_NAME
-              value: ${ANIME_SERVICE_CLIENT_NAME}
+              value: "${ANIME_SERVICE_CLIENT_NAME}"
             - name: ANIME_SERVICE_CLIENT_VERSION
-              value: 1
+              value: "1"
             - name: ANIME_SERVICE_CLIENT_PROTOCOL_VERSION
-              value: 1
+              value: "1"
             - name: ANIME_SERVICE_CACHE_DIR
               value: "/var/cache/anime_service/"
           volumeMounts:
             - mountPath: "/var/cache/anime_service/"
               name: cache
         - name: titles-updater
-          image: projectmovio/anime-titles-updater:0.0.1
+#          image: projectmovio/anime-titles-updater:0.0.1
+          image: anime-titles-updater
           resources:
             requests:
               memory: "5Mi"
