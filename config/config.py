@@ -22,12 +22,15 @@ class Config(object):
             log.debug("Reading config from: {}".format(self.config_path))
             with open(self.config_path) as config_file:
                 cfg = json.load(config_file)
-                self.base_url = cfg["api"]["anidb"]["base_url"]
-                self.pictures_url = cfg["api"]["anidb"]["pictures_url"]
+                if "base_url" in cfg["api"]["anidb"]:
+                    self.base_url = cfg["api"]["anidb"]["base_url"]
+                if "pictures_url" in cfg["api"]["anidb"]:
+                    self.base_url = cfg["api"]["anidb"]["pictures_url"]
+                if "cache_dir" in cfg["api"]["anidb"]:
+                    self.base_url = cfg["api"]["anidb"]["cache_dir"]
                 self.client_name = cfg["api"]["anidb"]["client_name"]
                 self.client_version = cfg["api"]["anidb"]["client_version"]
                 self.client_protocol_version = cfg["api"]["anidb"]["client_protocol_version"]
-                self.cache_dir = cfg["api"]["anidb"]["cache_dir"]
         else:
             log.debug("Reading config from env vars")
             self.base_url = os.getenv("ANIME_SERVICE_BASE_URL")

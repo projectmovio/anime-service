@@ -5,7 +5,7 @@ from flask import Flask, request
 from flask_caching import Cache
 
 from service.api.anidb import AniDbApi
-from service.utils.config import Config
+from config.config import Config
 
 log = logging.getLogger("service")
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")

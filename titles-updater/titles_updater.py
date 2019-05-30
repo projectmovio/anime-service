@@ -3,13 +3,13 @@ import os
 
 import requests
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-CACHE_DIR = os.path.join(CURRENT_DIR, "..", "cache")
-titles_path = os.path.join(CACHE_DIR, "titles")
+from config.config import Config
+
+titles_path = os.path.join(Config().cache_dir, "titles")
 os.makedirs(titles_path, exist_ok=True)
 
 now = datetime.datetime.now()
-current_filename = os.path.join(CACHE_DIR, "titles", "{}.xml".format(now.strftime("%Y-%m-%d")))
+current_filename = os.path.join(titles_path, "{}.xml".format(now.strftime("%Y-%m-%d")))
 
 if not os.path.isfile(current_filename):
     print("Downloading new titles file")
