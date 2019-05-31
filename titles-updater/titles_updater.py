@@ -33,10 +33,8 @@ while True:
             with open(current_filename, 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
         os.remove(gzip_file)
-    else:
-        print("Title file for today already exists")
 
-    print("Current titles: {}".format(os.path.abspath(current_filename)))
+        print("Downloaded titles: {}".format(os.path.abspath(current_filename)))
 
     # Clean up all old titles more than 2 days old
     for title in os.listdir(titles_path):
@@ -44,5 +42,4 @@ while True:
             print("Removing old titles file: {}", title)
             os.remove(os.path.join(titles_path, title))
 
-    print("Sleeping %s seconds" % sleep_time)
     time.sleep(sleep_time)
