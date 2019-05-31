@@ -29,19 +29,19 @@ class AniDbApi:
         log.debug("AniDB base_url: {}".format(self.base_url))
 
         self.nsmap = {"xml": "http://www.w3.org/XML/1998/namespace"}
+        self.current_titles_name = ""
+        self.anime_titles = {}
 
     def search(self, search_string):
-        result = []
+        found_anime = []
+        max_results = 20
+        for anime_id in self._find_anime_ids(search_string):
+            if len(found_anime) == max_results:
+                break
 
-        for anime in self._find_anime_ids(search_string):
-            result.append(anime["title"])
+            found_anime.append(self.get_anime(anime_id))
 
-        return jsonify(anime=result)
-
-    def get_all_anime(self):
-        result = list(map(lambda anime: anime["title"], self._find_anime_ids("")))
-
-        return jsonify(anime=result)
+        return jsonify(anime=found_anime)
 
     def get_anime(self, anime_id):
         url_params = {"request": "anime", "aid": anime_id}
@@ -91,23 +91,37 @@ class AniDbApi:
     def _find_anime_ids(self, search_string):
         now = datetime.datetime.now()
         today_date = now.strftime("%Y-%m-%d")
-        titles_file = os.path.join(self.config.cache_dir, "titles", "{}.xml".format(today_date))
+        titles_name = "{}.xml".format(today_date)
+        titles_file = os.path.join(self.config.cache_dir, "titles", titles_name)
         if not os.path.isfile(titles_file):
             log.warning("Titles file: [%s] doesn't exist, try fallback to yesterday", titles_file)
             yesterday_date = (now - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-            titles_file = os.path.join(self.config.cache_dir, "titles", "{}.xml".format(yesterday_date))
+            titles_name = "{}.xml".format(yesterday_date)
+            titles_file = os.path.join(self.config.cache_dir, "titles", titles_name)
 
             if not os.path.isfile(titles_file):
                 raise RuntimeError("No titles file for today: [%s] or yesterday: [%s]", today_date, yesterday_date)
 
         res = []
 
-        element_tree = ElementTree.parse(titles_file).getroot()
-        for anime in element_tree:
-            anime_id = anime.attrib.get("aid")
-            title = anime.find("./title[@type='main']", namespaces=self.nsmap)
-            if re.match(r'{}'.format(search_string), title.text, re.IGNORECASE):
-                res.append({"anime_id": anime_id, "title": title.text})
+        if self.current_titles_name != titles_name:
+            log.debug("Reading titles from new XML file: [%s.xml]", titles_name)
+            self.anime_titles = {}
+            self.current_titles_name = titles_name
+            
+            element_tree = ElementTree.parse(titles_file).getroot()
+            for anime in element_tree:
+                anime_id = anime.attrib.get("aid")
+                titles = anime.findall("./title", namespaces=self.nsmap)
+                for title in titles:
+                    if anime_id not in self.anime_titles:
+                        self.anime_titles[anime_id] = []
+                    self.anime_titles[anime_id].append(title.text)
+
+        for anime_id in self.anime_titles:
+            for title in self.anime_titles[anime_id]:
+                if re.match(r'{}'.format(search_string), title, re.IGNORECASE):
+                    res.append(anime_id)
 
         return res
 

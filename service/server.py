@@ -36,5 +36,3 @@ def anime():
     elif "id" in request.args:
         id = request.args.get("id")
         return anidb_api.get_anime(id)
-    else:
-        return anidb_api.get_all_anime()
