@@ -90,7 +90,7 @@ class AniDbApi:
 
     def _find_anime_ids(self, search_string):
         now = datetime.datetime.now()
-        today_date = "{}.xml".format(now.strftime("%Y-%m-%d"))
+        today_date = now.strftime("%Y-%m-%d")
         titles_file = os.path.join(self.config.cache_dir, "titles", "{}.xml".format(today_date))
         if not os.path.isfile(titles_file):
             log.warning("Titles file: [%s] doesn't exist, try fallback to yesterday", titles_file)
