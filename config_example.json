@@ -7,6 +7,9 @@
       "client_version": "<CLIENT_VERSION>",
       "client_protocol_version": "<CLIENT_PROTOCOL_VERSION>",
       "cache_dir": "<CAHCE_DIR>"
+    },
+    "jikan": {
+      "base_url": "https://api.jikan.moe/v3"
     }
   }
 }

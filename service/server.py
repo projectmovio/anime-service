@@ -1,7 +1,7 @@
 import logging
 import os
 
-from flask import Flask, request
+from flask import Flask, request, Response, make_response, jsonify
 from flask_caching import Cache
 
 from service.api.anidb import AniDbApi
@@ -36,3 +36,5 @@ def anime():
     elif "id" in request.args:
         id = request.args.get("id")
         return anidb_api.get_anime(id)
+    else:
+        return make_response(jsonify({"error": "'search' or 'id' query parameter required"}), 201)

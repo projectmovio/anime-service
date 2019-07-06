@@ -18,4 +18,6 @@ ADD ./config ./config
 ADD ./uwsgi.ini ./
 ADD ./start.sh ./
 
+ADD ./cache/titles /var/cache/anime_service/titles
+
 CMD ["bash", "start.sh"]

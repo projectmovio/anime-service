@@ -18,13 +18,13 @@ class AniDbApi:
         self.config = Config()
 
         base_url_params = {
-            "client": self.config.client_name,
-            "clientver": self.config.client_version,
-            "protover": self.config.client_protocol_version,
+            "client": self.config.anidb_client_name,
+            "clientver": self.config.anidb_client_version,
+            "protover": self.config.anidb_client_protocol_version,
         }
 
-        self.base_url = "{}?{}".format(self.config.base_url, urlencode(base_url_params))
-        self.pictures_url = self.config.pictures_url
+        self.base_url = "{}?{}".format(self.config.anidb_base_url, urlencode(base_url_params))
+        self.pictures_url = self.config.anidb_pictures_url
 
         log.debug("AniDB base_url: {}".format(self.base_url))
 
@@ -92,12 +92,12 @@ class AniDbApi:
         now = datetime.datetime.now()
         today_date = now.strftime("%Y-%m-%d")
         titles_name = "{}.xml".format(today_date)
-        titles_file = os.path.join(self.config.cache_dir, "titles", titles_name)
+        titles_file = os.path.join(self.config.anidb_cache_dir, "titles", titles_name)
         if not os.path.isfile(titles_file):
             log.warning("Titles file: [%s] doesn't exist, try fallback to yesterday", titles_file)
             yesterday_date = (now - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
             titles_name = "{}.xml".format(yesterday_date)
-            titles_file = os.path.join(self.config.cache_dir, "titles", titles_name)
+            titles_file = os.path.join(self.config.anidb_cache_dir, "titles", titles_name)
 
             if not os.path.isfile(titles_file):
                 raise RuntimeError("No titles file for today: [%s] or yesterday: [%s]", today_date, yesterday_date)
