@@ -75,15 +75,17 @@ class AniDbApi:
                 # Skip all endings, openings "episodes"
                 continue
 
+            title = episode.find("./title[@xml:lang='en']", namespaces=self.nsmap)
+            if title is not None:
+                title = title.text
+
             ep = {
                 "id": episode.attrib.get("id"),
                 "episode_number": epno.text,
                 "length": self._get_property(episode, "length"),
-                "air_date": self._get_property(episode, "airdate")
+                "air_date": self._get_property(episode, "airdate"),
+                "title": title
             }
-            ep["title"] = episode.find("./title[@xml:lang='en']", namespaces=self.nsmap)
-            if ep["title"] is not None:
-                ep["title"] = ep["title"].text
 
             res["episodes"].append(ep)
 
@@ -109,7 +111,7 @@ class AniDbApi:
             log.debug("Reading titles from new XML file: [%s.xml]", titles_name)
             self.anime_titles = {}
             self.current_titles_name = titles_name
-            
+
             element_tree = ElementTree.parse(titles_file).getroot()
             for anime in element_tree:
                 anime_id = anime.attrib.get("aid")
