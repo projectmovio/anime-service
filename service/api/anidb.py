@@ -34,12 +34,13 @@ class AniDbApi:
 
     def search(self, search_string):
         found_anime = []
-        max_results = 20
+        max_results = 100
         for anime_id in self._find_anime_ids(search_string):
             if len(found_anime) == max_results:
                 break
 
-            found_anime.append(self.get_anime(anime_id))
+            anime = {"anime_id": anime_id, "pictures_url": "{}/{}.jpg".format(self.pictures_url, anime_id)}
+            found_anime.append(anime)
 
         return jsonify(anime=found_anime)
 
