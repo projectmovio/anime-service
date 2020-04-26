@@ -1,6 +1,7 @@
 import logging
 
 import requests
+from flask import jsonify
 
 from service.utils.config import get_config
 

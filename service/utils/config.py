@@ -8,13 +8,13 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def get_config():
-    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "utils.json")
+    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "config.json")
     if os.path.isfile(config_path):
-        log.debug("Reading utils from: {}".format(config_path))
+        log.debug("Reading config from: {}".format(config_path))
         with open(config_path) as config_file:
             return json.load(config_file)
 
-    log.debug("Reading utils from env vars")
+    log.debug("Reading config from env vars")
     cache_dir = os.getenv("ANIDB_CACHE_DIR", os.path.abspath(os.path.join(CURRENT_DIR, "..", "cache")))
     return {
         "api": {
