@@ -25,6 +25,10 @@ def get_config():
                 "client_name": os.getenv("ANIDB_CLIENT_NAME"),
                 "client_version": os.getenv("ANIDB_CLIENT_VERSION"),
                 "client_protocol_version": os.getenv("ANIDB_CLIENT_PROTOCOL_VERSION")
+            },
+            "mal": {
+                "base_url": os.getenv("MAL_BASE_URL", "https://api.myanimelist.net/v2"),
+                "client_id": os.getenv("MAL_CLIENT_ID")
             }
         }
     }
