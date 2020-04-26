@@ -28,13 +28,13 @@ spec:
               memory: "100Mi"
               cpu: "100m"
           env:
-            - name: ANIME_SERVICE_CLIENT_NAME
-              value: "${ANIME_SERVICE_CLIENT_NAME}"
-            - name: ANIME_SERVICE_CLIENT_VERSION
+            - name: ANIDB_CLIENT_NAME
+              value: "${ANIDB_CLIENT_NAME}"
+            - name: ANIDB_CLIENT_VERSION
               value: "1"
-            - name: ANIME_SERVICE_CLIENT_PROTOCOL_VERSION
+            - name: ANIDB_CLIENT_PROTOCOL_VERSION
               value: "1"
-            - name: ANIME_SERVICE_CACHE_DIR
+            - name: ANIDB_CACHE_DIR
               value: "/var/cache/anime_service/"
           volumeMounts:
             - mountPath: "/var/cache/anime_service/"
@@ -49,7 +49,7 @@ spec:
               memory: "20Mi"
               cpu: "20m"
           env:
-            - name: ANIME_SERVICE_CACHE_DIR
+            - name: ANIDB_CACHE_DIR
               value: "/var/cache/anime_service/"
           volumeMounts:
             - mountPath: "/var/cache/anime_service/"

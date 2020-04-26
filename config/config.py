@@ -33,14 +33,14 @@ class Config(object):
                 self.client_protocol_version = cfg["api"]["anidb"]["client_protocol_version"]
         else:
             log.debug("Reading config from env vars")
-            if os.getenv("ANIME_SERVICE_BASE_URL") is not None:
-                self.base_url = os.getenv("ANIME_SERVICE_BASE_URL")
-            if os.getenv("ANIME_SERVICE_PICTURES_URL") is not None:
-                self.pictures_url = os.getenv("ANIME_SERVICE_PICTURES_URL")
-            if os.getenv("ANIME_SERVICE_CACHE_DIR") is not None:
-                self.cache_dir = os.getenv("ANIME_SERVICE_CACHE_DIR")
-            self.client_name = os.getenv("ANIME_SERVICE_CLIENT_NAME")
-            self.client_version = os.getenv("ANIME_SERVICE_CLIENT_VERSION")
-            self.client_protocol_version = os.getenv("ANIME_SERVICE_CLIENT_PROTOCOL_VERSION")
+            if os.getenv("ANIDB_BASE_URL") is not None:
+                self.base_url = os.getenv("ANIDB_BASE_URL")
+            if os.getenv("ANIDB_PICTURES_URL") is not None:
+                self.pictures_url = os.getenv("ANIDB_PICTURES_URL")
+            if os.getenv("ANIDB_CACHE_DIR") is not None:
+                self.cache_dir = os.getenv("ANIDB_CACHE_DIR")
+            self.client_name = os.getenv("ANIDB_CLIENT_NAME")
+            self.client_version = os.getenv("ANIDB_CLIENT_VERSION")
+            self.client_protocol_version = os.getenv("ANIDB_CLIENT_PROTOCOL_VERSION")
 
 
