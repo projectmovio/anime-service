@@ -1,5 +1,7 @@
 import logging
 
+import requests
+
 from utils.config import get_config
 
 log = logging.getLogger(__name__)
@@ -16,4 +18,10 @@ class MalApi:
 
         log.debug("MAL base_url: {}".format(self.base_url))
 
-
+    def search(self, search_str):
+        url = f"{self.base_url}/search"
+        url_params = {
+            "q": search_str
+        }
+        ret = requests.get(url, params=url_params)
+        return ret
