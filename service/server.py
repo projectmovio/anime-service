@@ -4,8 +4,9 @@ import os
 from flask import Flask, request
 from flask_caching import Cache
 
+from service.api.mal import MalApi
 from service.api.anidb import AniDbApi
-from utils.config import get_config
+from service.utils.config import get_config
 
 log = logging.getLogger("service")
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
