@@ -1,11 +1,19 @@
 import logging
 
 import requests
-from flask import jsonify
+from flask import jsonify, Response
 
 from service.utils.config import get_config
 
 log = logging.getLogger(__name__)
+
+
+class Error(Exception):
+    pass
+
+
+class HTTPError(Error):
+    pass
 
 
 class MalApi:
@@ -26,5 +34,19 @@ class MalApi:
         }
 
         ret = requests.get(url, params=url_params, headers=self.default_headers)
+        if ret.status_code != 200:
+            raise HTTPError()
         return jsonify(anime=ret.json()["data"])
+
+    def get_anime(self, anime_id):
+        url = f"{self.base_url}/anime/{anime_id}"
+        url_params = {
+            "fields": "episodes"
+        }
+        ret = requests.get(url, params=url_params, headers=self.default_headers)
+        if ret.status_code == 404:
+            return Response(status=404)
+        elif ret.status_code != 200:
+            raise HTTPError()
+        return jsonify(anime=ret.json())
 

@@ -25,7 +25,7 @@ cache = Cache(config={
 app = Flask(__name__)
 cache.init_app(app)
 
-#anidb_api = AniDbApi()
+# anidb_api = AniDbApi()
 mal_api = MalApi()
 
 
