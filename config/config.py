@@ -10,12 +10,6 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 class Config(object):
     def __init__(self):
         self.config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "config.json")
-        self.base_url = "http://api.anidb.net:9001/httpapi"
-        self.pictures_url = "http://img7.anidb.net/pics/anime/"
-        self.cache_dir = os.path.abspath(os.path.join(CURRENT_DIR, "..", "cache"))
-        self.client_name = ""
-        self.client_version = ""
-        self.client_protocol_version = ""
         self._read_config()
 
     def _read_config(self):
