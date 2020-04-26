@@ -7,6 +7,10 @@
       "client_version": "<CLIENT_VERSION>",
       "client_protocol_version": "<CLIENT_PROTOCOL_VERSION>",
       "cache_dir": "<CAHCE_DIR>"
+    },
+    "mal": {
+      "base_url": "https://api.myanimelist.net/v2",
+      "client_id": "<MAL_CLIENT_ID>"
     }
   }
 }
