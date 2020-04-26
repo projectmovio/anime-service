@@ -26,4 +26,5 @@ class MalApi:
         }
 
         ret = requests.get(url, params=url_params, headers=self.default_headers)
-        return jsonify(anime=ret["data"])
+        return jsonify(anime=ret.json()["data"])
+
