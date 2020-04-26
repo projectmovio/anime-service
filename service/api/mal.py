@@ -2,7 +2,7 @@ import logging
 
 import requests
 
-from utils.config import get_config
+from service.utils.config import get_config
 
 log = logging.getLogger(__name__)
 

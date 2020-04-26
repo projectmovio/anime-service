@@ -8,7 +8,7 @@ from xml.etree import ElementTree
 import requests
 from flask import jsonify
 
-from utils.config import get_config
+from service.utils.config import get_config
 
 log = logging.getLogger(__name__)
 
