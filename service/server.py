@@ -25,16 +25,17 @@ cache = Cache(config={
 app = Flask(__name__)
 cache.init_app(app)
 
-anidb_api = AniDbApi()
+#anidb_api = AniDbApi()
+mal_api = MalApi()
 
 
 @cache.cached(timeout=60 * 60 * 24)
-@app.route("/anime", methods=["get"])
+@app.route("/anime", methods=["GET"])
 def anime():
     log.debug("Headers: %s", request.headers)
     if "search" in request.args:
         search = request.args.get("search")
-        return anidb_api.search(search)
-    elif "id" in request.args:
-        id = request.args.get("id")
-        return anidb_api.get_anime(id)
+        return mal_api.search(search)
+    # elif "id" in request.args:
+    #     id = request.args.get("id")
+    #     return anidb_api.get_anime(id)
