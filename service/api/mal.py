@@ -13,16 +13,17 @@ class MalApi:
         self.config = get_config()
 
         self.default_headers = {
-            "X-MAL-Client-ID": self.config["api"]["mal"]["client_id"]
+            "X-Mal-Client-Id": self.config["api"]["mal"]["client_id"],
         }
         self.base_url = self.config["api"]["mal"]["base_url"]
 
         log.debug("MAL base_url: {}".format(self.base_url))
 
     def search(self, search_str):
-        url = f"{self.base_url}/search"
+        url = f"{self.base_url}/anime"
         url_params = {
             "q": search_str
         }
-        ret = requests.get(url, params=url_params)
-        return ret
+
+        ret = requests.get(url, params=url_params, headers=self.default_headers)
+        return jsonify(anime=ret["data"])
