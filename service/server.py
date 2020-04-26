@@ -36,6 +36,7 @@ def anime():
     if "search" in request.args:
         search = request.args.get("search")
         return mal_api.search(search)
-    # elif "id" in request.args:
-    #     id = request.args.get("id")
-    #     return anidb_api.get_anime(id)
+    elif "id" in request.args:
+        id = request.args.get("id")
+        return mal_api.get_anime(id)
+
