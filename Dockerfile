@@ -14,7 +14,6 @@ ADD requirements.txt ./requirements.txt
 RUN pip install -r requirements.txt
 
 ADD ./service ./service
-ADD ./config ./config
 ADD ./uwsgi.ini ./
 ADD ./start.sh ./
 

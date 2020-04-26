@@ -5,13 +5,14 @@ from flask import Flask, request
 from flask_caching import Cache
 
 from service.api.anidb import AniDbApi
-from config.config import Config
+from utils.config import get_config
 
 log = logging.getLogger("service")
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logging.getLogger("urllib3").setLevel("WARNING")
 
-flask_cache = os.path.join(Config().cache_dir, "flask")
+cfg = get_config()
+flask_cache = os.path.join(cfg["api"]["anidb"]["cache_dir"], "flask")
 os.makedirs(flask_cache, exist_ok=True)
 
 cache = Cache(config={
