@@ -136,9 +136,11 @@ class AniDbApi:
             return prop.text
         return None
 
-    def download_titles(self, file_path):
+    @staticmethod
+    def download_titles(file_path):
         r = requests.get("http://anidb.net/api/anime-titles.xml.gz", headers={"User-Agent": UserAgent().chrome})
 
+        # Write titles zip to temporary file
         gzip_file = "titles.gz"
         with open(gzip_file, 'wb') as f:
             f.write(r.content)
@@ -147,4 +149,6 @@ class AniDbApi:
         with gzip.open(gzip_file, 'rb') as f_in:
             with open(file_path, 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
+
+        # Remove gz file
         os.remove(gzip_file)
