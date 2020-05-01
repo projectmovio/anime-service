@@ -40,8 +40,31 @@ class MalApi:
 
     def get_anime(self, anime_id):
         url = f"{self.base_url}/anime/{anime_id}"
+        fields = [
+            "related_anime"
+            "alternative_titles",
+            "media_type",
+            "num_episodes",
+            "status",
+            "start_date",
+            "end_date",
+            "average_episode_duration",
+            "synopsis",
+            "mean",
+            "rank",
+            "popularity",
+            "num_list_users",
+            "num_favorites",
+            "num_scoring_users",
+            "start_season",
+            "broadcast",
+            "my_list_status{start_date,finish_date}",
+            "nsfw",
+            "created_at",
+            "updated_at"
+        ]
         url_params = {
-            "fields": "related_anime,alternative_titles,media_type,num_episodes,status,start_date,end_date,average_episode_duration,synopsis,mean,rank,popularity,num_list_users,num_favorites,num_scoring_users,start_season,broadcast,my_list_status{start_date,finish_date},nsfw,created_at,updated_at"
+            "fields": ",".join(fields)
         }
         ret = requests.get(url, params=url_params, headers=self.default_headers)
         if ret.status_code == 404:
