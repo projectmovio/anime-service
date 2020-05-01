@@ -36,13 +36,17 @@ def _object_exists(key):
     return True
 
 
-def _parse_xml(file_path):
+def _anime_titles(file_path):
     element_tree = ElementTree.parse(file_path).getroot()
     for anime in element_tree:
         anime_id = anime.attrib.get("aid")
         titles = anime.findall("./title", namespaces={"xml": "http://www.w3.org/XML/1998/namespace"})
 
-
+        for title in titles:
+            yield {
+                "id": int(anime_id),
+                "title": title.text,
+            }
 
 def handle(event, context):
     now = datetime.datetime.now()
