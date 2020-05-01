@@ -8,19 +8,19 @@ from xml.etree import ElementTree
 import requests
 from flask import jsonify
 
-from config.config import Config
+from service.utils.config import get_config
 
 log = logging.getLogger(__name__)
 
 
 class AniDbApi:
     def __init__(self):
-        self.config = Config()
+        self.config = get_config()
 
         base_url_params = {
-            "client": self.config.client_name,
-            "clientver": self.config.client_version,
-            "protover": self.config.client_protocol_version,
+            "client": self.config["api"]["anidb"]["client_name"],
+            "clientver": self.config["api"]["anidb"]["client_version"],
+            "protover": self.config["api"]["anidb"]["client_protocol_version"],
         }
 
         self.base_url = "{}?{}".format(self.config.base_url, urlencode(base_url_params))

@@ -7,7 +7,7 @@ import time
 import requests
 from fake_useragent import UserAgent
 
-from config.config import Config
+from service.utils.config import Config
 
 titles_path = os.path.join(Config().cache_dir, "titles")
 os.makedirs(titles_path, exist_ok=True)
