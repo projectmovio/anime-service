@@ -1,13 +1,15 @@
 import datetime
+import gzip
 import logging
 import os
 import re
+import shutil
 from urllib.parse import urlencode
 from xml.etree import ElementTree
 
 import requests
+from fake_useragent import UserAgent
 from flask import jsonify
-
 from service.utils.config import get_config
 
 log = logging.getLogger(__name__)
@@ -133,3 +135,16 @@ class AniDbApi:
         if prop is not None:
             return prop.text
         return None
+
+    def download_titles(self, file_path):
+        r = requests.get("http://anidb.net/api/anime-titles.xml.gz", headers={"User-Agent": UserAgent().chrome})
+
+        gzip_file = "titles.gz"
+        with open(gzip_file, 'wb') as f:
+            f.write(r.content)
+
+        # Unzip file
+        with gzip.open(gzip_file, 'rb') as f_in:
+            with open(file_path, 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
+        os.remove(gzip_file)
