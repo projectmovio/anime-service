@@ -18,8 +18,8 @@ def test_search(req_mock):
             "id": 20,
             "title": "Naruto",
             "main_picture": {
-                "medium": "https:\/\/api-cdn.myanimelist.net\/images\/anime\/13\/17405.jpg",
-                "large": "https:\/\/api-cdn.myanimelist.net\/images\/anime\/13\/17405l.jpg"
+                "medium": "17405.jpg",
+                "large": "17405l.jpg"
             },
         }]
     }
@@ -53,8 +53,8 @@ def test_get_anime(req_mock):
             "id": 21,
             "title": "One Piece",
             "main_picture": {
-                "medium": "https:\/\/api-cdn.myanimelist.net\/images\/anime\/6\/73245.jpg",
-                "large": "https:\/\/api-cdn.myanimelist.net\/images\/anime\/6\/73245l.jpg"
+                "medium": "73245.jpg",
+                "large": "73245l.jpg"
             }
         }
     }
