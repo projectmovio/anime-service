@@ -7,7 +7,6 @@ from botocore.exceptions import ClientError
 
 from anidb import AniDbApi
 
-s3_client = None
 s3_bucket = None
 bucket_name = os.getenv("ANIDB_TITLES_BUCKET")
 
@@ -19,21 +18,14 @@ def _get_s3_bucket():
     return s3_bucket
 
 
-def _get_s3_client():
-    global s3_client
-    if s3_client is None:
-        s3_client = boto3.client("s3")
-    return s3_client
-
-
-def _object_exists(key):
+def _download_file(key, location):
     try:
-        _get_s3_client().head_object(Bucket=bucket_name, Key=key)
+        s3_file = _get_s3_bucket().download_file(key, location)
+        return s3_file
     except ClientError as exc:
         if exc.response['Error']['Code'] == '404':
-            return False
+            return None
         raise
-    return True
 
 
 def _anime_titles(file_path):
@@ -48,21 +40,27 @@ def _anime_titles(file_path):
                 "title": title.text,
             }
 
-def handle(event, context):
-    now = datetime.datetime.now()
-    date_today = now.strftime("%Y-%m-%d")
-    date_yesterday = (now - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+def _create_titles_file():
 
-    current_filename = f"{date_today}.json"
 
-    if not _object_exists(current_filename):
-        download_path = os.path.join("/", "tmp", current_filename)
-        print(f"Downloading new titles file: {current_filename} to path: {download_path}")
+def _download_xml(download_path):
+    """Download titles file and put in S3 bucket, if it already exist get it from the bucket"""
+    file_name = os.path.basename(download_path)
+    xml_file = _download_file(file_name, download_path)
+
+    if xml_file is None:
+        print(f"Downloading new titles file: {file_name} to path: {download_path}")
 
         AniDbApi.download_titles(download_path)
 
-    # Clean up all old titles more than 2 days old
-    for title in os.listdir(titles_path):
-        if title != "{}.xml".format(date_today) and title != "{}.xml".format(date_yesterday):
-            print("Removing old titles file: {}", title)
-            os.remove(os.path.join(titles_path, title))
+        _get_s3_bucket().upload_file(download_path, file_name)
+
+
+
+def handle(event, context):
+    now = datetime.datetime.now()
+    date_today = now.strftime("%Y-%m-%d")
+    #date_yesterday = (now - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+
+    download_path = os.path.join("/", "tmp", f"{date_today}.xml")
+

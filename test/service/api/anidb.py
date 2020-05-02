@@ -1,7 +1,6 @@
 import unittest
-from xml.etree import ElementTree
 
-from service.api.anidb import AniDbApi
+from layers.api.anidb import AniDbApi
 
 
 class TestAniDb(unittest.TestCase):
