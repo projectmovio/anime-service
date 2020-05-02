@@ -29,7 +29,7 @@ def mocked_handler():
 def test_get_anime(mocked_get):
     mocked_get.return_value.status_code = 200
 
-    test_anime_path = os.path.join(CURRENT_DIR, "files", "test_anime.xml")
+    test_anime_path = os.path.join(CURRENT_DIR, "files", "anime.xml")
     with open(test_anime_path, "r") as f:
         xml_response = f.read().replace('\n', '')
 
