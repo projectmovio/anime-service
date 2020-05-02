@@ -1,50 +1,36 @@
-import datetime
 import gzip
 import logging
 import os
-import re
 import shutil
 from urllib.parse import urlencode
 from xml.etree import ElementTree
 
 import requests
 from fake_useragent import UserAgent
-from flask import jsonify
-from service.utils.config import get_config
 
 log = logging.getLogger(__name__)
+
+CLIENT = os.getenv("ANIDB_CLIENT")
+CLIENT_VERSION = os.getenv("ANIDB_CLIENT_VERSION")
+PROTOCOL_VERSION = os.getenv("ANIDB_PROTOCOL_VERSION")
 
 
 class AniDbApi:
     def __init__(self):
-        self.config = get_config()
 
         base_url_params = {
-            "client": self.config["api"]["anidb"]["client_name"],
-            "clientver": self.config["api"]["anidb"]["client_version"],
-            "protover": self.config["api"]["anidb"]["client_protocol_version"],
+            "client": CLIENT,
+            "clientver": CLIENT_VERSION,
+            "protover": PROTOCOL_VERSION,
         }
 
-        self.base_url = "{}?{}".format(self.config.base_url, urlencode(base_url_params))
-        self.pictures_url = self.config.pictures_url
+        api_url = "http://api.anidb.net:9001/httpapi"
+        self.base_url = f"{api_url}?{urlencode(base_url_params)}"
 
         log.debug("AniDB base_url: {}".format(self.base_url))
 
+        self.pictures_url = "http://img7.anidb.net/pics/anime/"
         self.nsmap = {"xml": "http://www.w3.org/XML/1998/namespace"}
-        self.current_titles_name = ""
-        self.anime_titles = {}
-
-    def search(self, search_string):
-        found_anime = []
-        max_results = 100
-        for anime_id in self._find_anime_ids(search_string):
-            if len(found_anime) == max_results:
-                break
-
-            anime = {"anime_id": anime_id, "pictures_url": "{}/{}.jpg".format(self.pictures_url, anime_id)}
-            found_anime.append(anime)
-
-        return jsonify(anime=found_anime)
 
     def get_anime(self, anime_id):
         url_params = {"request": "anime", "aid": anime_id}
@@ -54,7 +40,7 @@ class AniDbApi:
         response = requests.get(url)
 
         result = self._parse_anime(response.text)
-        return jsonify(anime=result)
+        return {"anime": result}
 
     def _parse_anime(self, anime_xml):
         res = {}
@@ -90,43 +76,6 @@ class AniDbApi:
             }
 
             res["episodes"].append(ep)
-
-        return res
-
-    def _find_anime_ids(self, search_string):
-        now = datetime.datetime.now()
-        today_date = now.strftime("%Y-%m-%d")
-        titles_name = "{}.xml".format(today_date)
-        titles_file = os.path.join(self.config.cache_dir, "titles", titles_name)
-        if not os.path.isfile(titles_file):
-            log.warning("Titles file: [%s] doesn't exist, try fallback to yesterday", titles_file)
-            yesterday_date = (now - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-            titles_name = "{}.xml".format(yesterday_date)
-            titles_file = os.path.join(self.config.cache_dir, "titles", titles_name)
-
-            if not os.path.isfile(titles_file):
-                raise RuntimeError("No titles file for today: [%s] or yesterday: [%s]", today_date, yesterday_date)
-
-        res = []
-
-        if self.current_titles_name != titles_name:
-            log.debug("Reading titles from new XML file: [%s.xml]", titles_name)
-            self.anime_titles = {}
-            self.current_titles_name = titles_name
-
-            element_tree = ElementTree.parse(titles_file).getroot()
-            for anime in element_tree:
-                anime_id = anime.attrib.get("aid")
-                titles = anime.findall("./title", namespaces=self.nsmap)
-                for title in titles:
-                    if anime_id not in self.anime_titles:
-                        self.anime_titles[anime_id] = []
-                    self.anime_titles[anime_id].append(title.text)
-
-        for anime_id in self.anime_titles:
-            for title in self.anime_titles[anime_id]:
-                if re.match(r'{}'.format(search_string), title, re.IGNORECASE):
-                    res.append(anime_id)
 
         return res
 

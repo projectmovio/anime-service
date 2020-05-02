@@ -1,6 +1,6 @@
 import unittest
 
-from layers.api.anidb import AniDbApi
+from python.anidb import AniDbApi
 
 
 class TestAniDb(unittest.TestCase):

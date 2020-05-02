@@ -6,7 +6,7 @@ from xml.etree import ElementTree
 import boto3
 from botocore.exceptions import ClientError
 
-from anidb import AniDbApi
+from python.anidb import AniDbApi
 
 s3_bucket = None
 bucket_name = os.getenv("ANIDB_TITLES_BUCKET")
