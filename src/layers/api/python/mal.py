@@ -78,5 +78,5 @@ class MalApi:
         if ret.status_code == 404:
             raise NotFoundError()
         elif ret.status_code != 200:
-            raise HTTPError()
+            raise HTTPError(f"Unexpected status code: {ret.status_code}")
         return {"anime": ret.json()}

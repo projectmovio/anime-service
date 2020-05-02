@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 import requests
 
-from mal import MalApi, HTTPError
+from mal import MalApi, HTTPError, NotFoundError
 
 ENV = {
     "MAL_CLIENT_ID": "TEST_MAL_CLIENT_ID"
@@ -44,7 +44,7 @@ def test_search(req_mock):
 
 @mock.patch.dict(os.environ, ENV)
 @patch.object(requests, "get")
-def test_search_invalid_status(req_mock):
+def test_search_error(req_mock):
     req_mock.return_value.status_code = 500
 
     mal_api = MalApi()
@@ -75,3 +75,25 @@ def test_get_anime(req_mock):
     mal_api = MalApi()
     ret = mal_api.get_anime(21)
     assert ret == exp
+
+
+@mock.patch.dict(os.environ, ENV)
+@patch.object(requests, "get")
+def test_get_anime_not_found(req_mock):
+    req_mock.return_value.status_code = 404
+
+    mal_api = MalApi()
+    with pytest.raises(NotFoundError):
+        mal_api.get_anime(21)
+
+
+@mock.patch.dict(os.environ, ENV)
+@patch.object(requests, "get")
+def test_get_anime_error(req_mock):
+    req_mock.return_value.status_code = 500
+
+    mal_api = MalApi()
+    with pytest.raises(HTTPError) as e:
+        mal_api.get_anime(21)
+
+    assert "Unexpected status code: 500" == str(e.value)
