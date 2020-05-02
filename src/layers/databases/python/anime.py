@@ -9,6 +9,14 @@ DATABASE_NAME = os.getenv("ANIME_DATABASE_NAME")
 table = None
 
 
+class Error(Exception):
+    pass
+
+
+class NotFoundError(Error):
+    pass
+
+
 def _get_table():
     global table
     if table is None:
@@ -34,5 +42,8 @@ def get_anime(mal_id):
         IndexName='mal_id',
         KeyConditionExpression=Key('mal_id').eq(mal_id)
     )
+
+    if not res["Items"]:
+        return NotFoundError(f"Anime with mal_id: {mal_id} not found")
 
     return res["Items"][0]
