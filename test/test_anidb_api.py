@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 import requests
 
-from anidb import AniDbApi, HTTPError, download_xml, save_json_titles
+from anidb import AniDbApi, HTTPError, download_xml, save_json_titles, _download_file
 
 ENV = {
     "ANIDB_CLIENT": "TEST_ANIDB_CLIENT",
@@ -115,3 +115,12 @@ def test_save_json_titles(mocked_anidb):
 
     # cleanup
     os.remove(out_path)
+
+
+@mock.patch.dict(os.environ, ENV)
+def test_download_file(mocked_anidb):
+    exp = "MOCKED_FILE"
+    mocked_anidb.s3_bucket.download_file = lambda *args: exp
+
+    ret = _download_file("TEST", "TEST")
+    assert ret == exp
