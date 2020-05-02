@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import requests
+from botocore.exceptions import ClientError
 
 from anidb import AniDbApi, HTTPError, download_xml, save_json_titles, _download_file
 
@@ -124,3 +125,19 @@ def test_download_file(mocked_anidb):
 
     ret = _download_file("TEST", "TEST")
     assert ret == exp
+
+
+@mock.patch.dict(os.environ, ENV)
+def test_download_file_not_found(mocked_anidb):
+    mocked_anidb.s3_bucket.download_file.side_effect = ClientError({"Error": {"Code": "404"}}, "TEST_OPERATION")
+
+    ret = _download_file("TEST", "TEST")
+    assert ret is None
+
+
+@mock.patch.dict(os.environ, ENV)
+def test_download_file_error(mocked_anidb):
+    mocked_anidb.s3_bucket.download_file.side_effect = ClientError({"Error": {"Code": "500"}}, "TEST_OPERATION")
+
+    with pytest.raises(ClientError):
+        _download_file("TEST", "TEST")
