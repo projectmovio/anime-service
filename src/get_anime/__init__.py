@@ -10,16 +10,16 @@ class HttpError(object):
 def handle(event, context):
     print(f"Received event: {event}")
 
-    if "queryStringParameters" not in event:
+    search = event["queryStringParameters"].get("search")
+    mid = event["queryStringParameters"].get("mid")
+
+    if search is None and mid is None:
         return {
             "statusCode": 400,
             "body": json.dumps({"error": "Please specify either 'search' or 'mid' query parameter"})
         }
 
     mal_api = MalApi()
-    search = event["queryStringParameters"].get("search")
-    mid = event["queryStringParameters"].get("mid")
-
     if mid:
         try:
             res = mal_api.get_anime(mid)
