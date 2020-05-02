@@ -7,20 +7,25 @@ from mal import MalApi, NotFoundError
 def handle(event, context):
     print(f"Received event: {event}")
 
-    mid = event["queryStringParameters"].get("mid")
+    mal_id = event["queryStringParameters"].get("mal_id")
 
-    if mid is None:
+    if mal_id is None:
         return {
             "statusCode": 400,
-            "body": json.dumps({"error": "Please specify the 'mid' query parameter"})
+            "body": json.dumps({"error": "Please specify the 'mal_id' query parameter"})
         }
 
     mal_api = MalApi()
 
+    try:
+        mal_api.get_anime(mal_id)
+    except NotFoundError:
+        pass
+        
     mal_data = {}
-    if mid:
+    if mal_id:
         try:
-            mal_data = mal_api.get_anime(mid)
+            mal_data = mal_api.get_anime(mal_id)
         except NotFoundError:
             return {"statusCode": 404}
         except HttpError:
@@ -29,7 +34,7 @@ def handle(event, context):
     if not mal_data:
         return {
             "statusCode": 404,
-            "body": json.dumps({"error": f"Mal data empty for MID: {mid}"})
+            "body": json.dumps({"error": f"Mal data empty for mal_id: {mal_id}"})
         }
 
 
