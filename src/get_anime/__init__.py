@@ -1,6 +1,10 @@
 import json
 
-from mal import MalApi
+from mal import MalApi, NotFoundError
+
+
+class HttpError(object):
+    pass
 
 
 def handle(event, context):
@@ -17,13 +21,27 @@ def handle(event, context):
     mid = event["queryStringParameters"].get("mid")
 
     if mid:
-        res = mal_api.get_anime(mid)
+        try:
+            res = mal_api.get_anime(mid)
+        except NotFoundError:
+            return {
+                "statusCode": 404
+            }
+        except HttpError:
+            return {
+                "statusCode": 500
+            }
         return {
             "statusCode": 200,
             "body": json.dumps(res)
         }
     elif search:
-        res = mal_api.search(search)
+        try:
+            res = mal_api.search(search)
+        except HttpError:
+            return {
+                "statusCode": 500
+            }
         return {
             "statusCode": 200,
             "body": json.dumps(res)
