@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 from xml.etree import ElementTree
 
@@ -18,6 +19,20 @@ def _get_s3_bucket():
     return s3_bucket
 
 
+def _download_xml(download_path):
+    """Try downloading XML file from S3 bucket, if it doesn't exist get it from AniDbApi"""
+    file_name = os.path.basename(download_path)
+
+    xml_file = _download_file(file_name, download_path)
+
+    if xml_file is None:
+        print(f"Downloading new titles file: {file_name} to path: {download_path}")
+
+        AniDbApi.download_titles(download_path)
+
+        _get_s3_bucket().upload_file(download_path, file_name)
+
+
 def _download_file(key, location):
     try:
         s3_file = _get_s3_bucket().download_file(key, location)
@@ -26,6 +41,19 @@ def _download_file(key, location):
         if exc.response['Error']['Code'] == '404':
             return None
         raise
+
+
+def _save_json_file(xml_path, json_path):
+    titles = {}
+    for anime in _anime_titles(xml_path):
+        titles[anime["title"]] = anime["id"]
+
+    with open(json_path, "w") as f:
+        json.dump(titles, f, indent=4)
+
+    file_name = os.path.basename(json_path)
+    print(f"Uploading {json_path} to bucket object: {file_name}")
+    _get_s3_bucket().upload_file(json_path, file_name)
 
 
 def _anime_titles(file_path):
@@ -40,27 +68,13 @@ def _anime_titles(file_path):
                 "title": title.text,
             }
 
-def _create_titles_file():
-
-
-def _download_xml(download_path):
-    """Download titles file and put in S3 bucket, if it already exist get it from the bucket"""
-    file_name = os.path.basename(download_path)
-    xml_file = _download_file(file_name, download_path)
-
-    if xml_file is None:
-        print(f"Downloading new titles file: {file_name} to path: {download_path}")
-
-        AniDbApi.download_titles(download_path)
-
-        _get_s3_bucket().upload_file(download_path, file_name)
-
-
 
 def handle(event, context):
     now = datetime.datetime.now()
     date_today = now.strftime("%Y-%m-%d")
-    #date_yesterday = (now - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 
-    download_path = os.path.join("/", "tmp", f"{date_today}.xml")
+    xml_path = os.path.join("/", "tmp", f"{date_today}.xml")
+    json_path = os.path.join("/", "tmp", f"{date_today}.json")
 
+    _download_xml(xml_path)
+    _save_json_file(xml_path, json_path)
