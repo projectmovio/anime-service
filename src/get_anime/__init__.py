@@ -24,25 +24,13 @@ def handle(event, context):
         try:
             res = mal_api.get_anime(mid)
         except NotFoundError:
-            return {
-                "statusCode": 404
-            }
+            return {"statusCode": 404}
         except HttpError:
-            return {
-                "statusCode": 500
-            }
-        return {
-            "statusCode": 200,
-            "body": json.dumps(res)
-        }
+            return {"statusCode": 500}
+        return {"statusCode": 200, "body": json.dumps(res)}
     elif search:
         try:
             res = mal_api.search(search)
         except HttpError:
-            return {
-                "statusCode": 500
-            }
-        return {
-            "statusCode": 200,
-            "body": json.dumps(res)
-        }
+            return {"statusCode": 500}
+        return {"statusCode": 200, "body": json.dumps(res)}

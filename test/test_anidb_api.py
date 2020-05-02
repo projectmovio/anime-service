@@ -8,7 +8,8 @@ import pytest
 import requests
 from botocore.exceptions import ClientError
 
-from anidb import AniDbApi, HTTPError, download_xml, save_json_titles, _download_file
+from anidb import (AniDbApi, HTTPError, _download_file, download_xml,
+                   save_json_titles)
 
 ENV = {
     "ANIDB_CLIENT": "TEST_ANIDB_CLIENT",
