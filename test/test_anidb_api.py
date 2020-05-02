@@ -1,4 +1,5 @@
 import gzip
+import json
 import os
 from unittest import mock
 from unittest.mock import MagicMock, patch
@@ -6,7 +7,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 import requests
 
-from anidb import AniDbApi, HTTPError, download_xml
+from anidb import AniDbApi, HTTPError, download_xml, save_json_titles
 
 ENV = {
     "ANIDB_CLIENT": "TEST_ANIDB_CLIENT",
@@ -33,7 +34,7 @@ def test_get_anime(mocked_get):
 
     test_anime_path = os.path.join(CURRENT_DIR, "files", "anime.xml")
     with open(test_anime_path, "r") as f:
-        xml_response = f.read().replace('\n', '')
+        xml_response = f.read().replace("\n", "")
 
     mocked_get.return_value.text = xml_response
 
@@ -72,7 +73,7 @@ def test_download_xml(mocked_get, mocked_anidb):
 
     with open(titles_path, "r") as f:
         exp = f.read()
-    with open(titles_path, 'rb') as f_in, gzip.open(file_name, 'wb') as f_out:
+    with open(titles_path, "rb") as f_in, gzip.open(file_name, "wb") as f_out:
         f_out.writelines(f_in)
     with open(file_name, "br") as f:
         mocked_get.return_value.content = f.read()
@@ -87,3 +88,30 @@ def test_download_xml(mocked_get, mocked_anidb):
     # cleanup
     os.remove(file_name)
     os.remove(out_file)
+
+
+@mock.patch.dict(os.environ, ENV)
+def test_save_json_titles(mocked_anidb):
+    mocked_anidb.upload_file = lambda *args: None
+    titles_path = os.path.join(CURRENT_DIR, "files", "titles.xml")
+
+    out_path = os.path.join(CURRENT_DIR, "test.json")
+    save_json_titles(titles_path, out_path)
+
+    with open(out_path, "r") as f:
+        json_data = json.load(f)
+
+    exp = {
+        "CotS": 1,
+        "Crest of the Stars": 1,
+        "Hvězdný erb": 1,
+        "Seikai no Monshou": 1,
+        "SnM": 1,
+        "星界の紋章": 1,
+        "星界之纹章": 1
+    }
+
+    assert json_data == exp
+
+    # cleanup
+    os.remove(out_path)
