@@ -21,6 +21,14 @@ BUCKET_NAME = os.getenv("ANIDB_TITLES_BUCKET")
 s3_bucket = None
 
 
+class Error(Exception):
+    pass
+
+
+class HTTPError(Error):
+    pass
+
+
 class AniDbApi:
     def __init__(self):
 
@@ -43,9 +51,12 @@ class AniDbApi:
 
         url = "{}&{}".format(self.base_url, urlencode(url_params))
         log.debug("Sending get request to: %s", url)
-        response = requests.get(url)
+        ret = requests.get(url)
 
-        result = self._parse_anime(response.text)
+        if ret.status_code != 200:
+            raise HTTPError(f"Unexpected status code: {ret.status_code}")
+
+        result = self._parse_anime(ret.text)
         return {"anime": result}
 
     def _parse_anime(self, anime_xml):
