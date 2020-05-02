@@ -1,11 +1,11 @@
 import logging
+import os
 
 import requests
-from flask import jsonify, Response
-
-from service.utils.config import get_config
 
 log = logging.getLogger(__name__)
+
+CLIENT_ID = os.getenv("MAL_CLIENT_ID")
 
 
 class Error(Exception):
@@ -16,14 +16,16 @@ class HTTPError(Error):
     pass
 
 
+class NotFoundError(Error):
+    pass
+
+
 class MalApi:
     def __init__(self):
-        self.config = get_config()
-
         self.default_headers = {
-            "X-Mal-Client-Id": self.config["api"]["mal"]["client_id"],
+            "X-Mal-Client-Id": CLIENT_ID,
         }
-        self.base_url = self.config["api"]["mal"]["base_url"]
+        self.base_url = "https://api.myanimelist.net/v2"
 
         log.debug("MAL base_url: {}".format(self.base_url))
 
@@ -36,7 +38,7 @@ class MalApi:
         ret = requests.get(url, params=url_params, headers=self.default_headers)
         if ret.status_code != 200:
             raise HTTPError()
-        return jsonify(anime=ret.json()["data"])
+        return {"anime": ret.json()["data"]}
 
     def get_anime(self, anime_id):
         url = f"{self.base_url}/anime/{anime_id}"
@@ -68,8 +70,7 @@ class MalApi:
         }
         ret = requests.get(url, params=url_params, headers=self.default_headers)
         if ret.status_code == 404:
-            return Response(status=404)
+            raise NotFoundError()
         elif ret.status_code != 200:
             raise HTTPError()
-        return jsonify(anime=ret.json())
-
+        return {"anime": ret.json()}

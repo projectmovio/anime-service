@@ -4,7 +4,7 @@ import os
 from flask import Flask, request
 from flask_caching import Cache
 
-from layers.api.mal import MalApi
+from python.mal import MalApi
 from service.utils.config import get_config
 
 log = logging.getLogger("service")
