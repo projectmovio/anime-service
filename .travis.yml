@@ -1,0 +1,14 @@
+language: python
+stages:
+  - test
+jobs:
+  include:
+    - stage: test
+      python: 3.8
+      install:
+        - pip install -r test/requirements.txt
+        - pip install coveralls
+      script:
+        - make test
+      after_success:
+        - coveralls
