@@ -1,11 +1,14 @@
 import gzip
+import json
 import logging
 import os
 import shutil
 from urllib.parse import urlencode
 from xml.etree import ElementTree
 
+import boto3
 import requests
+from botocore.exceptions import ClientError
 from fake_useragent import UserAgent
 
 log = logging.getLogger(__name__)
@@ -13,6 +16,9 @@ log = logging.getLogger(__name__)
 CLIENT = os.getenv("ANIDB_CLIENT")
 CLIENT_VERSION = os.getenv("ANIDB_CLIENT_VERSION")
 PROTOCOL_VERSION = os.getenv("ANIDB_PROTOCOL_VERSION")
+BUCKET_NAME = os.getenv("ANIDB_TITLES_BUCKET")
+
+s3_bucket = None
 
 
 class AniDbApi:
@@ -79,25 +85,83 @@ class AniDbApi:
 
         return res
 
-    def _get_property(self, xml_element, property):
-        prop = xml_element.find("./{}".format(property))
+    def _get_property(self, xml_element, prop):
+        prop = xml_element.find("./{}".format(prop))
         if prop is not None:
             return prop.text
         return None
 
-    @staticmethod
-    def download_titles(file_path):
-        r = requests.get("http://anidb.net/api/anime-titles.xml.gz", headers={"User-Agent": UserAgent().chrome})
 
-        # Write titles zip to temporary file
-        gzip_file = "titles.gz"
-        with open(gzip_file, 'wb') as f:
-            f.write(r.content)
+def _get_s3_bucket():
+    global s3_bucket
+    if s3_bucket is None:
+        s3_bucket = boto3.resource("s3").Bucket(BUCKET_NAME)
+    return s3_bucket
 
-        # Unzip file
-        with gzip.open(gzip_file, 'rb') as f_in:
-            with open(file_path, 'wb') as f_out:
-                shutil.copyfileobj(f_in, f_out)
 
-        # Remove gz file
-        os.remove(gzip_file)
+def _download_titles(file_path):
+    """Download anime titles in GZ format, unzip and save to the specified file_path"""
+    r = requests.get("http://anidb.net/api/anime-titles.xml.gz", headers={"User-Agent": UserAgent().chrome})
+
+    # Write titles zip to temporary file
+    gzip_file = "titles.gz"
+    with open(gzip_file, 'wb') as f:
+        f.write(r.content)
+
+    # Unzip file
+    with gzip.open(gzip_file, 'rb') as f_in:
+        with open(file_path, 'wb') as f_out:
+            shutil.copyfileobj(f_in, f_out)
+
+    # Remove gz file
+    os.remove(gzip_file)
+
+
+def _anime_titles(file_path):
+    element_tree = ElementTree.parse(file_path).getroot()
+    for anime in element_tree:
+        anime_id = anime.attrib.get("aid")
+        titles = anime.findall("./title", namespaces={"xml": "http://www.w3.org/XML/1998/namespace"})
+
+        for title in titles:
+            yield {
+                "id": int(anime_id),
+                "title": title.text,
+            }
+
+
+def download_xml(download_path):
+    """Try downloading XML file from S3 bucket, if it doesn't exist get it from AniDbApi"""
+    file_name = os.path.basename(download_path)
+
+    xml_file = _download_file(file_name, download_path)
+
+    if xml_file is None:
+        print(f"Downloading new titles file: {file_name} to path: {download_path}")
+
+        _download_titles(download_path)
+
+        _get_s3_bucket().upload_file(download_path, file_name)
+
+
+def _download_file(key, location):
+    try:
+        s3_file = _get_s3_bucket().download_file(key, location)
+        return s3_file
+    except ClientError as exc:
+        if exc.response['Error']['Code'] == '404':
+            return None
+        raise
+
+
+def save_json_titles(xml_path, json_path):
+    titles = {}
+    for anime in _anime_titles(xml_path):
+        titles[anime["title"]] = anime["id"]
+
+    with open(json_path, "w") as f:
+        json.dump(titles, f, indent=4)
+
+    file_name = os.path.basename(json_path)
+    print(f"Uploading {json_path} to bucket object: {file_name}")
+    _get_s3_bucket().upload_file(json_path, file_name)
