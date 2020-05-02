@@ -37,8 +37,14 @@ class MalApi:
 
         ret = requests.get(url, params=url_params, headers=self.default_headers)
         if ret.status_code != 200:
-            raise HTTPError()
-        return {"anime": ret.json()["data"]}
+            raise HTTPError(f"Unexpected status code: {ret.status_code}")
+
+        res = {
+            "anime": []
+        }
+        for a in ret.json()["data"]:
+            res["anime"].append(a["node"])
+        return res
 
     def get_anime(self, anime_id):
         url = f"{self.base_url}/anime/{anime_id}"
