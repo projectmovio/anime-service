@@ -2,7 +2,7 @@ import json
 
 
 import anime as anime_database
-from mal import MalApi, NotFoundError
+from mal import MalApi, NotFoundError, HTTPError
 
 
 def handle(event, context):
@@ -34,7 +34,7 @@ def handle(event, context):
             mal_data = mal_api.get_anime(mal_id)
         except NotFoundError:
             return {"statusCode": 404}
-        except HttpError:
+        except HTTPError:
             return {"statusCode": 500}
 
     if not mal_data:
