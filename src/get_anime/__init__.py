@@ -11,18 +11,18 @@ def handle(event, context):
     print(f"Received event: {event}")
 
     search = event["queryStringParameters"].get("search")
-    mid = event["queryStringParameters"].get("mid")
+    mal_id = event["queryStringParameters"].get("mal_id")
 
-    if search is None and mid is None:
+    if search is None and mal_id is None:
         return {
             "statusCode": 400,
-            "body": json.dumps({"error": "Please specify either 'search' or 'mid' query parameter"})
+            "body": json.dumps({"error": "Please specify either 'search' or 'mal_id' query parameter"})
         }
 
     mal_api = MalApi()
-    if mid:
+    if mal_id:
         try:
-            res = mal_api.get_anime(mid)
+            res = mal_api.get_anime(mal_id)
         except NotFoundError:
             return {"statusCode": 404}
         except HttpError:
