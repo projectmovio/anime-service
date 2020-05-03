@@ -38,4 +38,4 @@ def get_last_post_anime_update():
     if "Item" in res:
         return res["Item"]["timestamp"]
 
-    return None
+    return 0
