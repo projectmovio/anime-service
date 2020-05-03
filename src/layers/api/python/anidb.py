@@ -1,3 +1,4 @@
+import datetime
 import gzip
 import json
 import logging
@@ -26,6 +27,10 @@ class Error(Exception):
 
 
 class HTTPError(Error):
+    pass
+
+
+class TitlesNotFound(Error):
     pass
 
 
@@ -176,3 +181,26 @@ def save_json_titles(xml_path, json_path):
     file_name = os.path.basename(json_path)
     print(f"Uploading {json_path} to bucket object: {file_name}")
     _get_s3_bucket().upload_file(json_path, file_name)
+
+
+def get_json_titles(download_folder):
+    now = datetime.datetime.now()
+    date_today = now.strftime("%Y-%m-%d")
+    date_yesterday = (now - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+
+    today_file = f"{date_today}.json"
+    file_path = os.path.join(download_folder, today_file)
+    titles_file = _download_file(today_file, file_path)
+
+    if titles_file is None:
+        yesterday_file = f"{date_yesterday}.json"
+        file_path = os.path.join(download_folder, yesterday_file)
+        titles_file = _download_file(yesterday_file, file_path)
+
+    if titles_file is None:
+        raise TitlesNotFound(f"No titles found for dates: {date_today}, {date_yesterday}")
+
+    with open(file_path, "r") as f:
+        titles = json.load(f)
+
+    return titles
