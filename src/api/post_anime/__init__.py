@@ -3,7 +3,7 @@ import os
 
 import boto3
 
-from anime import get_anime, NotFoundError
+from anime_db import get_anime, NotFoundError
 
 SQS_QUEUE_URL = os.getenv("POST_ANIME_SQS_QUEUE_URL")
 

@@ -1,10 +1,13 @@
+import os
 import time
 
-import params
+import anidb
+import params_db
+import anime_db
 
 
 def handler(event, context):
-    last_timestamp = params.get_last_post_anime_update()
+    last_timestamp = params_db.get_last_post_anime_update()
 
     current_timestamp = int(time.time())
     if current_timestamp - last_timestamp <= 2:
