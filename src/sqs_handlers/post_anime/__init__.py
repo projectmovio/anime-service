@@ -18,5 +18,19 @@ def handler(event, context):
     # divide it in 1 update per lambda instead. This will also make the code cleaner.
     mal_id = event["Records"][0]["body"]
 
+    try:
+        anime_db.get_anime(mal_id)
+    except anime_db.NotFoundError:
+        pass
+    else:
+        print(f"Anime with mal_id: {mal_id} already present, ignore update")
+        return
 
-    params.set_last_post_anime_update(int(time.time()), mal_id)
+
+
+    download_folder = os.path.join("/", "tmp")
+    anidb_titles = anidb.get_json_titles(download_folder)
+
+
+
+    params_db.set_last_post_anime_update(int(time.time()), mal_id)
