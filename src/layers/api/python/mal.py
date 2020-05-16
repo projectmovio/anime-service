@@ -45,16 +45,27 @@ class MalApi:
     def get_anime(self, anime_id):
         url = f"{self.base_url}/anime/{anime_id}"
         fields = [
-            "related_anime",
-            "alternative_titles", "media_type", "num_episodes", "status", "start_date", "end_date",
-            "average_episode_duration", "synopsis", "mean", "rank", "popularity", "num_list_users", "num_favorites",
-            "num_scoring_users", "start_season", "broadcast", "my_list_status{start_date,finish_date}", "nsfw",
-            "created_at", "updated_at"
+            "related_anime", "alternative_titles", "media_type", "start_date", "end_date", "average_episode_duration",
+            "synopsis", "broadcast"
         ]
         url_params = {"fields": ",".join(fields)}
         ret = requests.get(url, params=url_params, headers=self.default_headers)
         if ret.status_code == 404:
-            raise NotFoundError()
+            raise NotFoundError(f"Anime with ID: {anime_id} not found")
         elif ret.status_code != 200:
             raise HTTPError(f"Unexpected status code: {ret.status_code}")
-        return {"anime": ret.json()}
+
+        anime = ret.json()
+        anime["all_titles"] = self._get_all_titles(anime)
+        return {"anime": anime}
+
+    def _get_all_titles(self, anime):
+        titles = [anime["title"]]
+
+        for title_key in anime["alternative_titles"]:
+            title = anime["alternative_titles"][title_key]
+            if isinstance(title, list):
+                titles += title
+            else:
+                titles.append(title)
+        return titles
