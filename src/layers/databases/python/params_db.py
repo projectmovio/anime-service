@@ -22,11 +22,11 @@ def _get_table():
     return table
 
 
-def set_last_post_anime_update(timestamp, mal_id, anidb_id):
+def set_last_post_anime_update(timestamp, anime_id):
     _get_table().update_item(
         Key={"name": "post_anime_update"},
-        UpdateExpression="SET timestamp= :timestamp, mal_id = :mal_id, anidb_id = :anidb_id",
-        ExpressionAttributeValues={":timestamp": timestamp, ":mal_id": mal_id, ":anidb_id": anidb_id}
+        UpdateExpression="SET timestamp= :timestamp, anime_id = :anime_id",
+        ExpressionAttributeValues={":timestamp": timestamp, ":anime_id": anime_id}
     )
 
 
