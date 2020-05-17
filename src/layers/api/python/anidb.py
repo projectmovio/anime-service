@@ -74,7 +74,6 @@ class AniDbApi:
         res["start_date"] = self._get_property(anime, "startdate")
         res["end_date"] = self._get_property(anime, "enddate")
         res["synopsis"] = self._get_property(anime, "description")
-        res["pictures_url"] = "{}/{}".format(self.pictures_url, self._get_property(anime, "picture"))
 
         res["episodes"] = []
         for episode in anime.find("episodes"):
