@@ -33,7 +33,6 @@ def handler(event, context):
     # save mal_info
     anime_id = anime_db.new_anime(mal_info)
 
-
     download_folder = os.path.join("/", "tmp")
     anidb_titles = anidb.get_json_titles(download_folder)
 

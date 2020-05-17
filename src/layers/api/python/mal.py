@@ -67,9 +67,12 @@ class MalApi:
         titles = [anime["title"]]
 
         for title_key in anime["alternative_titles"]:
-            title = anime["alternative_titles"][title_key]
-            if isinstance(title, list):
-                titles += title
-            else:
-                titles.append(title)
+            t_list = anime["alternative_titles"][title_key]
+
+            if not isinstance(t_list, list):
+                t_list = [t_list]
+
+            for t in t_list:
+                if t not in titles:
+                    titles.append(t)
         return titles
