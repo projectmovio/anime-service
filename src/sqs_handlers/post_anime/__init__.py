@@ -4,6 +4,7 @@ import time
 import anidb
 import params_db
 import anime_db
+import episodes_db
 import mal
 
 
@@ -28,21 +29,26 @@ def handler(event, context):
         return
 
     mal_api = mal.MalApi()
-    mal_info = mal_api.get_anime(mal_id)["anime"]
+    anime_data = mal_api.get_anime(mal_id)["anime"]
 
-    # save mal_info
-    anime_id = anime_db.new_anime(mal_info)
-
-    anidb_id = _get_anidb_id(mal_info["all_titles"])
-
+    anidb_id = _get_anidb_id(anime_data["all_titles"])
+    episodes = None
     if anidb_id:
         print(f"Found matching anidb_id: {anidb_id} for mal_id: {mal_id}")
         anidb_api = anidb.AniDbApi()
-        anidb_info = anidb_api.get_anime(anidb_id)
+        anidb_data = anidb_api.get_anime(anidb_id)["anime"]
 
-        anime_db.update_anime(anime_id, anidb_info)
+        # episodes will be stored in another database
+        episodes = anidb_data.pop("episodes")
 
-    params_db.set_last_post_anime_update(int(time.time()), mal_id)
+        anime_data = {**anime_data, **anidb_data}
+
+    anime_id = anime_db.new_anime(anime_data)
+
+    if episodes:
+        episodes_db.put_episodes(anime_id, episodes)
+
+    params_db.set_last_post_anime_update(int(time.time()), anime_id)
 
 
 def _get_anidb_id(all_titles):
