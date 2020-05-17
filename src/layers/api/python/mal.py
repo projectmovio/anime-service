@@ -57,6 +57,11 @@ class MalApi:
 
         anime = ret.json()
         anime["all_titles"] = self._get_all_titles(anime)
+
+        # Change id into mal_id, this way this dict can be easy transformed into db item
+        anime["mal_id"] = anime["id"]
+        del anime["id"]
+
         return {"anime": anime}
 
     def _get_all_titles(self, anime):

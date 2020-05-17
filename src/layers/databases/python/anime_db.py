@@ -24,17 +24,25 @@ def _get_table():
     return table
 
 
-def new_anime(mal_id):
-    anime_id = uuid.uuid5(uuid.NAMESPACE_OID, mal_id)
+def new_anime(mal_info):
+    anime_id = uuid.uuid5(uuid.NAMESPACE_OID, mal_info["mal_id"])
+    update_anime(anime_id, mal_info)
+
+    return anime_id
+
+
+def update_anime(anime_id, data):
+    items = " ".join(f"#{k} = :{k}" for k, in data)
+    update_expression = f"SET {items}"
+    expression_attribute_names = {f'#{k}': k for k in data}
+    expression_attribute_values = {f':{k}': v for k, v in data.iteritems()}
 
     _get_table().update_item(
         Key={"id": anime_id},
-        UpdateExpression="SET #attr1 = :val1",
-        ExpressionAttributeNames={"#attr1": "mal_id"},
-        ExpressionAttributeValues={":val1": mal_id}
+        UpdateExpression=update_expression,
+        ExpressionAttributeNames=expression_attribute_names,
+        ExpressionAttributeValues=expression_attribute_values
     )
-
-    return anime_id
 
 
 def get_anime(mal_id):

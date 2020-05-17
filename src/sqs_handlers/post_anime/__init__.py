@@ -4,6 +4,7 @@ import time
 import anidb
 import params_db
 import anime_db
+import mal
 
 
 def handler(event, context):
@@ -15,7 +16,7 @@ def handler(event, context):
         time.sleep(2)
 
     # batch size always 1, sleep and throttle could increase runtime close to lambda timeout
-    # divide it in 1 update per lambda instead. This will also make the code cleaner.
+    # split it up in 1 update per lambda instead. This will also make the code cleaner.
     mal_id = event["Records"][0]["body"]
 
     try:
