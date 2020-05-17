@@ -1,8 +1,8 @@
 import os
 import uuid
+from typing import List
 
 import boto3
-from boto3.dynamodb.conditions import Key
 
 DATABASE_NAME = os.getenv("ANIME_EPISODES_DATABASE_NAME")
 
@@ -24,7 +24,7 @@ def _get_table():
     return table
 
 
-def put_episodes(anime_id, episodes):
+def put_episodes(anime_id: uuid.UUID, episodes: List[dict]) -> None:
     with _get_table().batch_writer() as batch:
         for ep in episodes:
             ep["anime_id"] = anime_id
