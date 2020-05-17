@@ -35,7 +35,12 @@ def handler(event, context):
 
     anidb_id = _get_anidb_id(mal_info["all_titles"])
 
+    if anidb_id:
+        print(f"Found matching anidb_id: {anidb_id} for mal_id: {mal_id}")
+        anidb_api = anidb.AniDbApi()
+        anidb_info = anidb_api.get_anime(anidb_id)
 
+        anime_db.update_anime(anime_id, anidb_info)
 
     params_db.set_last_post_anime_update(int(time.time()), mal_id)
 
