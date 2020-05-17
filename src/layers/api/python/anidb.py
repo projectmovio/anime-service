@@ -68,13 +68,12 @@ class AniDbApi:
         res = {}
         anime = ElementTree.fromstring(anime_xml)
 
-        res["anime_id"] = anime.attrib.get("id")
-        res["title"] = anime.find("./titles/title[@type='main']").text
-        res["type"] = self._get_property(anime, "type")
-        res["episode_count"] = self._get_property(anime, "episodecount")
+        res["anidb_id"] = anime.attrib.get("id")
+        res["media_type"] = self._get_property(anime, "type")
+        res["num_episodes"] = self._get_property(anime, "episodecount")
         res["start_date"] = self._get_property(anime, "startdate")
         res["end_date"] = self._get_property(anime, "enddate")
-        res["description"] = self._get_property(anime, "description")
+        res["synopsis"] = self._get_property(anime, "description")
         res["pictures_url"] = "{}/{}".format(self.pictures_url, self._get_property(anime, "picture"))
 
         res["episodes"] = []
