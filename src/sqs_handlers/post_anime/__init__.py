@@ -27,11 +27,26 @@ def handler(event, context):
         print(f"Anime with mal_id: {mal_id} already present, ignore update")
         return
 
+    mal_api = mal.MalApi()
+    mal_info = mal_api.get_anime(mal_id)
+
+    # save mal_info
+    anime_id = anime_db.new_anime(mal_info)
 
 
     download_folder = os.path.join("/", "tmp")
     anidb_titles = anidb.get_json_titles(download_folder)
 
+    for title in mal_info["all_titles"]:
+        anidb_id = anidb_titles.get(title)
+        if anidb_id:
+            print(f"Found matching anidb_id: {anidb_id} for mal_id: {mal_id}")
+            break
+    else:
+        print("Could not find anidb_id for mal_id: {mal_id}")
+
+
+    
 
 
     params_db.set_last_post_anime_update(int(time.time()), mal_id)
