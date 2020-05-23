@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 import requests
 
-from mal import HTTPError, MalApi, NotFoundError
+from mal import HTTPError, MalApi, NotFoundError, Anime
 
 ENV = {"MAL_CLIENT_ID": "TEST_MAL_CLIENT_ID"}
 
@@ -13,19 +13,17 @@ ENV = {"MAL_CLIENT_ID": "TEST_MAL_CLIENT_ID"}
 @mock.patch.dict(os.environ, ENV)
 @patch.object(requests, "get")
 def test_search(req_mock):
-    exp = {
-        "anime": [{
-            "id": 20,
-            "title": "Naruto",
-            "main_picture": {
-                "medium": "17405.jpg",
-                "large": "17405l.jpg"
-            },
-        }]
-    }
+    exp = [{
+        "id": 20,
+        "title": "Naruto",
+        "main_picture": {
+            "medium": "17405.jpg",
+            "large": "17405l.jpg"
+        },
+    }]
 
     req_mock.return_value.status_code = 200
-    req_mock.return_value.json.return_value = {"data": [{"node": exp["anime"][0]}]}
+    req_mock.return_value.json.return_value = {"data": [{"node": exp[0]}]}
 
     mal_api = MalApi()
     ret = mal_api.search("Naruto")
@@ -49,22 +47,20 @@ def test_search_error(req_mock):
 @patch.object(requests, "get")
 def test_get_anime(req_mock):
     exp = {
-        "anime": {
-            "id": 21,
-            "title": "One Piece",
-            "main_picture": {
-                "medium": "73245.jpg",
-                "large": "73245l.jpg"
-            }
+        "id": 21,
+        "title": "One Piece",
+        "main_picture": {
+            "medium": "73245.jpg",
+            "large": "73245l.jpg"
         }
     }
 
     req_mock.return_value.status_code = 200
-    req_mock.return_value.json.return_value = exp["anime"]
+    req_mock.return_value.json.return_value = exp
 
     mal_api = MalApi()
     ret = mal_api.get_anime(21)
-    assert ret == exp
+    assert ret == Anime(**exp)
 
 
 @mock.patch.dict(os.environ, ENV)
