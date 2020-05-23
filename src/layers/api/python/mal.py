@@ -34,10 +34,18 @@ class BaseAnime(TypedDict):
     main_picture: MainPicture
 
 
+class RelationType(Enum):
+    SideStory = "side_story"
+    Summary = "summary"
+    AlternativeVersion = "alternative_version"
+    Character = "character"
+    Other = "other"
+    Sequel = "sequel"
+    Prequel = "prequel"
+
 class RelatedAnime(TypedDict):
     node: BaseAnime
-    relation_type: str  # TODO: ENUM
-
+    relation_type: RelationType
 
 class AlternativeTitles(TypedDict):
     synonyms: List[str]
@@ -59,7 +67,7 @@ class MediaType(Enum):
 class Anime(BaseAnime):
     related_anime: List[RelatedAnime]
     alternative_titles: AlternativeTitles
-    media_type: str  # TODO: ENUM
+    media_type: MediaType
     start_date: str
     end_date: str
     average_episode_duration: int
