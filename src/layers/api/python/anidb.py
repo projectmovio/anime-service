@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import shutil
+import uuid
 from urllib.parse import urlencode
 from xml.etree import ElementTree
 
@@ -51,7 +52,7 @@ class AniDbApi:
         self.pictures_url = "http://img7.anidb.net/pics/anime/"
         self.nsmap = {"xml": "http://www.w3.org/XML/1998/namespace"}
 
-    def get_anime(self, anime_id):
+    def get_anime(self, anime_id: uuid.UUID):
         url_params = {"request": "anime", "aid": anime_id}
 
         url = "{}&{}".format(self.base_url, urlencode(url_params))

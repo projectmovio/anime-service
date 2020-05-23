@@ -1,5 +1,8 @@
 import logging
 import os
+import uuid
+from enum import Enum
+from typing import NamedTuple, TypedDict, Dict, List
 
 import requests
 
@@ -20,6 +23,51 @@ class NotFoundError(Error):
     pass
 
 
+class MainPicture(TypedDict):
+    medium: str
+    large: str
+
+
+class BaseAnime(TypedDict):
+    id: int
+    title: str
+    main_picture: MainPicture
+
+
+class RelatedAnime(TypedDict):
+    node: BaseAnime
+    relation_type: str  # TODO: ENUM
+
+
+class AlternativeTitles(TypedDict):
+    synonyms: List[str]
+
+
+class BroadCast(TypedDict):
+    day_of_week: str
+    start_time: str
+
+
+class MediaType(Enum):
+    TV = "tv"
+    Movie = "movie"
+    OVA = "ova"
+    ONA = "ona"
+    Special = "special"
+
+
+class Anime(BaseAnime):
+    related_anime: List[RelatedAnime]
+    alternative_titles: AlternativeTitles
+    media_type: str  # TODO: ENUM
+    start_date: str
+    end_date: str
+    average_episode_duration: int
+    synopsis: str
+    broadcast: BroadCast
+    num_episodes: int
+
+
 class MalApi:
     def __init__(self):
         self.default_headers = {
@@ -29,7 +77,7 @@ class MalApi:
 
         log.debug("MAL base_url: {}".format(self.base_url))
 
-    def search(self, search_str):
+    def search(self, search_str: str):
         url = f"{self.base_url}/anime"
         url_params = {"q": search_str}
 
@@ -42,7 +90,7 @@ class MalApi:
             res["anime"].append(a["node"])
         return res
 
-    def get_anime(self, anime_id):
+    def get_anime(self, anime_id: uuid.UUID) -> Anime:
         url = f"{self.base_url}/anime/{anime_id}"
         fields = [
             "related_anime", "alternative_titles", "media_type", "start_date", "end_date", "average_episode_duration",
