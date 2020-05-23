@@ -2,78 +2,13 @@ import logging
 import os
 import uuid
 from enum import Enum
-from typing import NamedTuple, TypedDict, Dict, List
+from typing import TypedDict, List
 
 import requests
 
 log = logging.getLogger(__name__)
 
 CLIENT_ID = os.getenv("MAL_CLIENT_ID")
-
-
-class Error(Exception):
-    pass
-
-
-class HTTPError(Error):
-    pass
-
-
-class NotFoundError(Error):
-    pass
-
-
-class MainPicture(TypedDict):
-    medium: str
-    large: str
-
-
-class BaseAnime(TypedDict):
-    id: int
-    title: str
-    main_picture: MainPicture
-
-
-class RelationType(Enum):
-    SideStory = "side_story"
-    Summary = "summary"
-    AlternativeVersion = "alternative_version"
-    Character = "character"
-    Other = "other"
-    Sequel = "sequel"
-    Prequel = "prequel"
-
-class RelatedAnime(TypedDict):
-    node: BaseAnime
-    relation_type: RelationType
-
-class AlternativeTitles(TypedDict):
-    synonyms: List[str]
-
-
-class BroadCast(TypedDict):
-    day_of_week: str
-    start_time: str
-
-
-class MediaType(Enum):
-    TV = "tv"
-    Movie = "movie"
-    OVA = "ova"
-    ONA = "ona"
-    Special = "special"
-
-
-class Anime(BaseAnime):
-    related_anime: List[RelatedAnime]
-    alternative_titles: AlternativeTitles
-    media_type: MediaType
-    start_date: str
-    end_date: str
-    average_episode_duration: int
-    synopsis: str
-    broadcast: BroadCast
-    num_episodes: int
 
 
 class MalApi:
@@ -132,3 +67,70 @@ class MalApi:
                 if t not in titles:
                     titles.append(t)
         return titles
+
+
+class Error(Exception):
+    pass
+
+
+class HTTPError(Error):
+    pass
+
+
+class NotFoundError(Error):
+    pass
+
+
+class MainPicture(TypedDict):
+    medium: str
+    large: str
+
+
+class BaseAnime(TypedDict):
+    id: int
+    title: str
+    main_picture: MainPicture
+
+
+class RelationType(Enum):
+    SideStory = "side_story"
+    Summary = "summary"
+    AlternativeVersion = "alternative_version"
+    Character = "character"
+    Other = "other"
+    Sequel = "sequel"
+    Prequel = "prequel"
+
+
+class RelatedAnime(TypedDict):
+    node: BaseAnime
+    relation_type: RelationType
+
+
+class AlternativeTitles(TypedDict):
+    synonyms: List[str]
+
+
+class BroadCast(TypedDict):
+    day_of_week: str
+    start_time: str
+
+
+class MediaType(Enum):
+    TV = "tv"
+    Movie = "movie"
+    OVA = "ova"
+    ONA = "ona"
+    Special = "special"
+
+
+class Anime(BaseAnime):
+    related_anime: List[RelatedAnime]
+    alternative_titles: AlternativeTitles
+    media_type: MediaType
+    start_date: str
+    end_date: str
+    average_episode_duration: int
+    synopsis: str
+    broadcast: BroadCast
+    num_episodes: int
