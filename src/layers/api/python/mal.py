@@ -2,7 +2,7 @@ import logging
 import os
 import uuid
 from enum import Enum
-from typing import TypedDict, List
+from typing import TypedDict, List, NamedTuple
 
 import requests
 
@@ -23,12 +23,12 @@ class NotFoundError(Error):
     pass
 
 
-class MainPicture(TypedDict):
+class MainPicture(NamedTuple):
     medium: str
     large: str
 
 
-class BaseAnime(TypedDict):
+class BaseAnime(NamedTuple):
     id: int
     title: str
     main_picture: MainPicture
@@ -44,16 +44,16 @@ class RelationType(Enum):
     Prequel = "prequel"
 
 
-class RelatedAnime(TypedDict):
+class RelatedAnime(NamedTuple):
     node: BaseAnime
     relation_type: RelationType
 
 
-class AlternativeTitles(TypedDict):
+class AlternativeTitles(NamedTuple):
     synonyms: List[str]
 
 
-class BroadCast(TypedDict):
+class BroadCast(NamedTuple):
     day_of_week: str
     start_time: str
 
@@ -77,6 +77,21 @@ class Anime(BaseAnime):
     broadcast: BroadCast
     num_episodes: int
 
+    @property
+    def all_titles(self):
+        titles = [self.title]
+
+        for title_key in self.alternative_titles:
+            t_list = self.alternative_titles[title_key]
+
+            if not isinstance(t_list, list):
+                t_list = [t_list]
+
+            for t in t_list:
+                if t not in titles:
+                    titles.append(t)
+        return titles
+
 
 class MalApi:
     def __init__(self):
@@ -87,7 +102,7 @@ class MalApi:
 
         log.debug("MAL base_url: {}".format(self.base_url))
 
-    def search(self, search_str: str):
+    def search(self, search_str: str) -> List[Anime]:
         url = f"{self.base_url}/anime"
         url_params = {"q": search_str}
 
@@ -95,9 +110,9 @@ class MalApi:
         if ret.status_code != 200:
             raise HTTPError(f"Unexpected status code: {ret.status_code}")
 
-        res = {"anime": []}
+        res = []
         for a in ret.json()["data"]:
-            res["anime"].append(a["node"])
+            res.append(a["node"])
         return res
 
     def get_anime(self, anime_id: uuid.UUID) -> Anime:
@@ -113,24 +128,6 @@ class MalApi:
         elif ret.status_code != 200:
             raise HTTPError(f"Unexpected status code: {ret.status_code}")
 
-        anime = ret.json()
-        anime["all_titles"] = self._get_all_titles(anime)
-
-        # Change id into mal_id, this way this dict can be easy transformed into db item
-        anime["mal_id"] = anime.pop("id")
+        anime = Anime(**ret.json())
 
         return anime
-
-    def _get_all_titles(self, anime):
-        titles = [anime["title"]]
-
-        for title_key in anime["alternative_titles"]:
-            t_list = anime["alternative_titles"][title_key]
-
-            if not isinstance(t_list, list):
-                t_list = [t_list]
-
-            for t in t_list:
-                if t not in titles:
-                    titles.append(t)
-        return titles

@@ -29,9 +29,9 @@ def handler(event, context):
         return
 
     mal_api = mal.MalApi()
-    anime_data = mal_api.get_anime(mal_id)["anime"]
+    mal_data: mal.Anime = mal_api.get_anime(mal_id)
 
-    anidb_id = _get_anidb_id(anime_data["all_titles"])
+    anidb_id = _get_anidb_id(mal_data.all_titles)
     episodes = None
     if anidb_id:
         print(f"Found matching anidb_id: {anidb_id} for mal_id: {mal_id}")
