@@ -52,7 +52,7 @@ class MalApi:
         # Change id into mal_id, this way this dict can be easy transformed into db item
         anime["mal_id"] = anime.pop("id")
 
-        return {"anime": anime}
+        return anime
 
     def _get_all_titles(self, anime):
         titles = [anime["title"]]
@@ -134,3 +134,4 @@ class Anime(BaseAnime):
     synopsis: str
     broadcast: BroadCast
     num_episodes: int
+
