@@ -115,7 +115,7 @@ class MalApi:
             res.append(a["node"])
         return res
 
-    def get_anime(self, anime_id: uuid.UUID) -> Anime:
+    def get_anime(self, anime_id: int) -> Anime:
         url = f"{self.base_url}/anime/{anime_id}"
         fields = [
             "related_anime", "alternative_titles", "media_type", "start_date", "end_date", "average_episode_duration",
