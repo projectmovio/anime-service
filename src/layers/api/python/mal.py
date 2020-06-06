@@ -1,8 +1,10 @@
+import datetime
 import logging
 import os
-import uuid
+
+from dataclasses import dataclass
 from enum import Enum
-from typing import TypedDict, List, NamedTuple
+from typing import List, NamedTuple, Optional
 
 import requests
 
@@ -28,7 +30,8 @@ class MainPicture(NamedTuple):
     large: str
 
 
-class BaseAnime(NamedTuple):
+@dataclass
+class BaseAnime:
     id: int
     title: str
     main_picture: MainPicture
@@ -66,16 +69,17 @@ class MediaType(Enum):
     Special = "special"
 
 
+@dataclass
 class Anime(BaseAnime):
-    related_anime: List[RelatedAnime]
-    alternative_titles: AlternativeTitles
     media_type: MediaType
-    start_date: str
-    end_date: str
     average_episode_duration: int
     synopsis: str
-    broadcast: BroadCast
     num_episodes: int
+    alternative_titles: Optional[AlternativeTitles] = None
+    start_date: Optional[datetime.date] = ""
+    end_date: Optional[str] = ""
+    related_anime: Optional[List[RelatedAnime]] = list
+    broadcast: Optional[BroadCast] = None
 
     @property
     def all_titles(self):
