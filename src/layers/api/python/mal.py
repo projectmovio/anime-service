@@ -52,9 +52,6 @@ class RelatedAnime(NamedTuple):
     relation_type: RelationType
 
 
-class AlternativeTitles(NamedTuple):
-    synonyms: List[str]
-
 
 class BroadCast(NamedTuple):
     day_of_week: str
@@ -75,25 +72,30 @@ class Anime(BaseAnime):
     average_episode_duration: int
     synopsis: str
     num_episodes: int
-    alternative_titles: Optional[AlternativeTitles] = None
-    start_date: Optional[datetime.date] = ""
-    end_date: Optional[str] = ""
+    alternative_titles: Optional[dict] = None
+    start_date: Optional[datetime.date] = None
+    end_date: Optional[datetime.date] = None
     related_anime: Optional[List[RelatedAnime]] = list
     broadcast: Optional[BroadCast] = None
+
+    def __post_init__(self):
+        if self.start_date is not None:
+            self.start_date = datetime.datetime.strptime(self.start_date, "%Y-%m-%d")
+
+        if self.end_date is not None:
+            self.start_date = datetime.datetime.strptime(self.start_date, "%Y-%m-%d")
 
     @property
     def all_titles(self):
         titles = [self.title]
 
-        for title_key in self.alternative_titles:
-            t_list = self.alternative_titles[title_key]
-
-            if not isinstance(t_list, list):
-                t_list = [t_list]
-
-            for t in t_list:
+        if self.alternative_titles is not None:
+            if "synonyms" in self.alternative_titles:
+                titles += self.alternative_titles.pop("synonyms")
+            for t in self.alternative_titles:
                 if t not in titles:
-                    titles.append(t)
+                    titles.append(self.alternative_titles[t])
+
         return titles
 
 

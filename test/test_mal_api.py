@@ -109,19 +109,20 @@ def test_get_all_titles():
         },
     })
 
-    all_titles = anime.all_titles
-
     exp = [
         anime.title,
         anime.alternative_titles["synonyms"][0],
         anime.alternative_titles["en"],
         anime.alternative_titles["ja"]
     ]
-    assert exp == all_titles
+    assert anime.all_titles == exp
 
 
 def test_start_date():
     anime = Anime(**BASE_NARUTO_ANIME, **{
         "start_date": "2020-01-01"
     })
+
+    exp = datetime.datetime.strptime("2020-01-01", "%Y-%m-%d")
+    assert exp == anime.start_date
 
