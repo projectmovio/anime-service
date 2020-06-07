@@ -4,7 +4,7 @@ import os
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, NamedTuple, Optional
+from typing import List, Optional
 
 import requests
 
@@ -25,7 +25,8 @@ class NotFoundError(Error):
     pass
 
 
-class MainPicture(NamedTuple):
+@dataclass
+class MainPicture:
     medium: str
     large: str
 
@@ -47,13 +48,14 @@ class RelationType(Enum):
     Prequel = "prequel"
 
 
-class RelatedAnime(NamedTuple):
+@dataclass
+class RelatedAnime:
     node: BaseAnime
     relation_type: RelationType
 
 
-
-class BroadCast(NamedTuple):
+@dataclass
+class BroadCast:
     day_of_week: str
     start_time: str
 

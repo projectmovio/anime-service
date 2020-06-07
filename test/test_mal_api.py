@@ -1,3 +1,4 @@
+import datetime
 import os
 from unittest import mock
 from unittest.mock import patch
@@ -6,6 +7,7 @@ import pytest
 import requests
 
 from mal import HTTPError, MalApi, NotFoundError, Anime
+from utils import dataclass_from_dict
 
 ENV = {"MAL_CLIENT_ID": "TEST_MAL_CLIENT_ID"}
 
