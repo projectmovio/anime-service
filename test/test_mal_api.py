@@ -1,4 +1,3 @@
-import datetime
 import os
 from unittest import mock
 from unittest.mock import patch
@@ -6,8 +5,7 @@ from unittest.mock import patch
 import pytest
 import requests
 
-from mal import HTTPError, MalApi, NotFoundError, Anime
-from utils import dataclass_from_dict
+from mal import HTTPError, MalApi, NotFoundError, get_all_titles
 
 ENV = {"MAL_CLIENT_ID": "TEST_MAL_CLIENT_ID"}
 
@@ -66,7 +64,7 @@ def test_get_anime(req_mock):
 
     mal_api = MalApi()
     ret = mal_api.get_anime(21)
-    assert ret == dataclass_from_dict(Anime, BASE_NARUTO_ANIME)
+    assert ret == BASE_NARUTO_ANIME
 
 
 @mock.patch.dict(os.environ, ENV)
@@ -92,7 +90,7 @@ def test_get_anime_error(req_mock):
 
 
 def test_get_all_titles():
-    anime = dataclass_from_dict(Anime, {**BASE_NARUTO_ANIME, **{
+    anime = {**BASE_NARUTO_ANIME, **{
         "alternative_titles": {
             "synonyms": [
                 "NARUTO"
@@ -100,36 +98,7 @@ def test_get_all_titles():
             "en": "Naruto2",
             "ja": "ナルト"
         },
-    }})
+    }}
 
-    exp = [
-        anime.title,
-        anime.alternative_titles["synonyms"][0],
-        anime.alternative_titles["en"],
-        anime.alternative_titles["ja"]
-    ]
-    assert anime.all_titles == exp
-
-
-def test_anime_dates():
-    start_date_str = "2020-01-01"
-    end_date_str = "2030-01-01"
-    anime = dataclass_from_dict(Anime, {**BASE_NARUTO_ANIME, **{
-        "start_date": start_date_str,
-        "end_date": end_date_str,
-    }})
-
-    exp = datetime.datetime.strptime(start_date_str, "%Y-%m-%d")
-    assert exp == anime.start_date
-
-    exp = datetime.datetime.strptime(end_date_str, "%Y-%m-%d")
-    assert exp == anime.end_date
-
-
-def test_anime_invalid_date_format():
-    start_date_str = "2020-01-01 00:10:20"
-
-    with pytest.raises(ValueError):
-        dataclass_from_dict(Anime, {**BASE_NARUTO_ANIME, **{
-            "start_date": start_date_str,
-        }})
+    exp = [BASE_NARUTO_ANIME["title"], "NARUTO", "Naruto2", "ナルト"]
+    assert get_all_titles(anime) == exp

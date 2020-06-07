@@ -44,9 +44,8 @@ def test_get_anime(mocked_get):
     ret = anidb_api.get_anime(123)
 
     assert "anime" in ret
-    assert "anime_id" in ret["anime"]
-    assert ret["anime"]["anime_id"] == "1"
-    assert ret["anime"]["title"] == "Seikai no Monshou"
+    assert "anidb_id" in ret["anime"]
+    assert ret["anime"]["anidb_id"] == "1"
 
 
 @mock.patch.dict(os.environ, ENV)
