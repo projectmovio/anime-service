@@ -8,3 +8,7 @@ format:
 	pip install yapf isort
 	find . -name '*.py' -exec yapf -i -vv {} \+
 	isort -rc .
+
+.PHONY: mypy
+mypy:
+	find ./src -exec mypy {} \;
