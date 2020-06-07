@@ -61,21 +61,12 @@ def test_search_error(req_mock):
 @mock.patch.dict(os.environ, ENV)
 @patch.object(requests, "get")
 def test_get_anime(req_mock):
-    exp = {
-        "id": 21,
-        "title": "One Piece",
-        "main_picture": {
-            "medium": "73245.jpg",
-            "large": "73245l.jpg"
-        }
-    }
-
     req_mock.return_value.status_code = 200
-    req_mock.return_value.json.return_value = exp
+    req_mock.return_value.json.return_value = BASE_NARUTO_ANIME
 
     mal_api = MalApi()
     ret = mal_api.get_anime(21)
-    assert ret == Anime(**exp)
+    assert ret == dataclass_from_dict(Anime, BASE_NARUTO_ANIME)
 
 
 @mock.patch.dict(os.environ, ENV)
@@ -101,7 +92,7 @@ def test_get_anime_error(req_mock):
 
 
 def test_get_all_titles():
-    anime = Anime(**BASE_NARUTO_ANIME, **{
+    anime = dataclass_from_dict(Anime, {**BASE_NARUTO_ANIME, **{
         "alternative_titles": {
             "synonyms": [
                 "NARUTO"
@@ -109,7 +100,7 @@ def test_get_all_titles():
             "en": "Naruto2",
             "ja": "ナルト"
         },
-    })
+    }})
 
     exp = [
         anime.title,
@@ -120,11 +111,16 @@ def test_get_all_titles():
     assert anime.all_titles == exp
 
 
-def test_start_date():
-    anime = Anime(**BASE_NARUTO_ANIME, **{
-        "start_date": "2020-01-01"
-    })
+def test_anime_dates():
+    start_date_str = "2020-01-01"
+    end_date_str = "2030-01-01"
+    anime = dataclass_from_dict(Anime, {**BASE_NARUTO_ANIME, **{
+        "start_date": start_date_str,
+        "end_date": end_date_str,
+    }})
 
-    exp = datetime.datetime.strptime("2020-01-01", "%Y-%m-%d")
+    exp = datetime.datetime.strptime(start_date_str, "%Y-%m-%d")
     assert exp == anime.start_date
 
+    exp = datetime.datetime.strptime(end_date_str, "%Y-%m-%d")
+    assert exp == anime.end_date

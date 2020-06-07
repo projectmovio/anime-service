@@ -2,11 +2,13 @@ import datetime
 import logging
 import os
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import requests
+
+from utils import dataclass_from_dict
 
 log = logging.getLogger(__name__)
 
@@ -75,17 +77,17 @@ class Anime(BaseAnime):
     synopsis: str
     num_episodes: int
     alternative_titles: Optional[dict] = None
-    start_date: Optional[datetime.date] = None
-    end_date: Optional[datetime.date] = None
+    start_date: Optional[Union[str, datetime.date]] = None
+    end_date: Optional[Union[str, datetime.date]] = None
     related_anime: Optional[List[RelatedAnime]] = list
     broadcast: Optional[BroadCast] = None
 
     def __post_init__(self):
-        if self.start_date is not None:
+        if self.start_date is not None and isinstance(self.start_date, str):
             self.start_date = datetime.datetime.strptime(self.start_date, "%Y-%m-%d")
 
-        if self.end_date is not None:
-            self.start_date = datetime.datetime.strptime(self.start_date, "%Y-%m-%d")
+        if self.end_date is not None and isinstance(self.end_date, str):
+            self.end_date = datetime.datetime.strptime(self.end_date, "%Y-%m-%d")
 
     @property
     def all_titles(self):
@@ -136,6 +138,6 @@ class MalApi:
         elif ret.status_code != 200:
             raise HTTPError(f"Unexpected status code: {ret.status_code}")
 
-        anime = Anime(**ret.json())
+        anime = dataclass_from_dict(Anime, ret.json())
 
         return anime
