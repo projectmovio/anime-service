@@ -124,3 +124,12 @@ def test_anime_dates():
 
     exp = datetime.datetime.strptime(end_date_str, "%Y-%m-%d")
     assert exp == anime.end_date
+
+
+def test_anime_invalid_date_format():
+    start_date_str = "2020-01-01 00:10:20"
+
+    with pytest.raises(ValueError):
+        anime = dataclass_from_dict(Anime, {**BASE_NARUTO_ANIME, **{
+            "start_date": start_date_str,
+        }})
