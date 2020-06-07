@@ -52,7 +52,7 @@ class AniDbApi:
         self.pictures_url = "http://img7.anidb.net/pics/anime/"
         self.nsmap = {"xml": "http://www.w3.org/XML/1998/namespace"}
 
-    def get_anime(self, anime_id: uuid.UUID):
+    def get_anime(self, anime_id):
         url_params = {"request": "anime", "aid": anime_id}
 
         url = "{}&{}".format(self.base_url, urlencode(url_params))

@@ -24,7 +24,7 @@ def _get_table():
     return table
 
 
-def put_episodes(anime_id: uuid.UUID, episodes: List[dict]) -> None:
+def put_episodes(anime_id, episodes):
     with _get_table().batch_writer() as batch:
         for ep in episodes:
             ep["anime_id"] = anime_id
