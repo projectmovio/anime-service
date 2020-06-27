@@ -35,3 +35,19 @@ def test_handle_search(mock):
     }
     assert res == exp
 
+
+def test_handle_search_http_error(mock):
+    anime_db, mal_api = mock
+    mal_api.MalApi.return_value.search.side_effect = mal_api.HTTPError
+    event = {
+        "queryStringParameters": {
+            "search": "naruto"
+        }
+    }
+
+    res = api.search_anime.handle(event, None)
+
+    exp = {
+        "statusCode": 500,
+    }
+    assert res == exp
