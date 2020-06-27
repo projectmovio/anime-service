@@ -2,3 +2,4 @@ pytest
 pytest-cov
 pytest-html
 boto3
+python-json-logger
