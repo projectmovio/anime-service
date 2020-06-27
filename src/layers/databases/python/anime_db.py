@@ -55,3 +55,15 @@ def get_anime_by_mal_id(mal_id):
         return NotFoundError(f"Anime with mal_id: {mal_id} not found")
 
     return res["Items"][0]
+
+
+def get_anime(anime_id):
+    res = _get_table().query(
+        IndexName='id',
+        KeyConditionExpression=Key('id').eq(anime_id)
+    )
+
+    if not res["Items"]:
+        return NotFoundError(f"Anime with mal_id: {anime_id} not found")
+
+    return res["Items"][0]
