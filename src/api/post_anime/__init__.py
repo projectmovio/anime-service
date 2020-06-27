@@ -3,7 +3,7 @@ import os
 
 import boto3
 
-from anime_db import get_anime, NotFoundError
+import anime_db
 import logger
 
 SQS_QUEUE_URL = os.getenv("POST_ANIME_SQS_QUEUE_URL")
@@ -32,8 +32,8 @@ def handle(event, context):
         }
 
     try:
-        get_anime(mal_id)
-    except NotFoundError:
+        anime_db.get_anime_by_mal_id(mal_id)
+    except anime_db.NotFoundError:
         pass
     else:
         return {
@@ -43,3 +43,5 @@ def handle(event, context):
     _get_sqs_queue().send_message(
         MessageBody=str(mal_id)
     )
+
+
