@@ -116,3 +116,21 @@ def test_handle_search_mal_id_not_found(mock):
         "statusCode": 404,
     }
     assert res == exp
+
+
+def test_handle_search_http_error(mock):
+    anime_db, mal_api = mock
+    anime_db.table.query.side_effect = anime_db.NotFoundError
+    mal_api.MalApi.return_value.get_anime.side_effect = mal_api.HTTPError
+    event = {
+        "queryStringParameters": {
+            "mal_id": "123"
+        }
+    }
+
+    res = api.search_anime.handle(event, None)
+
+    exp = {
+        "statusCode": 500,
+    }
+    assert res == exp
