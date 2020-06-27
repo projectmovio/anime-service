@@ -44,4 +44,6 @@ def handle(event, context):
         MessageBody=str(mal_id)
     )
 
-
+    return {
+        "statusCode": 202,
+    }
