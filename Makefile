@@ -5,6 +5,11 @@ test:
 		--cov-report html \
 		--cov=mal \
 		--cov=anidb \
+		--cov=anime_db \
+		--cov=episodes_db \
+		--cov=params_db \
+		--cov=logger \
+		--cov=sqs_handlers \
 		-vv
 
 .PHONY: format
