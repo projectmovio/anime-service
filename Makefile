@@ -1,7 +1,7 @@
 .PHONY: test
 test:
 	pip install -U -r test/requirements.txt
-	PYTHONPATH=./src/layers/api/python:./src/layers/common/python:./src/layers/utils/python pytest \
+	PYTHONPATH=./src/layers/api/python:./src/layers/common/python:./src/layers/utils/python:./src/:./src/layers/databases/python pytest \
 		--cov-report html \
 		--cov=mal \
 		--cov=anidb \
