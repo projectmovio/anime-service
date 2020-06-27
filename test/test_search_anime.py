@@ -51,3 +51,68 @@ def test_handle_search_http_error(mock):
         "statusCode": 500,
     }
     assert res == exp
+
+
+def test_handle_search_mal_id_in_db(mock):
+    anime_db, mal_api = mock
+    exp_res = {
+        "id": "123"
+    }
+    anime_db.table.query.return_value = {
+        "Items": [
+            exp_res
+        ]
+    }
+    event = {
+        "queryStringParameters": {
+            "mal_id": "123"
+        }
+    }
+
+    res = api.search_anime.handle(event, None)
+
+    exp = {
+        "statusCode": 200,
+        "body": exp_res
+    }
+    assert res == exp
+
+
+def test_handle_search_mal_id_not_found_in_db(mock):
+    anime_db, mal_api = mock
+    exp_res = {
+        "id": "123"
+    }
+    anime_db.table.query.side_effect = anime_db.NotFoundError
+    mal_api.MalApi.return_value.get_anime.return_value = exp_res
+    event = {
+        "queryStringParameters": {
+            "mal_id": "123"
+        }
+    }
+
+    res = api.search_anime.handle(event, None)
+
+    exp = {
+        "statusCode": 200,
+        "body": exp_res
+    }
+    assert res == exp
+
+
+def test_handle_search_mal_id_not_found(mock):
+    anime_db, mal_api = mock
+    anime_db.table.query.side_effect = anime_db.NotFoundError
+    mal_api.MalApi.return_value.get_anime.side_effect = mal_api.NotFoundError
+    event = {
+        "queryStringParameters": {
+            "mal_id": "123"
+        }
+    }
+
+    res = api.search_anime.handle(event, None)
+
+    exp = {
+        "statusCode": 404,
+    }
+    assert res == exp

@@ -25,7 +25,7 @@ def handle(event, context):
         except anime_db.NotFoundError:
             log.debug(f"Anime with mal_id: {mal_id} not found in DB, use API")
         else:
-            return {"statusCode": 200, "body": json.dumps(res)}
+            return {"statusCode": 200, "body": res}
 
         try:
             res = mal.MalApi().get_anime(mal_id)
@@ -34,7 +34,7 @@ def handle(event, context):
         except mal.HTTPError:
             return {"statusCode": 500}
         else:
-            return {"statusCode": 200, "body": json.dumps(res)}
+            return {"statusCode": 200, "body": res}
     elif search:
         try:
             res = mal.MalApi().search(search)
