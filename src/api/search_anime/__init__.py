@@ -1,14 +1,10 @@
 import json
 
-from mal import MalApi, NotFoundError
+import mal
 import anime_db
 import logger
 
 log = logger.get_logger("search_anime")
-
-
-class HttpError(object):
-    pass
 
 
 def handle(event, context):
@@ -32,16 +28,16 @@ def handle(event, context):
             return {"statusCode": 200, "body": json.dumps(res)}
 
         try:
-            res = MalApi().get_anime(mal_id)
-        except NotFoundError:
+            res = mal.MalApi().get_anime(mal_id)
+        except mal.NotFoundError:
             return {"statusCode": 404}
-        except HttpError:
+        except mal.HTTPError:
             return {"statusCode": 500}
         else:
             return {"statusCode": 200, "body": json.dumps(res)}
     elif search:
         try:
-            res = MalApi().search(search)
-        except HttpError:
+            res = mal.MalApi().search(search)
+        except mal.HTTPError:
             return {"statusCode": 500}
-        return {"statusCode": 200, "body": json.dumps(res)}
+        return {"statusCode": 200, "body": res}
