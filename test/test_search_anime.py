@@ -118,7 +118,7 @@ def test_handle_search_mal_id_not_found(mock):
     assert res == exp
 
 
-def test_handle_search_http_error(mock):
+def test_handle_search_mal_id_http_error(mock):
     anime_db, mal_api = mock
     anime_db.table.query.side_effect = anime_db.NotFoundError
     mal_api.MalApi.return_value.get_anime.side_effect = mal_api.HTTPError
@@ -132,5 +132,20 @@ def test_handle_search_http_error(mock):
 
     exp = {
         "statusCode": 500,
+    }
+    assert res == exp
+
+
+def test_handle_no_query_params():
+    event = {
+        "queryStringParameters": {
+        }
+    }
+
+    res = api.search_anime.handle(event, None)
+
+    exp = {
+        "statusCode": 400,
+        "body": {"error": "Please specify either 'search' or 'mal_id' query parameter"}
     }
     assert res == exp

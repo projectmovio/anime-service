@@ -16,7 +16,7 @@ def handle(event, context):
     if search is None and mal_id is None:
         return {
             "statusCode": 400,
-            "body": json.dumps({"error": "Please specify either 'search' or 'mal_id' query parameter"})
+            "body": {"error": "Please specify either 'search' or 'mal_id' query parameter"}
         }
 
     if mal_id:
