@@ -28,7 +28,7 @@ def handle(event, context):
     if mal_id is None:
         return {
             "statusCode": 400,
-            "body": json.dumps({"error": "Please specify the 'mal_id' query parameter"})
+            "body": {"error": "Please specify the 'mal_id' query parameter"}
         }
 
     try:
