@@ -4,10 +4,13 @@ import os
 import boto3
 
 from anime_db import get_anime, NotFoundError
+import logger
 
 SQS_QUEUE_URL = os.getenv("POST_ANIME_SQS_QUEUE_URL")
 
 sqs_queue = None
+
+log = logger.get_logger("post_anime")
 
 
 def _get_sqs_queue():
@@ -18,7 +21,7 @@ def _get_sqs_queue():
 
 
 def handle(event, context):
-    print(f"Received event: {event}")
+    log.debug(f"Received event: {event}")
 
     mal_id = event["queryStringParameters"].get("mal_id")
 

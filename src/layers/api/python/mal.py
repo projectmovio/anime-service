@@ -1,9 +1,9 @@
-import logging
 import os
 
 import requests
+import logger
 
-log = logging.getLogger(__name__)
+log = logger.get_logger(__name__)
 
 CLIENT_ID = os.getenv("MAL_CLIENT_ID")
 

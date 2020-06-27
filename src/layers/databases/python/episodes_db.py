@@ -1,6 +1,4 @@
 import os
-import uuid
-from typing import List
 
 import boto3
 

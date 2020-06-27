@@ -2,13 +2,17 @@ import json
 
 from mal import MalApi, NotFoundError
 import anime_db
+import logger
+
+log = logger.get_logger("get_anime")
+
 
 class HttpError(object):
     pass
 
 
 def handle(event, context):
-    print(f"Received event: {event}")
+    log.debug(f"Received event: {event}")
 
     search = event["queryStringParameters"].get("search")
     mal_id = event["queryStringParameters"].get("mal_id")
@@ -23,7 +27,7 @@ def handle(event, context):
         try:
             res = anime_db.get_anime(mal_id)
         except anime_db.NotFoundError:
-            print(f"Anime with mal_id: {mal_id} not found in DB, use API")
+            log.debug(f"Anime with mal_id: {mal_id} not found in DB, use API")
         else:
             return {"statusCode": 200, "body": json.dumps(res)}
 

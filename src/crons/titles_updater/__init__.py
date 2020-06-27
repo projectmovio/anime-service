@@ -2,9 +2,13 @@ import datetime
 import os
 
 from anidb import download_xml, save_json_titles
+import logger
+
+log = logger.get_logger("titles_updater")
 
 
 def handle(event, context):
+    log.debug("Starting handler")
     now = datetime.datetime.now()
     date_today = now.strftime("%Y-%m-%d")
 

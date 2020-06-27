@@ -1,10 +1,8 @@
 import datetime
 import gzip
 import json
-import logging
 import os
 import shutil
-import uuid
 from urllib.parse import urlencode
 from xml.etree import ElementTree
 
@@ -12,8 +10,9 @@ import boto3
 import requests
 from botocore.exceptions import ClientError
 from fake_useragent import UserAgent
+import logger
 
-log = logging.getLogger(__name__)
+log = logger.get_logger(__name__)
 
 CLIENT = os.getenv("ANIDB_CLIENT")
 CLIENT_VERSION = os.getenv("ANIDB_CLIENT_VERSION")
@@ -152,7 +151,7 @@ def download_xml(download_path):
     xml_file = _download_file(file_name, download_path)
 
     if xml_file is None:
-        print(f"Downloading new titles file: {file_name} to path: {download_path}")
+        log.info(f"Downloading new titles file: {file_name} to path: {download_path}")
 
         _download_titles(download_path)
 
@@ -178,7 +177,7 @@ def save_json_titles(xml_path, json_path):
         json.dump(titles, f, indent=4)
 
     file_name = os.path.basename(json_path)
-    print(f"Uploading {json_path} to bucket object: {file_name}")
+    log.info(f"Uploading {json_path} to bucket object: {file_name}")
     _get_s3_bucket().upload_file(json_path, file_name)
 
 

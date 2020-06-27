@@ -6,6 +6,9 @@ import params_db
 import anime_db
 import episodes_db
 import mal
+import logger
+
+log = logger.get_logger("sqs_hanlders.post_anime")
 
 
 def handler(event, context):
@@ -13,7 +16,7 @@ def handler(event, context):
 
     current_timestamp = int(time.time())
     if current_timestamp - last_timestamp <= 2:
-        print("Previous update triggered less than 2 seconds ago")
+        log.debug("Previous update triggered less than 2 seconds ago")
         time.sleep(2)
 
     # batch size always 1, sleep and throttle could increase runtime close to lambda timeout
@@ -32,7 +35,7 @@ def handler(event, context):
     anime_data = mal_api.get_anime(mal_id)
 
     titles = mal.get_all_titles(anime_data)
-    anidb_id = _get_anidb_id()
+    anidb_id = _get_anidb_id(titles)
     episodes = None
     if anidb_id:
         print(f"Found matching anidb_id: {anidb_id} for mal_id: {mal_id}")
