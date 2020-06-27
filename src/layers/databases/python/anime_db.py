@@ -45,7 +45,7 @@ def update_anime(anime_id, data):
     )
 
 
-def get_anime(mal_id):
+def get_anime_by_mal_id(mal_id):
     res = _get_table().query(
         IndexName='mal_id',
         KeyConditionExpression=Key('mal_id').eq(mal_id)

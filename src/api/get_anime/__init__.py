@@ -25,7 +25,7 @@ def handle(event, context):
 
     if mal_id:
         try:
-            res = anime_db.get_anime(mal_id)
+            res = anime_db.get_anime_by_mal_id(mal_id)
         except anime_db.NotFoundError:
             log.debug(f"Anime with mal_id: {mal_id} not found in DB, use API")
         else:
