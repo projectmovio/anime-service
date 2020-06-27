@@ -41,3 +41,19 @@ def test_handler(mocked_episodes_db):
         "body": exp_eps
     }
     assert res == exp
+
+
+def test_handler_not_found(mocked_episodes_db):
+    mocked_episodes_db.table.query.side_effect = mocked_episodes_db.NotFoundError
+    event = {
+        "pathParameters": {
+            "anime_id": "123"
+        }
+    }
+
+    res = handle(event, None)
+
+    exp = {
+        "statusCode": 404,
+    }
+    assert res == exp
