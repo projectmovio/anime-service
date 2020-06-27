@@ -4,7 +4,7 @@ from mal import MalApi, NotFoundError
 import anime_db
 import logger
 
-log = logger.get_logger("get_anime")
+log = logger.get_logger("search_anime")
 
 
 class HttpError(object):
