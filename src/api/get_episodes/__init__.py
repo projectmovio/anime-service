@@ -18,7 +18,7 @@ def handle(event, context):
     try:
         res = episodes_db.get_episodes(anime_id)
     except episodes_db.NotFoundError:
-        log.debug(f"Anime with id: {anime_id} not found in episodes DB")
+        log.debug(f"No episodes found for anime with id: {anime_id}")
         return {"statusCode": 404}
     else:
         return {"statusCode": 200, "body": json.dumps(res)}
