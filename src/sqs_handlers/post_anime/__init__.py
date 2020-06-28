@@ -28,7 +28,7 @@ def handler(event, context):
     except anime_db.NotFoundError:
         pass
     else:
-        print(f"Anime with mal_id: {mal_id} already present, ignore update")
+        log.debug(f"Anime with mal_id: {mal_id} already present, ignore update")
         return
 
     mal_api = mal.MalApi()
@@ -38,7 +38,7 @@ def handler(event, context):
     anidb_id = _get_anidb_id(titles)
     episodes = None
     if anidb_id:
-        print(f"Found matching anidb_id: {anidb_id} for mal_id: {mal_id}")
+        log.debug(f"Found matching anidb_id: {anidb_id} for mal_id: {mal_id}")
         anidb_api = anidb.AniDbApi()
         anidb_data = anidb_api.get_anime(anidb_id)["anime"]
 
@@ -64,5 +64,5 @@ def _get_anidb_id(all_titles):
         if anidb_id:
             return anidb_id
 
-    print("Could not find anidb_id for mal_id: {mal_id}")
+    log.warning("Could not find anidb_id for mal_id: {mal_id}")
     return None
