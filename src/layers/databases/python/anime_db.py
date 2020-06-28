@@ -61,7 +61,7 @@ def get_anime_by_mal_id(mal_id):
     )
 
     if not res["Items"]:
-        return NotFoundError(f"Anime with mal_id: {mal_id} not found")
+        raise NotFoundError(f"Anime with mal_id: {mal_id} not found")
 
     return res["Items"][0]
 
@@ -73,6 +73,6 @@ def get_anime(anime_id):
     )
 
     if not res["Items"]:
-        return NotFoundError(f"Anime with mal_id: {anime_id} not found")
+        raise NotFoundError(f"Anime with mal_id: {anime_id} not found")
 
     return res["Items"][0]
