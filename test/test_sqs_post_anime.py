@@ -47,7 +47,41 @@ def test_handler(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, mo
     mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
     # MAL request mock
     mocked_get.return_value.status_code = 200
-    mocked_get.return_value.json = lambda *a, **k: TEST_MAL_RESPONSE
+    mocked_get.return_value.json = lambda *a, **k: TEST_MAL_RESPONSE.copy()
+    mocked_anidb.s3_bucket.download_file = download_file_mock
+    # ANIDB request mock
+    with open(ANIME_XML) as fs:
+        mocked_get.return_value.text = fs.read()
+
+    mocked_params_db.table.update_item = update_item_params_mock
+
+    event = {
+        "Records": [
+            {
+                "body": TEST_MAL_ID
+            }
+        ]
+    }
+    handler(event, None)
+
+    assert ":timestamp" in UPDATED_PARAM
+    assert ":anime_id" in UPDATED_PARAM
+
+    if os.path.isfile("titles.json"):
+        os.remove("titles.json")
+
+
+@mock.patch("requests.get")
+def test_handler_to_early(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, mocked_episodes_db):
+    mocked_params_db.table.get_item.return_value = {
+        "Item": {
+            "timestamp": int(time.time()) + 2
+        }
+    }
+    mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
+    # MAL request mock
+    mocked_get.return_value.status_code = 200
+    mocked_get.return_value.json = lambda *a, **k: TEST_MAL_RESPONSE.copy()
     mocked_anidb.s3_bucket.download_file = download_file_mock
     # ANIDB request mock
     with open(ANIME_XML) as fs:

@@ -105,6 +105,7 @@ def test_handle_search_mal_id_not_found(mocked_mal_api, mocked_anime_db):
     }
     assert res == exp
 
+
 @mock.patch("mal.MalApi")
 def test_handle_search_mal_id_http_error(mocked_mal_api, mocked_anime_db):
     mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
