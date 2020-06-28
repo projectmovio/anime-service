@@ -18,6 +18,24 @@ ENV = {
 }
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
+now = datetime.datetime.now()
+date_today = now.strftime("%Y-%m-%d")
+date_yesterday = (now - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+
+
+def download_file_mock(key, location):
+    if key == f"{date_today}.json":
+        return None
+
+    mocked_json_titles = {
+        "Seikai no Monshou": 1
+    }
+    with open("titles.json", "w") as f:
+        json.dump(mocked_json_titles, f)
+
+    shutil.copy2("titles.json", location)
+    return True
+
 
 @mock.patch.dict(os.environ, ENV)
 @mock.patch("requests.get")
@@ -151,6 +169,12 @@ def test_get_json_titles_yesterday_file(mocked_anidb):
     mocked_anidb.s3_bucket.download_file = download_file_mock
 
     mocked_anidb.get_json_titles(CURRENT_DIR)
+
+    # Cleanup
+    if os.path.isfile("titles.json"):
+        os.remove("titles.json")
+    if os.path.isfile(f"{date_yesterday}.json"):
+        os.remove(f"{date_yesterday}.json")
 
 
 @mock.patch.dict(os.environ, ENV)
