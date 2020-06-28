@@ -17,3 +17,5 @@ def handle(event, context):
 
     download_xml(xml_path)
     save_json_titles(xml_path, json_path)
+
+    return xml_path, json_path
