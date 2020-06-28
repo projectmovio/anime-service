@@ -1,5 +1,3 @@
-import json
-
 import mal
 import anime_db
 import logger

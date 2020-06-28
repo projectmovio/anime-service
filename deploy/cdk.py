@@ -11,7 +11,7 @@ app = core.App()
 
 env = {"region": "eu-west-1"}
 
-Layers(app, "anime-layers", env=env)
-Lambdas(app, "anime-lambdas", env=env)
+layers_stack = Layers(app, "anime-layers", env=env)
+Lambdas(app, "anime-lambdas", layers_stack.layers, env=env)
 
 app.synth()
