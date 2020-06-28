@@ -5,7 +5,6 @@ from unittest import mock
 from unittest.mock import MagicMock, patch
 
 import pytest
-import requests
 from botocore.exceptions import ClientError
 
 from anidb import (AniDbApi, HTTPError, _download_file, download_xml,
@@ -30,7 +29,7 @@ def mocked_anidb():
 
 
 @mock.patch.dict(os.environ, ENV)
-@patch.object(requests, "get")
+@mock.patch("requests.get")
 def test_get_anime(mocked_get):
     mocked_get.return_value.status_code = 200
 
@@ -49,7 +48,7 @@ def test_get_anime(mocked_get):
 
 
 @mock.patch.dict(os.environ, ENV)
-@patch.object(requests, "get")
+@mock.patch("requests.get")
 def test_get_anime_error(mocked_get):
     mocked_get.return_value.status_code = 500
 
@@ -62,7 +61,7 @@ def test_get_anime_error(mocked_get):
 
 
 @mock.patch.dict(os.environ, ENV)
-@patch.object(requests, "get")
+@mock.patch("requests.get")
 def test_download_xml(mocked_get, mocked_anidb):
     mocked_get.return_value.status_code = 200
     mocked_anidb._download_file = lambda *args: None
@@ -89,6 +88,17 @@ def test_download_xml(mocked_get, mocked_anidb):
     # cleanup
     os.remove(file_name)
     os.remove(out_file)
+
+
+@mock.patch.dict(os.environ, ENV)
+@mock.patch("requests.get")
+def test_download_xml_wrong_status(mocked_get, mocked_anidb):
+    mocked_get.return_value.status_code = 403
+    mocked_anidb._download_file = lambda *args: None
+    mocked_anidb.s3_bucket.upload_file.return_value = True
+
+    with pytest.raises(mocked_anidb.HTTPError):
+        download_xml("downloaded.xml")
 
 
 @mock.patch.dict(os.environ, ENV)
