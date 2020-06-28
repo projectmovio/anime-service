@@ -7,22 +7,22 @@ CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 LAMBDAS_DIR = os.path.join(CURRENT_DIR, "..", "..", "src", "lambdas")
 
 LAMBDA_CONFIG = {
-    "api.get_anime": {
+    "api-get_anime": {
         "layers": ["utils", "databases"],
     },
-    "api.get_episodes": {
+    "api-get_episodes": {
         "layers": ["utils", "databases"],
     },
-    "api.post_anime": {
+    "api-post_anime": {
         "layers": ["utils", "databases"],
     },
-    "api.search_anime": {
+    "api-search_anime": {
         "layers": ["utils", "databases", "api"],
     },
-    "crons.titles_updater": {
+    "crons-titles_updater": {
         "layers": ["utils", "databases"],
     },
-    "sqs_handlers.post_anime": {
+    "sqs_handlers-post_anime": {
         "layers": ["utils", "databases", "api"],
     }
 }
@@ -40,7 +40,7 @@ class Lambdas(core.Stack):
             for _ in files:
                 parent_folder = os.path.basename(os.path.dirname(root))
                 lambda_folder = os.path.basename(root)
-                name = f"{parent_folder}.{lambda_folder}"
+                name = f"{parent_folder}-{lambda_folder}"
 
                 layers = []
                 for layer_name in LAMBDA_CONFIG[name]["layers"]:
