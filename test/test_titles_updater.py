@@ -3,12 +3,7 @@ import gzip
 import json
 import os
 import shutil
-import unittest
 from unittest import mock
-from unittest.mock import MagicMock
-
-import pytest
-
 from crons.titles_updater import handle
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))

@@ -40,3 +40,12 @@ def mocked_post_anime():
     api.post_anime.sqs_queue = MagicMock()
 
     return api.post_anime
+
+
+@pytest.fixture(scope='function')
+def mocked_params_db():
+    import params_db
+
+    params_db.table = MagicMock()
+
+    return params_db
