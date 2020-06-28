@@ -116,6 +116,8 @@ def _get_s3_bucket():
 def _download_titles(file_path):
     """Download anime titles in GZ format, unzip and save to the specified file_path"""
     r = requests.get("http://anidb.net/api/anime-titles.xml.gz", headers={"User-Agent": UserAgent().chrome})
+    if r.status_code != 200:
+        raise HTTPError("Didn't get 200 status from titles request")
 
     # Write titles zip to temporary file
     gzip_file = "titles.gz"
