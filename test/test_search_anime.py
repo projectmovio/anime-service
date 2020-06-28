@@ -1,11 +1,15 @@
+from unittest import mock
+
 import api.search_anime
+import mal
 
 
+@mock.patch("mal.MalApi")
 def test_handle_search(mocked_mal):
     exp_res = {
         "id": "123"
     }
-    mocked_mal.MalApi.return_value.search.return_value = exp_res
+    mocked_mal.return_value.search.return_value = exp_res
     event = {
         "queryStringParameters": {
             "search": "naruto"
@@ -21,8 +25,9 @@ def test_handle_search(mocked_mal):
     assert res == exp
 
 
-def test_handle_search_http_error(mocked_mal):
-    mocked_mal.MalApi.return_value.search.side_effect = mocked_mal.HTTPError
+@mock.patch("mal.MalApi")
+def test_handle_search_http_error(mocked_mal_api):
+    mocked_mal_api.return_value.search.side_effect = mal.HTTPError
     event = {
         "queryStringParameters": {
             "search": "naruto"
@@ -61,12 +66,13 @@ def test_handle_search_mal_id_in_db(mocked_anime_db):
     assert res == exp
 
 
-def test_handle_search_mal_id_not_found_in_db(mocked_anime_db, mocked_mal):
+@mock.patch("mal.MalApi")
+def test_handle_search_mal_id_not_found_in_db(mocked_mal_api, mocked_anime_db):
     exp_res = {
         "id": "123"
     }
     mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
-    mocked_mal.MalApi.return_value.get_anime.return_value = exp_res
+    mocked_mal_api.return_value.get_anime.return_value = exp_res
     event = {
         "queryStringParameters": {
             "mal_id": "123"
@@ -82,9 +88,10 @@ def test_handle_search_mal_id_not_found_in_db(mocked_anime_db, mocked_mal):
     assert res == exp
 
 
-def test_handle_search_mal_id_not_found(mocked_anime_db, mocked_mal):
+@mock.patch("mal.MalApi")
+def test_handle_search_mal_id_not_found(mocked_mal_api, mocked_anime_db):
     mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
-    mocked_mal.MalApi.return_value.get_anime.side_effect = mocked_mal.NotFoundError
+    mocked_mal_api.return_value.get_anime.side_effect = mal.NotFoundError
     event = {
         "queryStringParameters": {
             "mal_id": "123"
@@ -98,10 +105,10 @@ def test_handle_search_mal_id_not_found(mocked_anime_db, mocked_mal):
     }
     assert res == exp
 
-
-def test_handle_search_mal_id_http_error(mocked_anime_db, mocked_mal):
+@mock.patch("mal.MalApi")
+def test_handle_search_mal_id_http_error(mocked_mal_api, mocked_anime_db):
     mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
-    mocked_mal.MalApi.return_value.get_anime.side_effect = mocked_mal.HTTPError
+    mocked_mal_api.return_value.get_anime.side_effect = mal.HTTPError
     event = {
         "queryStringParameters": {
             "mal_id": "123"

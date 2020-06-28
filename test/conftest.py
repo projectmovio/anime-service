@@ -14,14 +14,6 @@ def mocked_anidb():
     return anidb
 
 
-@pytest.fixture(scope='function')
-def mocked_mal():
-    import mal
-
-    mal.MalApi = MagicMock()
-
-    return mal
-
 
 @pytest.fixture(scope='function')
 def mocked_anime_db():
