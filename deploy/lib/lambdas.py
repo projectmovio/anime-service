@@ -5,6 +5,8 @@ import subprocess
 from aws_cdk import core
 from aws_cdk.aws_lambda import LayerVersion, Code, Runtime, Function
 
+from lib.utils import clean_pycache
+
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 LAMBDAS_DIR = os.path.join(CURRENT_DIR, "..", "..", "src", "lambdas")
 LAYERS_DIR = os.path.join(CURRENT_DIR, "..", "..", "src", "layers")
@@ -56,6 +58,7 @@ class Lambdas(core.Stack):
                 packages_folder = os.path.join(build_folder, "python", "lib", "python3.8", "site-packages")
                 print(f"Installing layer requirements to target: {os.path.abspath(packages_folder)}")
                 subprocess.check_output(["pip", "install", "-r", requirements_path, "-t", packages_folder])
+                clean_pycache()
 
             self.layers[layer] = LayerVersion(
                 self,
