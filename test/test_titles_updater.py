@@ -63,3 +63,6 @@ def test_handler_no_s3_file(mocked_get, mocked_anidb):
                        '星界の紋章': 1, '星界之纹章': 1}
     with open(json_path) as fs:
         assert exp_json_titles == json.load(fs)
+
+    if os.path.isfile(titles_gzip):
+        os.remove(titles_gzip)
