@@ -1,14 +1,14 @@
+import datetime
 import gzip
 import json
 import os
+import shutil
 from unittest import mock
-from unittest.mock import MagicMock
 
 import pytest
 from botocore.exceptions import ClientError
 
-from anidb import (AniDbApi, HTTPError, _download_file, download_xml,
-                   save_json_titles)
+from anidb import AniDbApi, HTTPError
 
 ENV = {
     "ANIDB_CLIENT": "TEST_ANIDB_CLIENT",
@@ -71,7 +71,7 @@ def test_download_xml(mocked_download_file, mocked_get, mocked_anidb):
         mocked_get.return_value.content = f.read()
 
     out_file = "downloaded.xml"
-    download_xml(out_file)
+    mocked_anidb.download_xml(out_file)
     with open(out_file, "r") as f:
         out_data = f.read()
 
@@ -91,7 +91,7 @@ def test_download_xml_wrong_status(mocked_download_file, mocked_get, mocked_anid
     mocked_anidb.s3_bucket.upload_file.return_value = True
 
     with pytest.raises(mocked_anidb.HTTPError):
-        download_xml("downloaded.xml")
+        mocked_anidb.download_xml("downloaded.xml")
 
 
 @mock.patch.dict(os.environ, ENV)
@@ -100,7 +100,7 @@ def test_save_json_titles(mocked_anidb):
     titles_path = os.path.join(CURRENT_DIR, "files", "titles.xml")
 
     out_path = os.path.join(CURRENT_DIR, "test.json")
-    save_json_titles(titles_path, out_path)
+    mocked_anidb.save_json_titles(titles_path, out_path)
 
     with open(out_path, "r") as f:
         json_data = json.load(f)
@@ -126,7 +126,7 @@ def test_download_file(mocked_anidb):
     exp = "MOCKED_FILE"
     mocked_anidb.s3_bucket.download_file = lambda *args: exp
 
-    ret = _download_file("TEST", "TEST")
+    ret = mocked_anidb._download_file("TEST", "TEST")
     assert ret == exp
 
 
@@ -134,7 +134,7 @@ def test_download_file(mocked_anidb):
 def test_download_file_not_found(mocked_anidb):
     mocked_anidb.s3_bucket.download_file.side_effect = ClientError({"Error": {"Code": "404"}}, "TEST_OPERATION")
 
-    ret = _download_file("TEST", "TEST")
+    ret = mocked_anidb._download_file("TEST", "TEST")
     assert ret is None
 
 
@@ -143,4 +143,19 @@ def test_download_file_error(mocked_anidb):
     mocked_anidb.s3_bucket.download_file.side_effect = ClientError({"Error": {"Code": "500"}}, "TEST_OPERATION")
 
     with pytest.raises(ClientError):
-        _download_file("TEST", "TEST")
+        mocked_anidb._download_file("TEST", "TEST")
+
+
+@mock.patch.dict(os.environ, ENV)
+def test_get_json_titles_yesterday_file(mocked_anidb):
+    mocked_anidb.s3_bucket.download_file = download_file_mock
+
+    mocked_anidb.get_json_titles(CURRENT_DIR)
+
+
+@mock.patch.dict(os.environ, ENV)
+def test_get_json_titles_no_file(mocked_anidb):
+    mocked_anidb.s3_bucket.download_file.return_value = None
+
+    with pytest.raises(mocked_anidb.TitlesNotFound):
+        mocked_anidb.get_json_titles(CURRENT_DIR)
