@@ -37,6 +37,6 @@ def get_episodes(anime_id):
     )
 
     if not res["Items"]:
-        return NotFoundError(f"Anime with mal_id: {anime_id} not found")
+        raise NotFoundError(f"Anime with mal_id: {anime_id} not found")
 
     return res["Items"]
