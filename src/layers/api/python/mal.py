@@ -55,7 +55,9 @@ class MalApi:
         elif ret.status_code != 200:
             raise HTTPError(f"Unexpected status code: {ret.status_code}")
 
-        return ret.json()
+        res = ret.json()
+        res["mal_id"] = res.pop("id")
+        return res
 
 
 def get_all_titles(anime):
