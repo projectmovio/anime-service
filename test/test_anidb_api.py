@@ -2,7 +2,7 @@ import gzip
 import json
 import os
 from unittest import mock
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 from botocore.exceptions import ClientError
@@ -17,15 +17,6 @@ ENV = {
     "ANIDB_TITLES_BUCKET": "TEST_ANIDB_TITLES_BUCKET"
 }
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
-
-
-@pytest.fixture
-def mocked_anidb():
-    import anidb
-
-    anidb.s3_bucket = MagicMock()
-
-    return anidb
 
 
 @mock.patch.dict(os.environ, ENV)

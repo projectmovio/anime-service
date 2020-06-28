@@ -1,26 +1,11 @@
-from unittest.mock import MagicMock
-
-import pytest
 import api.search_anime
 
 
-@pytest.fixture
-def mock():
-    import anime_db
-    import mal
-
-    anime_db.table = MagicMock()
-    mal.MalApi = MagicMock()
-
-    return anime_db, mal
-
-
-def test_handle_search(mock):
-    anime_db, mal_api = mock
+def test_handle_search(mocked_mal):
     exp_res = {
         "id": "123"
     }
-    mal_api.MalApi.return_value.search.return_value = exp_res
+    mocked_mal.MalApi.return_value.search.return_value = exp_res
     event = {
         "queryStringParameters": {
             "search": "naruto"
@@ -36,9 +21,8 @@ def test_handle_search(mock):
     assert res == exp
 
 
-def test_handle_search_http_error(mock):
-    anime_db, mal_api = mock
-    mal_api.MalApi.return_value.search.side_effect = mal_api.HTTPError
+def test_handle_search_http_error(mocked_mal):
+    mocked_mal.MalApi.return_value.search.side_effect = mocked_mal.HTTPError
     event = {
         "queryStringParameters": {
             "search": "naruto"
@@ -53,12 +37,11 @@ def test_handle_search_http_error(mock):
     assert res == exp
 
 
-def test_handle_search_mal_id_in_db(mock):
-    anime_db, mal_api = mock
+def test_handle_search_mal_id_in_db(mocked_anime_db):
     exp_res = {
         "id": "123"
     }
-    anime_db.table.query.return_value = {
+    mocked_anime_db.table.query.return_value = {
         "Items": [
             exp_res
         ]
@@ -78,13 +61,12 @@ def test_handle_search_mal_id_in_db(mock):
     assert res == exp
 
 
-def test_handle_search_mal_id_not_found_in_db(mock):
-    anime_db, mal_api = mock
+def test_handle_search_mal_id_not_found_in_db(mocked_anime_db, mocked_mal):
     exp_res = {
         "id": "123"
     }
-    anime_db.table.query.side_effect = anime_db.NotFoundError
-    mal_api.MalApi.return_value.get_anime.return_value = exp_res
+    mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
+    mocked_mal.MalApi.return_value.get_anime.return_value = exp_res
     event = {
         "queryStringParameters": {
             "mal_id": "123"
@@ -100,10 +82,9 @@ def test_handle_search_mal_id_not_found_in_db(mock):
     assert res == exp
 
 
-def test_handle_search_mal_id_not_found(mock):
-    anime_db, mal_api = mock
-    anime_db.table.query.side_effect = anime_db.NotFoundError
-    mal_api.MalApi.return_value.get_anime.side_effect = mal_api.NotFoundError
+def test_handle_search_mal_id_not_found(mocked_anime_db, mocked_mal):
+    mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
+    mocked_mal.MalApi.return_value.get_anime.side_effect = mocked_mal.NotFoundError
     event = {
         "queryStringParameters": {
             "mal_id": "123"
@@ -118,10 +99,9 @@ def test_handle_search_mal_id_not_found(mock):
     assert res == exp
 
 
-def test_handle_search_mal_id_http_error(mock):
-    anime_db, mal_api = mock
-    anime_db.table.query.side_effect = anime_db.NotFoundError
-    mal_api.MalApi.return_value.get_anime.side_effect = mal_api.HTTPError
+def test_handle_search_mal_id_http_error(mocked_anime_db, mocked_mal):
+    mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
+    mocked_mal.MalApi.return_value.get_anime.side_effect = mocked_mal.HTTPError
     event = {
         "queryStringParameters": {
             "mal_id": "123"

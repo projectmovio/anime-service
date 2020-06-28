@@ -1,17 +1,4 @@
-from unittest.mock import MagicMock
-
-import pytest
-
 from api.get_episodes import handle
-
-
-@pytest.fixture
-def mocked_episodes_db():
-    import episodes_db
-
-    episodes_db.table = MagicMock()
-
-    return episodes_db
 
 
 def test_handler(mocked_episodes_db):

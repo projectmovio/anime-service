@@ -3,6 +3,7 @@ import gzip
 import json
 import os
 import shutil
+import unittest
 from unittest import mock
 from unittest.mock import MagicMock
 
@@ -12,15 +13,6 @@ from crons.titles_updater import handle
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 TEST_TITLES = os.path.join(CURRENT_DIR, "files", "titles.xml")
-
-
-@pytest.fixture
-def mocked_anidb():
-    import anidb
-
-    anidb.s3_bucket = MagicMock()
-
-    return anidb
 
 
 def download_file_mock(key, location):

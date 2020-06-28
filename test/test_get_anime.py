@@ -1,17 +1,4 @@
-from unittest.mock import MagicMock
-
-import pytest
-
 from api.get_anime import handle
-
-
-@pytest.fixture
-def mocked_anime_db():
-    import anime_db
-
-    anime_db.table = MagicMock()
-
-    return anime_db
 
 
 def test_handler(mocked_anime_db):
