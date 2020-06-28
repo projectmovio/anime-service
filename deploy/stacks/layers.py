@@ -12,11 +12,13 @@ class Layers(core.Stack):
     def __init__(self, app: core.App, id: str, **kwargs) -> None:
         super().__init__(app, id, **kwargs)
         self._create_layers()
+        self.layers = {}
 
     def _create_layers(self):
-        LayerVersion(
-            self,
-            "api",
-            code=Code.from_asset(path=os.path.join(LAYERS_DIR, "api")),
-            compatible_runtimes=[Runtime.PYTHON_3_8],
-        )
+        for layer in os.listdir(LAYERS_DIR):
+            self.layers[layer] = LayerVersion(
+                self,
+                layer,
+                code=Code.from_asset(path=os.path.join(LAYERS_DIR, layer)),
+                compatible_runtimes=[Runtime.PYTHON_3_8],
+            )
