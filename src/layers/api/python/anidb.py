@@ -150,6 +150,7 @@ def download_xml(download_path):
     """Try downloading XML file from S3 bucket, if it doesn't exist get it from AniDbApi"""
     file_name = os.path.basename(download_path)
 
+    print(_download_file)
     xml_file = _download_file(file_name, download_path)
 
     if xml_file is None:

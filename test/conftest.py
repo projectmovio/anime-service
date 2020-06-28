@@ -1,14 +1,12 @@
 from unittest.mock import MagicMock
-import anidb
 import pytest
-
-download_func = anidb._download_file
 
 
 @pytest.fixture(scope='function')
 def mocked_anidb():
+    import anidb
+
     anidb.s3_bucket = MagicMock()
-    anidb._download_file = download_func
 
     return anidb
 

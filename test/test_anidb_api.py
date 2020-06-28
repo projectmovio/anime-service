@@ -53,9 +53,10 @@ def test_get_anime_error(mocked_get):
 
 @mock.patch.dict(os.environ, ENV)
 @mock.patch("requests.get")
-def test_download_xml(mocked_get, mocked_anidb):
+@mock.patch("anidb._download_file")
+def test_download_xml(mocked_download_file, mocked_get, mocked_anidb):
     mocked_get.return_value.status_code = 200
-    mocked_anidb._download_file = lambda *args: None
+    mocked_download_file.return_value = None
     mocked_anidb.s3_bucket.upload_file.return_value = True
 
     # create gzipped titles
@@ -83,9 +84,10 @@ def test_download_xml(mocked_get, mocked_anidb):
 
 @mock.patch.dict(os.environ, ENV)
 @mock.patch("requests.get")
-def test_download_xml_wrong_status(mocked_get, mocked_anidb):
+@mock.patch("anidb._download_file")
+def test_download_xml_wrong_status(mocked_download_file, mocked_get, mocked_anidb):
     mocked_get.return_value.status_code = 403
-    mocked_anidb._download_file = lambda *args: None
+    mocked_download_file.return_value = None
     mocked_anidb.s3_bucket.upload_file.return_value = True
 
     with pytest.raises(mocked_anidb.HTTPError):
