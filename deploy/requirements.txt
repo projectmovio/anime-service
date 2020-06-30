@@ -1,2 +1,2 @@
-aws-cdk.core==1.47.0
-aws_cdk.aws_lambda==1.47.0
+aws-cdk.core==1.47.1
+aws_cdk.aws_lambda==1.47.1
