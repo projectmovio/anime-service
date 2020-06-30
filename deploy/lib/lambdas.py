@@ -12,35 +12,56 @@ LAMBDAS_DIR = os.path.join(CURRENT_DIR, "..", "..", "src", "lambdas")
 LAYERS_DIR = os.path.join(CURRENT_DIR, "..", "..", "src", "layers")
 BUILD_FOLDER = os.path.join(CURRENT_DIR, "..", "..", "build")
 
-LAMBDA_CONFIG = {
-    "api-get_anime": {
-        "layers": ["utils", "databases"],
-    },
-    "api-get_episodes": {
-        "layers": ["utils", "databases"],
-    },
-    "api-post_anime": {
-        "layers": ["utils", "databases"],
-    },
-    "api-search_anime": {
-        "layers": ["utils", "databases", "api"],
-    },
-    "crons-titles_updater": {
-        "layers": ["utils", "databases"],
-    },
-    "sqs_handlers-post_anime": {
-        "layers": ["utils", "databases", "api"],
-    }
-}
-
 
 class Lambdas(core.Stack):
 
-    def __init__(self, app: core.App, id: str, **kwargs) -> None:
+    def __init__(self, app: core.App, id: str, config: dict, **kwargs) -> None:
         super().__init__(app, id, **kwargs)
+        self.config = config
         self.layers = {}
+        self._create_lambdas_config()
         self._create_layers()
         self._create_lambdas()
+
+    def _create_lambdas_config(self):
+        self.lambdas_config = {
+            "api-get_anime": {
+                "layers": ["utils", "databases"],
+                "variables": {
+                    "ANIME_DATABASE_NAME": self.config["ANIME_DATABASE_NAME"],
+                }
+            },
+            "api-get_episodes": {
+                "layers": ["utils", "databases"],
+                "variables": {
+                    "ANIME_EPISODES_DATABASE_NAME": self.config["ANIME_EPISODES_DATABASE_NAME"],
+                }
+            },
+            "api-post_anime": {
+                "layers": ["utils", "databases"],
+                "variables": {
+                    "ANIME_DATABASE_NAME": self.config["ANIME_DATABASE_NAME"],
+                }
+            },
+            "api-search_anime": {
+                "layers": ["utils", "databases", "api"],
+                "variables": {
+                    "ANIME_DATABASE_NAME": self.config["ANIME_DATABASE_NAME"],
+                }
+            },
+            "crons-titles_updater": {
+                "layers": ["utils", "databases"],
+            },
+            "sqs_handlers-post_anime": {
+                "layers": ["utils", "databases", "api"],
+                "variables": {
+                    "ANIME_DATABASE_NAME": self.config["ANIME_DATABASE_NAME"],
+                    "ANIME_EPISODES_DATABASE_NAME": self.config["ANIME_EPISODES_DATABASE_NAME"],
+                    "ANIME_PARAMS_DATABASE_NAME": self.config["ANIME_PARAMS_DATBASE_NAME"],
+
+                }
+            },
+        }
 
     def _create_layers(self):
         if os.path.isdir(BUILD_FOLDER):
@@ -75,7 +96,7 @@ class Lambdas(core.Stack):
                 name = f"{parent_folder}-{lambda_folder}"
 
                 layers = []
-                for layer_name in LAMBDA_CONFIG[name]["layers"]:
+                for layer_name in self.lambdas_config[name]["layers"]:
                     layers.append(self.layers[layer_name])
 
                 Function(
@@ -85,5 +106,6 @@ class Lambdas(core.Stack):
                     handler="__init__",
                     runtime=Runtime.PYTHON_3_8,
                     layers=layers,
-                    function_name=name
+                    function_name=name,
+                    environment=self.lambdas_config[name]["variables"]
                 )

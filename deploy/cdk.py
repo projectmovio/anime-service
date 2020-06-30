@@ -11,7 +11,13 @@ app = core.App()
 
 env = {"region": "eu-west-1"}
 
-DynamoDb(app, "anime-dynmodbs", env=env)
-Lambdas(app, "anime-lambdas", env=env)
+dynamodb = DynamoDb(app, "anime-dynmodbs", env=env)
+
+lambdas_config = {
+    "ANIME_DATABASE_NAME": dynamodb.anime_table,
+    "ANIME_EPISODES_DATABASE_NAME": dynamodb.anime_episodes,
+    "ANIME_PARAMS_DATABASE_NAME": dynamodb.anime_episodes
+}
+Lambdas(app, "anime-lambdas", lambdas_config, env=env)
 
 app.synth()

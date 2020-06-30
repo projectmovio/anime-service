@@ -9,18 +9,18 @@ class DynamoDb(core.Stack):
         self._create_tables()
 
     def _create_tables(self):
-        anime_table = Table(
+        self.anime_table = Table(
             self,
             "anime",
             partition_key=Attribute(name="id", type=AttributeType.STRING),
             billing_mode=BillingMode.PAY_PER_REQUEST,
         )
-        anime_table.add_global_secondary_index(
+        self.anime_table.add_global_secondary_index(
             partition_key=Attribute(name="mal_id", type=AttributeType.STRING),
             index_name="mal_id"
         )
 
-        Table(
+        self.anime_episodes = Table(
             self,
             "anime_episodes",
             partition_key=Attribute(name="anime_id", type=AttributeType.STRING),
@@ -28,7 +28,7 @@ class DynamoDb(core.Stack):
             billing_mode=BillingMode.PAY_PER_REQUEST,
         )
 
-        Table(
+        self.anime_params = Table(
             self,
             "anime_params",
             partition_key=Attribute(name="name", type=AttributeType.STRING),
