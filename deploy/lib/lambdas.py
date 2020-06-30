@@ -51,13 +51,14 @@ class Lambdas(core.Stack):
             },
             "crons-titles_updater": {
                 "layers": ["utils", "databases"],
+                "variables": {}
             },
             "sqs_handlers-post_anime": {
                 "layers": ["utils", "databases", "api"],
                 "variables": {
                     "ANIME_DATABASE_NAME": self.config["ANIME_DATABASE_NAME"],
                     "ANIME_EPISODES_DATABASE_NAME": self.config["ANIME_EPISODES_DATABASE_NAME"],
-                    "ANIME_PARAMS_DATABASE_NAME": self.config["ANIME_PARAMS_DATBASE_NAME"],
+                    "ANIME_PARAMS_DATABASE_NAME": self.config["ANIME_PARAMS_DATABASE_NAME"],
 
                 }
             },

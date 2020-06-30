@@ -16,7 +16,7 @@ dynamodb = DynamoDb(app, "anime-dynmodbs", env=env)
 lambdas_config = {
     "ANIME_DATABASE_NAME": dynamodb.anime_table.table_name,
     "ANIME_EPISODES_DATABASE_NAME": dynamodb.anime_episodes.table_name,
-    "ANIME_PARAMS_DATABASE_NAME": dynamodb.anime_episodes.table_name
+    "ANIME_PARAMS_DATABASE_NAME": dynamodb.anime_params.table_name,
 }
 Lambdas(app, "anime-lambdas", lambdas_config, env=env)
 
