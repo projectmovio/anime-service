@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from aws_cdk import core
 
+from lib.buckets import Buckets
 from lib.dynamodb import DynamoDb
 from lib.lambdas import Lambdas
 from lib.sqs import SqS
@@ -14,14 +15,14 @@ env = {"region": "eu-west-1"}
 
 dynamodb = DynamoDb(app, "anime-dynmodbs", env=env)
 sqs = SqS(app, "anime-sqs", env=env)
+buckets = Buckets(app, "anime-buckets", env=env)
 
 lambdas_config = {
     "ANIME_DATABASE_NAME": dynamodb.anime_table.table_name,
     "ANIME_EPISODES_DATABASE_NAME": dynamodb.anime_episodes.table_name,
     "ANIME_PARAMS_DATABASE_NAME": dynamodb.anime_params.table_name,
-    "POST_ANIME_SQS_QUEUE_URL": sqs.post_anime_queue.queue_url
+    "POST_ANIME_SQS_QUEUE_URL": sqs.post_anime_queue.queue_url,
 }
 Lambdas(app, "anime-lambdas", lambdas_config, env=env)
-
 
 app.synth()
