@@ -90,6 +90,8 @@ class Lambdas(core.Stack):
             )
 
     def _create_lambdas(self):
+        clean_pycache()
+
         for root, dirs, files in os.walk(LAMBDAS_DIR):
             for _ in files:
                 parent_folder = os.path.basename(os.path.dirname(root))
