@@ -12,6 +12,6 @@ class SqS(core.Stack):
         post_anime_dl = Queue(self, "post_anime_dl")
         self.post_anime_queue = Queue(
             self,
-            "post_anime",
+            "anime",
             dead_letter_queue=DeadLetterQueue(max_receive_count=5, queue=post_anime_dl)
         )

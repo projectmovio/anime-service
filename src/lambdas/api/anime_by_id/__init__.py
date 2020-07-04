@@ -1,7 +1,7 @@
 import anime_db
 import logger
 
-log = logger.get_logger("get_anime")
+log = logger.get_logger("anime_by_id")
 
 
 class HttpError(object):
@@ -11,7 +11,7 @@ class HttpError(object):
 def handle(event, context):
     log.debug(f"Received event: {event}")
 
-    anime_id = event["pathParameters"].get("anime_id")
+    anime_id = event["pathParameters"].get("id")
 
     try:
         res = anime_db.get_anime(anime_id)

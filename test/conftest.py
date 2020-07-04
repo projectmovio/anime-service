@@ -34,12 +34,12 @@ def mocked_episodes_db():
 
 
 @pytest.fixture(scope='function')
-def mocked_post_anime():
-    import api.post_anime
+def mocked_anime():
+    import api.anime
 
-    api.post_anime.sqs_queue = MagicMock()
+    api.anime.sqs_queue = MagicMock()
 
-    return api.post_anime
+    return api.anime
 
 
 @pytest.fixture(scope='function')

@@ -1,4 +1,4 @@
-from api.post_anime import handle
+from api.anime import handle
 
 
 def test_handler(mocked_anime_db, mocked_post_anime):

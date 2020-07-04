@@ -8,7 +8,7 @@ import episodes_db
 import mal
 import logger
 
-log = logger.get_logger("sqs_hanlders.post_anime")
+log = logger.get_logger("sqs_hanlders.anime")
 
 
 def handler(event, context):

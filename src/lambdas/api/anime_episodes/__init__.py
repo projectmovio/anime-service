@@ -1,7 +1,7 @@
 import episodes_db
 import logger
 
-log = logger.get_logger("get_anime")
+log = logger.get_logger("anime_by_id")
 
 
 class HttpError(object):

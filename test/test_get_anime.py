@@ -1,4 +1,4 @@
-from api.get_anime import handle
+from api.anime_by_id import handle
 
 
 def test_handler(mocked_anime_db):

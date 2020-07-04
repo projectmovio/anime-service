@@ -27,7 +27,7 @@ class Lambdas(core.Stack):
 
     def _create_lambdas_config(self):
         self.lambdas_config = {
-            "api-get_anime": {
+            "api-anime_by_id": {
                 "layers": ["utils", "databases"],
                 "variables": {
                     "ANIME_DATABASE_NAME": self.config["anime_database_name"],
@@ -40,7 +40,7 @@ class Lambdas(core.Stack):
                     )
                 ]
             },
-            "api-get_episodes": {
+            "api-anime_episodes": {
                 "layers": ["utils", "databases"],
                 "variables": {
                     "ANIME_EPISODES_DATABASE_NAME": self.config["anime_episodes_database_name"],
@@ -53,7 +53,7 @@ class Lambdas(core.Stack):
                     )
                 ]
             },
-            "api-post_anime": {
+            "api-anime": {
                 "layers": ["utils", "databases"],
                 "variables": {
                     "ANIME_DATABASE_NAME": self.config["anime_database_name"],
@@ -95,7 +95,7 @@ class Lambdas(core.Stack):
                     )
                 ]
             },
-            "sqs_handlers-post_anime": {
+            "sqs_handlers-anime": {
                 "layers": ["utils", "databases", "api"],
                 "variables": {
                     "ANIME_DATABASE_NAME": self.config["anime_database_name"],
