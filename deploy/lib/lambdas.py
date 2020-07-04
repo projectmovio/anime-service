@@ -41,6 +41,7 @@ class Lambdas(core.Stack):
                 "layers": ["utils", "databases"],
                 "variables": {
                     "ANIME_DATABASE_NAME": self.config["ANIME_DATABASE_NAME"],
+                    "POST_ANIME_SQS_QUEUE_URL": self.config["POST_ANIME_SQS_QUEUE_URL"],
                 }
             },
             "api-search_anime": {
