@@ -30,7 +30,7 @@ class Anime(core.Stack):
         self._create_lambdas_config()
         self._create_layers()
         self._create_lambdas()
-        self._create_gateway()
+        #self._create_gateway()
 
     def _create_buckets(self):
         self.anidb_titles_bucket = Bucket(
