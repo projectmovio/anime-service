@@ -4,8 +4,11 @@ import subprocess
 
 from aws_cdk import core
 from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, LambdaProxyIntegration
+from aws_cdk.aws_dynamodb import Table, Attribute, AttributeType, BillingMode
 from aws_cdk.aws_iam import Role, ServicePrincipal, PolicyStatement
 from aws_cdk.aws_lambda import LayerVersion, Code, Runtime, Function
+from aws_cdk.aws_s3 import Bucket, BlockPublicAccess
+from aws_cdk.aws_sqs import Queue, DeadLetterQueue
 
 from lib.utils import clean_pycache
 
@@ -15,61 +18,109 @@ LAYERS_DIR = os.path.join(CURRENT_DIR, "..", "..", "src", "layers")
 BUILD_FOLDER = os.path.join(CURRENT_DIR, "..", "..", "build")
 
 
-class Lambdas(core.Stack):
+class Anime(core.Stack):
 
-    def __init__(self, app: core.App, id: str, config: dict, **kwargs) -> None:
+    def __init__(self, app: core.App, id: str, **kwargs) -> None:
         super().__init__(app, id, **kwargs)
-        self.config = config
         self.layers = {}
         self.lambdas = {}
+        self._create_buckets()
+        self._create_tables()
+        self._create_queues()
         self._create_lambdas_config()
         self._create_layers()
         self._create_lambdas()
         self._create_gateway()
+
+    def _create_buckets(self):
+        self.anidb_titles_bucket = Bucket(
+            self,
+            "anidb_titles_bucket",
+            block_public_access=BlockPublicAccess(
+                block_public_acls=True,
+                block_public_policy=True,
+            ),
+            removal_policy=core.RemovalPolicy.DESTROY,
+        )
+
+    def _create_tables(self):
+        self.anime_table = Table(
+            self,
+            "anime_items",
+            partition_key=Attribute(name="id", type=AttributeType.STRING),
+            billing_mode=BillingMode.PAY_PER_REQUEST,
+        )
+        self.anime_table.add_global_secondary_index(
+            partition_key=Attribute(name="mal_id", type=AttributeType.STRING),
+            index_name="mal_id"
+        )
+
+        self.anime_episodes = Table(
+            self,
+            "anime_episodes",
+            partition_key=Attribute(name="anime_id", type=AttributeType.STRING),
+            sort_key=Attribute(name="id", type=AttributeType.NUMBER),
+            billing_mode=BillingMode.PAY_PER_REQUEST,
+        )
+
+        self.anime_params = Table(
+            self,
+            "anime_params",
+            partition_key=Attribute(name="name", type=AttributeType.STRING),
+            billing_mode=BillingMode.PAY_PER_REQUEST,
+        )
+
+    def _create_queues(self):
+        post_anime_dl = Queue(self, "post_anime_dl")
+        self.post_anime_queue = Queue(
+            self,
+            "anime",
+            dead_letter_queue=DeadLetterQueue(max_receive_count=5, queue=post_anime_dl)
+        )
 
     def _create_lambdas_config(self):
         self.lambdas_config = {
             "api-anime_by_id": {
                 "layers": ["utils", "databases"],
                 "variables": {
-                    "ANIME_DATABASE_NAME": self.config["anime_database_name"],
+                    "ANIME_DATABASE_NAME": self.anime_table.table_name,
                 },
                 "concurrent_executions": 100,
                 "policies": [
                     PolicyStatement(
                         actions=["dynamodb:Query"],
-                        resources=[self.config["anime_database_arn"]]
+                        resources=[self.anime_table.table_arn]
                     )
                 ]
             },
             "api-anime_episodes": {
                 "layers": ["utils", "databases"],
                 "variables": {
-                    "ANIME_EPISODES_DATABASE_NAME": self.config["anime_episodes_database_name"],
+                    "ANIME_EPISODES_DATABASE_NAME": self.anime_episodes.table_name,
                 },
                 "concurrent_executions": 100,
                 "policies": [
                     PolicyStatement(
                         actions=["dynamodb:Query"],
-                        resources=[self.config["anime_episodes_database_arn"]]
+                        resources=[self.anime_episodes.table_arn]
                     )
                 ]
             },
             "api-anime": {
                 "layers": ["utils", "databases"],
                 "variables": {
-                    "ANIME_DATABASE_NAME": self.config["anime_database_name"],
-                    "POST_ANIME_SQS_QUEUE_URL": self.config["post_anime_sqs_queue_url"],
+                    "ANIME_DATABASE_NAME": self.anime_table.table_name,
+                    "POST_ANIME_SQS_QUEUE_URL": self.post_anime_queue.queue_url,
                 },
                 "concurrent_executions": 100,
                 "policies": [
                     PolicyStatement(
                         actions=["dynamodb:Query"],
-                        resources=[self.config["anime_database_arn"]]
+                        resources=[self.anime_table.table_arn]
                     ),
                     PolicyStatement(
                         actions=["sqs:SendMessage"],
-                        resources=[self.config["post_anime_sqs_queue_arn"]]
+                        resources=[self.post_anime_queue.queue_arn]
                     ),
                 ]
             },
@@ -80,30 +131,30 @@ class Lambdas(core.Stack):
                 "policies": [
                     PolicyStatement(
                         actions=["s3:GetItem", "s3:PutItem"],
-                        resources=[self.config["anidb_titles_bucket_objects_arn"]]
+                        resources=[self.anidb_titles_bucket.arn_for_objects("*")]
                     )
                 ]
             },
             "sqs_handlers-post_anime": {
                 "layers": ["utils", "databases", "api"],
                 "variables": {
-                    "ANIME_DATABASE_NAME": self.config["anime_database_name"],
-                    "ANIME_EPISODES_DATABASE_NAME": self.config["anime_episodes_database_name"],
-                    "ANIME_PARAMS_DATABASE_NAME": self.config["anime_params_database_name"],
+                    "ANIME_DATABASE_NAME": self.anime_table.table_name,
+                    "ANIME_EPISODES_DATABASE_NAME": self.anime_episodes.table_name,
+                    "ANIME_PARAMS_DATABASE_NAME": self.anime_params.table_name,
                 },
                 "concurrent_executions": 1,
                 "policies": [
                     PolicyStatement(
                         actions=["dynamodb:Query"],
-                        resources=[self.config["anime_database_arn"]]
+                        resources=[self.anime_table.table_arn]
                     ),
                     PolicyStatement(
                         actions=["dynamodb:UpdateItem"],
-                        resources=[self.config["anime_episodes_database_arn"]]
+                        resources=[self.anime_episodes.table_arn]
                     ),
                     PolicyStatement(
                         actions=["dynamodb:UpdateItem"],
-                        resources=[self.config["anime_params_database_arn"]]
+                        resources=[self.anime_params.table_arn]
                     )
                 ]
             },
