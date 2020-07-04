@@ -1,6 +1,9 @@
 from unittest import mock
 
+import pytest
+
 import mal
+
 from api.anime import handle
 
 
@@ -230,3 +233,17 @@ def test_search_no_query_params():
         "body": {"error": "Please specify either 'search' or 'mal_id' query parameter"}
     }
     assert res == exp
+
+
+def test_unsupported_method(mocked_anime_db, mocked_anime):
+    event = {
+        "http": {
+            "method": "AA"
+        },
+        "queryStringParameters": {
+            "mal_id": "123"
+        }
+    }
+
+    with pytest.raises(mocked_anime.UnsupportedMethod):
+        handle(event, None)
