@@ -174,7 +174,7 @@ class Lambdas(core.Stack):
 
         http_api.add_routes(
             path="/anime",
-            methods=[HttpMethod.GET],
+            methods=[HttpMethod.GET, HttpMethod.POST],
             integration=LambdaProxyIntegration(handler=self.lambdas["api-anime"])
         )
 
