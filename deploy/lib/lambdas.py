@@ -29,30 +29,35 @@ class Lambdas(core.Stack):
                 "layers": ["utils", "databases"],
                 "variables": {
                     "ANIME_DATABASE_NAME": self.config["ANIME_DATABASE_NAME"],
-                }
+                },
+                "concurrent_executions": 100
             },
             "api-get_episodes": {
                 "layers": ["utils", "databases"],
                 "variables": {
                     "ANIME_EPISODES_DATABASE_NAME": self.config["ANIME_EPISODES_DATABASE_NAME"],
-                }
+                },
+                "concurrent_executions": 100
             },
             "api-post_anime": {
                 "layers": ["utils", "databases"],
                 "variables": {
                     "ANIME_DATABASE_NAME": self.config["ANIME_DATABASE_NAME"],
                     "POST_ANIME_SQS_QUEUE_URL": self.config["POST_ANIME_SQS_QUEUE_URL"],
-                }
+                },
+                "concurrent_executions": 100
             },
             "api-search_anime": {
                 "layers": ["utils", "databases", "api"],
                 "variables": {
                     "ANIME_DATABASE_NAME": self.config["ANIME_DATABASE_NAME"],
-                }
+                },
+                "concurrent_executions": 100
             },
             "crons-titles_updater": {
                 "layers": ["utils", "databases"],
-                "variables": {}
+                "variables": {},
+                "concurrent_executions": 1
             },
             "sqs_handlers-post_anime": {
                 "layers": ["utils", "databases", "api"],
@@ -60,8 +65,8 @@ class Lambdas(core.Stack):
                     "ANIME_DATABASE_NAME": self.config["ANIME_DATABASE_NAME"],
                     "ANIME_EPISODES_DATABASE_NAME": self.config["ANIME_EPISODES_DATABASE_NAME"],
                     "ANIME_PARAMS_DATABASE_NAME": self.config["ANIME_PARAMS_DATABASE_NAME"],
-
-                }
+                },
+                "concurrent_executions": 1
             },
         }
 
@@ -111,5 +116,6 @@ class Lambdas(core.Stack):
                     runtime=Runtime.PYTHON_3_8,
                     layers=layers,
                     function_name=name,
-                    environment=self.lambdas_config[name]["variables"]
+                    environment=self.lambdas_config[name]["variables"],
+                    reserved_concurrent_executions=self.lambdas_config[name]["concurrent_executions"]
                 )
