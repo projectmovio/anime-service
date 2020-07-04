@@ -90,7 +90,7 @@ class Lambdas(core.Stack):
                 "policies": [
                     PolicyStatement(
                         actions=["s3:GetItem", "s3:PutItem"],
-                        resources=[self.config["anidb_titles_bucket"]]
+                        resources=[self.config["anidb_titles_bucket_objects_arn"]]
                     )
                 ]
             },

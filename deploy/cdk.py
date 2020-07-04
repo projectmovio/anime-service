@@ -26,7 +26,8 @@ lambdas_config = {
     "anime_params_database_arn": dynamodb.anime_params.table_arn,
     "post_anime_sqs_queue_url": sqs.post_anime_queue.queue_url,
     "post_anime_sqs_queue_arn": sqs.post_anime_queue.queue_arn,
-    "anidb_titles_bucket": buckets.anidb_titles_bucket
+    "anidb_titles_bucket_arn": buckets.anidb_titles_bucket.bucket_arn,
+    "anidb_titles_bucket_objects_arn": buckets.anidb_titles_bucket.arn_for_objects("*"),
 }
 Lambdas(app, "anime-lambdas", lambdas_config, env=env)
 
