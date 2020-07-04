@@ -3,6 +3,7 @@ import shutil
 import subprocess
 
 from aws_cdk import core
+from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, LambdaProxyIntegration
 from aws_cdk.aws_iam import Role, ServicePrincipal, PolicyStatement
 from aws_cdk.aws_lambda import LayerVersion, Code, Runtime, Function
 
@@ -24,6 +25,7 @@ class Lambdas(core.Stack):
         self._create_lambdas_config()
         self._create_layers()
         self._create_lambdas()
+        self._create_gateway()
 
     def _create_lambdas_config(self):
         self.lambdas_config = {
@@ -71,19 +73,6 @@ class Lambdas(core.Stack):
                     ),
                 ]
             },
-            "api-search_anime": {
-                "layers": ["utils", "databases", "api"],
-                "variables": {
-                    "ANIME_DATABASE_NAME": self.config["anime_database_name"],
-                },
-                "concurrent_executions": 100,
-                "policies": [
-                    PolicyStatement(
-                        actions=["dynamodb:Query"],
-                        resources=[self.config["anime_database_arn"]]
-                    )
-                ]
-            },
             "crons-titles_updater": {
                 "layers": ["utils", "databases"],
                 "variables": {},
@@ -95,7 +84,7 @@ class Lambdas(core.Stack):
                     )
                 ]
             },
-            "sqs_handlers-anime": {
+            "sqs_handlers-post_anime": {
                 "layers": ["utils", "databases", "api"],
                 "variables": {
                     "ANIME_DATABASE_NAME": self.config["anime_database_name"],
@@ -179,3 +168,18 @@ class Lambdas(core.Stack):
                     reserved_concurrent_executions=lambda_config["concurrent_executions"],
                     role=lambda_role,
                 )
+
+    def _create_gateway(self):
+        http_api = HttpApi(self, "anime_gateway")
+
+        http_api.add_routes(
+            path="/anime",
+            methods=[HttpMethod.GET],
+            integration=LambdaProxyIntegration(handler=self.lambdas["api-anime"])
+        )
+
+        http_api.add_routes(
+            path="/anime/{id}",
+            methods=[HttpMethod.GET],
+            integration=LambdaProxyIntegration(handler=self.lambdas["api-anime_by_id"])
+        )
