@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from aws_cdk import core
 
+from lib.apigateway import ApiGateway
 from lib.buckets import Buckets
 from lib.dynamodb import DynamoDb
 from lib.lambdas import Lambdas
@@ -29,6 +30,7 @@ lambdas_config = {
     "anidb_titles_bucket_arn": buckets.anidb_titles_bucket.bucket_arn,
     "anidb_titles_bucket_objects_arn": buckets.anidb_titles_bucket.arn_for_objects("*"),
 }
-Lambdas(app, "anime-lambdas", lambdas_config, env=env)
+lambdas_stack = Lambdas(app, "anime-lambdas", lambdas_config, env=env)
+ApiGateway(app, "anime-gateway", lambdas_stack.lambdas, env=env)
 
 app.synth()

@@ -20,6 +20,7 @@ class Lambdas(core.Stack):
         super().__init__(app, id, **kwargs)
         self.config = config
         self.layers = {}
+        self.lambdas = {}
         self._create_lambdas_config()
         self._create_layers()
         self._create_lambdas()
@@ -166,7 +167,7 @@ class Lambdas(core.Stack):
                 for policy in lambda_config["policies"]:
                     lambda_role.add_to_policy(policy)
 
-                Function(
+                self.lambdas[name] = Function(
                     self,
                     name,
                     code=Code.from_asset(root),
