@@ -18,10 +18,15 @@ sqs = SqS(app, "anime-sqs", env=env)
 buckets = Buckets(app, "anime-buckets", env=env)
 
 lambdas_config = {
-    "ANIME_DATABASE_NAME": dynamodb.anime_table.table_name,
-    "ANIME_EPISODES_DATABASE_NAME": dynamodb.anime_episodes.table_name,
-    "ANIME_PARAMS_DATABASE_NAME": dynamodb.anime_params.table_name,
-    "POST_ANIME_SQS_QUEUE_URL": sqs.post_anime_queue.queue_url,
+    "anime_database_name": dynamodb.anime_table.table_name,
+    "anime_database_arn": dynamodb.anime_table.table_arn,
+    "anime_episodes_database_name": dynamodb.anime_episodes.table_name,
+    "anime_episodes_database_arn": dynamodb.anime_episodes.table_arn,
+    "anime_params_database_name": dynamodb.anime_params.table_name,
+    "anime_params_database_arn": dynamodb.anime_params.table_arn,
+    "post_anime_sqs_queue_url": sqs.post_anime_queue.queue_url,
+    "post_anime_sqs_queue_arn": sqs.post_anime_queue.queue_arn,
+    "anidb_titles_bucket": buckets.anidb_titles_bucket
 }
 Lambdas(app, "anime-lambdas", lambdas_config, env=env)
 

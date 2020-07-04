@@ -3,6 +3,7 @@ import shutil
 import subprocess
 
 from aws_cdk import core
+from aws_cdk.aws_iam import Role, ServicePrincipal, PolicyStatement
 from aws_cdk.aws_lambda import LayerVersion, Code, Runtime, Function
 
 from lib.utils import clean_pycache
@@ -28,45 +29,93 @@ class Lambdas(core.Stack):
             "api-get_anime": {
                 "layers": ["utils", "databases"],
                 "variables": {
-                    "ANIME_DATABASE_NAME": self.config["ANIME_DATABASE_NAME"],
+                    "ANIME_DATABASE_NAME": self.config["anime_database_name"],
                 },
-                "concurrent_executions": 100
+                "concurrent_executions": 100,
+                "policies": [
+                    PolicyStatement(
+                        actions=["dynamodb:Query"],
+                        resources=[self.config["anime_database_arn"]]
+                    )
+                ]
             },
             "api-get_episodes": {
                 "layers": ["utils", "databases"],
                 "variables": {
-                    "ANIME_EPISODES_DATABASE_NAME": self.config["ANIME_EPISODES_DATABASE_NAME"],
+                    "ANIME_EPISODES_DATABASE_NAME": self.config["anime_episodes_database_name"],
                 },
-                "concurrent_executions": 100
+                "concurrent_executions": 100,
+                "policies": [
+                    PolicyStatement(
+                        actions=["dynamodb:Query"],
+                        resources=[self.config["anime_episodes_database_arn"]]
+                    )
+                ]
             },
             "api-post_anime": {
                 "layers": ["utils", "databases"],
                 "variables": {
-                    "ANIME_DATABASE_NAME": self.config["ANIME_DATABASE_NAME"],
-                    "POST_ANIME_SQS_QUEUE_URL": self.config["POST_ANIME_SQS_QUEUE_URL"],
+                    "ANIME_DATABASE_NAME": self.config["anime_database_name"],
+                    "POST_ANIME_SQS_QUEUE_URL": self.config["post_anime_sqs_queue_url"],
                 },
-                "concurrent_executions": 100
+                "concurrent_executions": 100,
+                "policies": [
+                    PolicyStatement(
+                        actions=["dynamodb:Query"],
+                        resources=[self.config["anime_database_arn"]]
+                    ),
+                    PolicyStatement(
+                        actions=["sqs:SendMessage"],
+                        resources=[self.config["post_anime_sqs_queue_arn"]]
+                    ),
+                ]
             },
             "api-search_anime": {
                 "layers": ["utils", "databases", "api"],
                 "variables": {
-                    "ANIME_DATABASE_NAME": self.config["ANIME_DATABASE_NAME"],
+                    "ANIME_DATABASE_NAME": self.config["anime_database_name"],
                 },
-                "concurrent_executions": 100
+                "concurrent_executions": 100,
+                "policies": [
+                    PolicyStatement(
+                        actions=["dynamodb:Query"],
+                        resources=[self.config["anime_database_arn"]]
+                    )
+                ]
             },
             "crons-titles_updater": {
                 "layers": ["utils", "databases"],
                 "variables": {},
-                "concurrent_executions": 1
+                "concurrent_executions": 1,
+                "policies": [
+                    PolicyStatement(
+                        actions=["s3:GetItem", "s3:PutItem"],
+                        resources=[self.config["anidb_titles_bucket"]]
+                    )
+                ]
             },
             "sqs_handlers-post_anime": {
                 "layers": ["utils", "databases", "api"],
                 "variables": {
-                    "ANIME_DATABASE_NAME": self.config["ANIME_DATABASE_NAME"],
-                    "ANIME_EPISODES_DATABASE_NAME": self.config["ANIME_EPISODES_DATABASE_NAME"],
-                    "ANIME_PARAMS_DATABASE_NAME": self.config["ANIME_PARAMS_DATABASE_NAME"],
+                    "ANIME_DATABASE_NAME": self.config["anime_database_name"],
+                    "ANIME_EPISODES_DATABASE_NAME": self.config["anime_episodes_database_name"],
+                    "ANIME_PARAMS_DATABASE_NAME": self.config["anime_params_database_name"],
                 },
-                "concurrent_executions": 1
+                "concurrent_executions": 1,
+                "policies": [
+                    PolicyStatement(
+                        actions=["dynamodb:Query"],
+                        resources=[self.config["anime_database_arn"]]
+                    ),
+                    PolicyStatement(
+                        actions=["dynamodb:UpdateItem"],
+                        resources=[self.config["anime_episodes_database_arn"]]
+                    ),
+                    PolicyStatement(
+                        actions=["dynamodb:UpdateItem"],
+                        resources=[self.config["anime_params_database_arn"]]
+                    )
+                ]
             },
         }
 
@@ -103,10 +152,19 @@ class Lambdas(core.Stack):
                 parent_folder = os.path.basename(os.path.dirname(root))
                 lambda_folder = os.path.basename(root)
                 name = f"{parent_folder}-{lambda_folder}"
+                lambda_config = self.lambdas_config[name]
 
                 layers = []
-                for layer_name in self.lambdas_config[name]["layers"]:
+                for layer_name in lambda_config["layers"]:
                     layers.append(self.layers[layer_name])
+
+                lambda_role = Role(
+                    self,
+                    f"{name}_role",
+                    assumed_by=ServicePrincipal(service="lambda.amazonaws.com")
+                )
+                for policy in lambda_config["policies"]:
+                    lambda_role.add_to_policy(policy)
 
                 Function(
                     self,
@@ -116,6 +174,7 @@ class Lambdas(core.Stack):
                     runtime=Runtime.PYTHON_3_8,
                     layers=layers,
                     function_name=name,
-                    environment=self.lambdas_config[name]["variables"],
-                    reserved_concurrent_executions=self.lambdas_config[name]["concurrent_executions"]
+                    environment=lambda_config["variables"],
+                    reserved_concurrent_executions=lambda_config["concurrent_executions"],
+                    role=lambda_role,
                 )
