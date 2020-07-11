@@ -263,11 +263,11 @@ class Anime(core.Stack):
         for r in routes:
             integration = HttpIntegration(
                 self,
-                f"r_integration",
+                f"{r}_integration",
                 http_api=http_api,
                 integration_type=HttpIntegrationType.LAMBDA_PROXY,
                 integration_uri=routes[r]["target_lambda"].function_arn,
-                method=routes[r]["method"],
+                method=getattr(HttpMethod, routes[r]["method"]),
                 payload_format_version=PayloadFormatVersion.VERSION_2_0,
             )
             CfnRoute(
