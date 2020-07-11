@@ -6,7 +6,7 @@ from aws_cdk import core
 from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, LambdaProxyIntegration, CfnAuthorizer, CfnRoute, \
     HttpIntegration, HttpIntegrationType, PayloadFormatVersion
 from aws_cdk.aws_dynamodb import Table, Attribute, AttributeType, BillingMode
-from aws_cdk.aws_iam import Role, ServicePrincipal, PolicyStatement
+from aws_cdk.aws_iam import Role, ServicePrincipal, PolicyStatement, ManagedPolicy
 from aws_cdk.aws_lambda import LayerVersion, Code, Runtime, Function
 from aws_cdk.aws_s3 import Bucket, BlockPublicAccess
 from aws_cdk.aws_sqs import Queue, DeadLetterQueue
@@ -207,6 +207,8 @@ class Anime(core.Stack):
                 )
                 for policy in lambda_config["policies"]:
                     lambda_role.add_to_policy(policy)
+                lambda_role.add_managed_policy(
+                    ManagedPolicy.from_aws_managed_policy_name("service-role/AWSLambdaBasicExecutionRole"))
 
                 self.lambdas[name] = Function(
                     self,
