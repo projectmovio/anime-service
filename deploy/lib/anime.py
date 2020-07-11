@@ -238,38 +238,38 @@ class Anime(core.Stack):
 
         CfnRoute(
             self,
-            "anime",
+            "get_anime",
             api_id = http_api.http_api_id,
             route_key="GET /anime",
             authorization_type="JWT",
-            authorizer_id=authorizer.logical_id,
+            authorizer_id=authorizer.ref,
             target=self.lambdas["api-anime"].function_arn
         )
         CfnRoute(
             self,
-            "anime",
+            "post_anime",
             api_id=http_api.http_api_id,
             route_key="POST /anime",
             authorization_type="JWT",
-            authorizer_id=authorizer.logical_id,
+            authorizer_id=authorizer.ref,
             target=self.lambdas["api-anime"].function_arn
         )
         CfnRoute(
             self,
-            "anime",
+            "get_anime_by_id",
             api_id=http_api.http_api_id,
             route_key="GET /anime/{id}",
             authorization_type="JWT",
-            authorizer_id=authorizer.logical_id,
+            authorizer_id=authorizer.ref,
             target=self.lambdas["api-anime_by_id"].function_arn
         )
         CfnRoute(
             self,
-            "anime",
+            "get_anime_episodes",
             api_id=http_api.http_api_id,
             route_key="GET /anime/{id}/episodes",
             authorization_type="JWT",
-            authorizer_id=authorizer.logical_id,
+            authorizer_id=authorizer.ref,
             target=self.lambdas["api-anime_episodes"].function_arn
         )
 
