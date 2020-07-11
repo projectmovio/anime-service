@@ -283,5 +283,5 @@ class Anime(core.Stack):
             routes[r]["target_lambda"].add_permission(
                 f"{r}_apigateway_invoke",
                 principal=ServicePrincipal("apigateway.amazonaws.com"),
-                source_arn=f"arn:aws:apigateway:{self.region}::/apis/{http_api.http_api_id}"
+                source_arn=f"arn:aws:execute-api:{self.region}:{self.account}:{http_api.http_api_id}/*"
             )
