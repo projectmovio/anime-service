@@ -3,7 +3,7 @@ import shutil
 import subprocess
 
 from aws_cdk import core
-from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, LambdaProxyIntegration
+from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, LambdaProxyIntegration, CfnAuthorizer
 from aws_cdk.aws_dynamodb import Table, Attribute, AttributeType, BillingMode
 from aws_cdk.aws_iam import Role, ServicePrincipal, PolicyStatement
 from aws_cdk.aws_lambda import LayerVersion, Code, Runtime, Function
@@ -30,7 +30,7 @@ class Anime(core.Stack):
         self._create_lambdas_config()
         self._create_layers()
         self._create_lambdas()
-        #self._create_gateway()
+        self._create_gateway()
 
     def _create_buckets(self):
         self.anidb_titles_bucket = Bucket(
@@ -239,4 +239,17 @@ class Anime(core.Stack):
             path="/anime/{id}/episodes",
             methods=[HttpMethod.GET],
             integration=LambdaProxyIntegration(handler=self.lambdas["api-anime_episodes"])
+        )
+
+        CfnAuthorizer(
+            self,
+            "cognito",
+            api_id=http_api.http_api_id,
+            authorizer_type="JWT",
+            identity_source=["$request.header.Authorization"],
+            name="cognito",
+            jwt_configuration={
+                "Audience": ["2uqacp9st5av58h7kfhcq1eoa6"],
+                "Issuer": "https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_sJ3Y4kSv6"
+            }
         )
