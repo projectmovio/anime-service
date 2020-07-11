@@ -3,7 +3,7 @@ import shutil
 import subprocess
 
 from aws_cdk import core
-from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, LambdaProxyIntegration, CfnAuthorizer
+from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, LambdaProxyIntegration, CfnAuthorizer, CfnRoute
 from aws_cdk.aws_dynamodb import Table, Attribute, AttributeType, BillingMode
 from aws_cdk.aws_iam import Role, ServicePrincipal, PolicyStatement
 from aws_cdk.aws_lambda import LayerVersion, Code, Runtime, Function
@@ -223,25 +223,7 @@ class Anime(core.Stack):
     def _create_gateway(self):
         http_api = HttpApi(self, "anime_gateway")
 
-        http_api.add_routes(
-            path="/anime",
-            methods=[HttpMethod.GET, HttpMethod.POST],
-            integration=LambdaProxyIntegration(handler=self.lambdas["api-anime"])
-        )
-
-        http_api.add_routes(
-            path="/anime/{id}",
-            methods=[HttpMethod.GET],
-            integration=LambdaProxyIntegration(handler=self.lambdas["api-anime_by_id"])
-        )
-
-        http_api.add_routes(
-            path="/anime/{id}/episodes",
-            methods=[HttpMethod.GET],
-            integration=LambdaProxyIntegration(handler=self.lambdas["api-anime_episodes"])
-        )
-
-        CfnAuthorizer(
+        authorizer = CfnAuthorizer(
             self,
             "cognito",
             api_id=http_api.http_api_id,
@@ -253,3 +235,42 @@ class Anime(core.Stack):
                 issuer="https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_sJ3Y4kSv6"
             )
         )
+
+        CfnRoute(
+            self,
+            "anime",
+            api_id = http_api.http_api_id,
+            route_key="GET /anime",
+            authorization_type="JWT",
+            authorizer_id=authorizer.logical_id,
+            target=self.lambdas["api-anime"].function_arn
+        )
+        CfnRoute(
+            self,
+            "anime",
+            api_id=http_api.http_api_id,
+            route_key="POST /anime",
+            authorization_type="JWT",
+            authorizer_id=authorizer.logical_id,
+            target=self.lambdas["api-anime"].function_arn
+        )
+        CfnRoute(
+            self,
+            "anime",
+            api_id=http_api.http_api_id,
+            route_key="GET /anime/{id}",
+            authorization_type="JWT",
+            authorizer_id=authorizer.logical_id,
+            target=self.lambdas["api-anime_by_id"].function_arn
+        )
+        CfnRoute(
+            self,
+            "anime",
+            api_id=http_api.http_api_id,
+            route_key="GET /anime/{id}/episodes",
+            authorization_type="JWT",
+            authorizer_id=authorizer.logical_id,
+            target=self.lambdas["api-anime_episodes"].function_arn
+        )
+
+
