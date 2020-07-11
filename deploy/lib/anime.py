@@ -3,7 +3,8 @@ import shutil
 import subprocess
 
 from aws_cdk import core
-from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, LambdaProxyIntegration, CfnAuthorizer, CfnRoute
+from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, LambdaProxyIntegration, CfnAuthorizer, CfnRoute, \
+    HttpIntegration, HttpIntegrationType, PayloadFormatVersion
 from aws_cdk.aws_dynamodb import Table, Attribute, AttributeType, BillingMode
 from aws_cdk.aws_iam import Role, ServicePrincipal, PolicyStatement
 from aws_cdk.aws_lambda import LayerVersion, Code, Runtime, Function
@@ -236,43 +237,45 @@ class Anime(core.Stack):
             )
         )
 
+        routes = {
+            "get_anime": {
+                "method": "GET",
+                "route": "/anime",
+                "target_lambda": self.lambdas["api-anime"]
+            },
+            "post_anime": {
+                "method": "POST",
+                "route": "/anime",
+                "target_lambda": self.lambdas["api-anime"]
+            },
+            "get_anime_by_id": {
+                "method": "GET",
+                "route": "/anime/{id}",
+                "target_lambda": self.lambdas["api-anime_by_id"]
+            },
+            "get_anime_episodes": {
+                "method": "GET",
+                "route": "/anime/{id}/episodes",
+                "target_lambda": self.lambdas["api-anime_episodes"]
+            }
+        }
 
-
-        CfnRoute(
-            self,
-            "get_anime",
-            api_id = http_api.http_api_id,
-            route_key="GET /anime",
-            authorization_type="JWT",
-            authorizer_id=authorizer.ref,
-            target="/integration" + core.Fn.ref(self.lambdas["api-anime"])
-        )
-        CfnRoute(
-            self,
-            "post_anime",
-            api_id=http_api.http_api_id,
-            route_key="POST /anime",
-            authorization_type="JWT",
-            authorizer_id=authorizer.ref,
-            target="/integration" + core.Fn.ref(self.lambdas["api-anime"])
-        )
-        CfnRoute(
-            self,
-            "get_anime_by_id",
-            api_id=http_api.http_api_id,
-            route_key="GET /anime/{id}",
-            authorization_type="JWT",
-            authorizer_id=authorizer.ref,
-            target="/integration" + core.Fn.ref(self.lambdas["api-anime_by_id"])
-        )
-        CfnRoute(
-            self,
-            "get_anime_episodes",
-            api_id=http_api.http_api_id,
-            route_key="GET /anime/{id}/episodes",
-            authorization_type="JWT",
-            authorizer_id=authorizer.ref,
-            target="/integration" + core.Fn.ref(self.lambdas["api-anime_episodes"])
-        )
-
-
+        for r in routes:
+            integration = HttpIntegration(
+                self,
+                f"r_integration",
+                http_api=http_api,
+                integration_type=HttpIntegrationType.LAMBDA_PROXY,
+                integration_uri=routes[r]["target_lambda"].function_arn,
+                method=routes[r]["method"],
+                payload_format_version=PayloadFormatVersion.VERSION_2_0,
+            )
+            CfnRoute(
+                self,
+                r,
+                api_id=http_api.http_api_id,
+                route_key=f"{routes[r]['method']} {routes[r]['route']}",
+                authorization_type="JWT",
+                authorizer_id=authorizer.ref,
+                target="integrations/" + integration.integration_id
+            )
