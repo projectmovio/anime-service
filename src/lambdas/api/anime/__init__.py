@@ -32,8 +32,15 @@ def handle(event, context):
 
     method = event["requestContext"]["http"]["method"]
 
-    mal_id = event["queryStringParameters"].get("mal_id")
-    search = event["queryStringParameters"].get("search")
+    query_params = event.get("queryStringParameters")
+    if not query_params:
+        return {
+            "statusCode": 400,
+            "body": {"error": "Please specify query parameters"}
+        }
+
+    mal_id = query_params.get("mal_id")
+    search = query_params.get("search")
 
     if method == "POST":
         return _post_anime(mal_id)
