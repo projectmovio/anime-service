@@ -15,8 +15,8 @@ import logger
 log = logger.get_logger(__name__)
 
 CLIENT = os.getenv("ANIDB_CLIENT")
-CLIENT_VERSION = os.getenv("ANIDB_CLIENT_VERSION")
-PROTOCOL_VERSION = os.getenv("ANIDB_PROTOCOL_VERSION")
+CLIENT_VERSION = os.getenv("ANIDB_CLIENT_VERSION", "1")
+PROTOCOL_VERSION = os.getenv("ANIDB_PROTOCOL_VERSION", "1")
 BUCKET_NAME = os.getenv("ANIDB_TITLES_BUCKET")
 
 s3_bucket = None
