@@ -179,7 +179,7 @@ class Anime(core.Stack):
                         resources=[self.anime_table.table_arn]
                     ),
                     PolicyStatement(
-                        actions=["dynamodb:PutItem"],
+                        actions=["dynamodb:BatchWriteItem"],
                         resources=[self.anime_episodes.table_arn]
                     ),
                     PolicyStatement(
