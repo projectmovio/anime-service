@@ -119,7 +119,7 @@ class Anime(core.Stack):
                 "policies": [
                     PolicyStatement(
                         actions=["dynamodb:Query"],
-                        resources=[self.anime_table.table_arn]
+                        resources=[f"{self.anime_table.table_arn}/index/mal_id"]
                     ),
                     PolicyStatement(
                         actions=["sqs:SendMessage"],
