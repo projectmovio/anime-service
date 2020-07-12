@@ -11,6 +11,7 @@ from aws_cdk.aws_lambda import LayerVersion, Code, Runtime, Function
 from aws_cdk.aws_lambda_event_sources import SqsEventSource
 from aws_cdk.aws_s3 import Bucket, BlockPublicAccess
 from aws_cdk.aws_sqs import Queue, DeadLetterQueue
+from aws_cdk.core import Duration
 
 from lib.utils import clean_pycache
 
@@ -247,7 +248,7 @@ class Anime(core.Stack):
                     environment=lambda_config["variables"],
                     reserved_concurrent_executions=lambda_config["concurrent_executions"],
                     role=lambda_role,
-                    timeout=lambda_config["timeout"]
+                    timeout=Duration.seconds(lambda_config["timeout"])
                 )
 
         self.lambdas["sqs_handlers-post_anime"].add_event_source(SqsEventSource(self.post_anime_queue))
