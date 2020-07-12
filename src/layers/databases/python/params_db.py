@@ -22,11 +22,11 @@ def _get_table():
     return table
 
 
-def set_last_post_anime_update(timestamp, anime_id):
+def set_last_post_anime_update(last_run, anime_id):
     _get_table().update_item(
         Key={"name": "post_anime_update"},
-        UpdateExpression="SET time= :timestamp, anime_id = :anime_id",
-        ExpressionAttributeValues={":time": timestamp, ":anime_id": anime_id}
+        UpdateExpression="SET last_run= :last_run, anime_id = :anime_id",
+        ExpressionAttributeValues={":last_run": last_run, ":anime_id": anime_id}
     )
 
 
@@ -36,6 +36,6 @@ def get_last_post_anime_update():
     )
 
     if "Item" in res:
-        return res["Item"]["time"]
+        return res["Item"]["last_run"]
 
     return 0
