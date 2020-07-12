@@ -29,7 +29,7 @@ def _get_table():
 
 
 def new_anime(mal_info):
-    anime_id = uuid.uuid5(uuid.NAMESPACE_OID, mal_info["mal_id"])
+    anime_id = uuid.uuid5(uuid.NAMESPACE_OID, str(mal_info["mal_id"]))
     update_anime(anime_id, mal_info)
 
     return anime_id
