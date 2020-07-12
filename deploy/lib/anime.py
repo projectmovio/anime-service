@@ -137,6 +137,10 @@ class Anime(core.Stack):
                 "concurrent_executions": 1,
                 "policies": [
                     PolicyStatement(
+                        actions=["s3:ListBucket"],
+                        resources=[self.anidb_titles_bucket.bucket_arn]
+                    ),
+                    PolicyStatement(
                         actions=["s3:GetItem", "s3:PutItem"],
                         resources=[self.anidb_titles_bucket.arn_for_objects("*")]
                     )
