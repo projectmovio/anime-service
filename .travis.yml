@@ -6,7 +6,7 @@ jobs:
     - stage: test
       python: 3.8
       install:
-        - pip install -r test/requirements.txt
+        - pip install -r test/unittest/requirements.txt
         - pip install -r src/layers/api/requirements.txt
         - pip install coveralls
       script:
