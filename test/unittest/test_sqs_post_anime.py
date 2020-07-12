@@ -50,7 +50,7 @@ def update_item_params_mock(*a, **k):
 def test_handle(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, mocked_episodes_db):
     mocked_params_db.table.get_item.return_value = {
         "Item": {
-            "timestamp": int(time.time()) - 10
+            "last_run": int(time.time()) - 10
         }
     }
     mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
@@ -73,7 +73,7 @@ def test_handle(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, moc
     }
     handle(event, None)
 
-    assert ":timestamp" in UPDATED_PARAM
+    assert ":last_run" in UPDATED_PARAM
     assert ":anime_id" in UPDATED_PARAM
 
     if os.path.isfile("titles.json"):
@@ -84,7 +84,7 @@ def test_handle(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, moc
 def test_handle_to_early(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, mocked_episodes_db):
     mocked_params_db.table.get_item.return_value = {
         "Item": {
-            "timestamp": int(time.time()) + 2
+            "last_run": int(time.time()) + 2
         }
     }
     mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
@@ -107,7 +107,7 @@ def test_handle_to_early(mocked_get, mocked_params_db, mocked_anime_db, mocked_a
     }
     handle(event, None)
 
-    assert ":timestamp" in UPDATED_PARAM
+    assert ":last_run" in UPDATED_PARAM
     assert ":anime_id" in UPDATED_PARAM
 
     if os.path.isfile("titles.json"):
@@ -117,7 +117,7 @@ def test_handle_to_early(mocked_get, mocked_params_db, mocked_anime_db, mocked_a
 def test_handle_already_exist_skipped(mocked_params_db, mocked_anime_db, mocked_anidb, mocked_episodes_db):
     mocked_params_db.table.get_item.return_value = {
         "Item": {
-            "timestamp": int(time.time()) - 10
+            "last_run": int(time.time()) - 10
         }
     }
     mocked_anime_db.table.get_item.return_value = {
@@ -138,7 +138,7 @@ def test_handle_already_exist_skipped(mocked_params_db, mocked_anime_db, mocked_
 def test_handle_no_anidb_match(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, mocked_episodes_db):
     mocked_params_db.table.get_item.return_value = {
         "Item": {
-            "timestamp": int(time.time()) - 10
+            "last_run": int(time.time()) - 10
         }
     }
     mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
@@ -161,7 +161,7 @@ def test_handle_no_anidb_match(mocked_get, mocked_params_db, mocked_anime_db, mo
     }
     handle(event, None)
 
-    assert ":timestamp" in UPDATED_PARAM
+    assert ":last_run" in UPDATED_PARAM
     assert ":anime_id" in UPDATED_PARAM
 
     if os.path.isfile("titles.json"):
