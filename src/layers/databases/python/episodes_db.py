@@ -32,10 +32,10 @@ def put_episodes(anime_id, episodes):
 
 def get_episodes(anime_id):
     res = _get_table().query(
-        KeyConditionExpression=Key('anime_id').eq(anime_id)
+        KeyConditionExpression=Key('anime_id').eq(f"{anime_id}")
     )
 
     if not res["Items"]:
-        raise NotFoundError(f"Anime with mal_id: {anime_id} not found")
+        raise NotFoundError(f"Anime with id: {anime_id} not found")
 
     return res["Items"]
