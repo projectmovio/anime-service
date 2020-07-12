@@ -214,7 +214,7 @@ class Anime(core.Stack):
                     self,
                     name,
                     code=Code.from_asset(root),
-                    handler="__init__",
+                    handler="__init__.handle",
                     runtime=Runtime.PYTHON_3_8,
                     layers=layers,
                     function_name=name,
