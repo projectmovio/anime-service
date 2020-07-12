@@ -108,7 +108,7 @@ class Anime(core.Stack):
                 ]
             },
             "api-anime": {
-                "layers": ["utils", "databases"],
+                "layers": ["utils", "databases", "api"],
                 "variables": {
                     "ANIME_DATABASE_NAME": self.anime_table.table_name,
                     "POST_ANIME_SQS_QUEUE_URL": self.post_anime_queue.queue_url,
