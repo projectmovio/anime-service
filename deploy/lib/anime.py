@@ -182,6 +182,10 @@ class Anime(core.Stack):
                     PolicyStatement(
                         actions=["s3:ListBucket"],
                         resources=[self.anidb_titles_bucket.bucket_arn]
+                    ),
+                    PolicyStatement(
+                        actions=["s3:GetObject"],
+                        resources=[self.anidb_titles_bucket.arn_for_objects("*")]
                     )
                 ],
                 "timeout": 15
