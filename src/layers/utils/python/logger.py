@@ -7,6 +7,11 @@ LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 
 def get_logger(name):
+    root = logging.getLogger()
+    if root.handlers:
+        for handler in root.handlers:
+            root.removeHandler(handler)
+
     logger = logging.getLogger(name)
     logger.setLevel(LOG_LEVEL)
 
@@ -14,6 +19,6 @@ def get_logger(name):
     formatter = jsonlogger.JsonFormatter(fmt='%(asctime)s %(levelname)s %(name)s %(message)s')
     handler.setFormatter(formatter)
     handler.setLevel(LOG_LEVEL)
-    #logger.addHandler(handler)
+    logger.addHandler(handler)
 
     return logger
