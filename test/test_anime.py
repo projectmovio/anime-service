@@ -56,7 +56,7 @@ def test_post_anime_already_exist(mocked_anime_db):
     assert res == exp
 
 
-def test_post_anime_no_id_provided(mocked_anime_db):
+def test_post_anime_no_query_params(mocked_anime_db):
     mocked_anime_db.table.query.return_value = {
         "Items": [
             {
@@ -71,6 +71,37 @@ def test_post_anime_no_id_provided(mocked_anime_db):
             }
         },
         "queryStringParameters": {
+
+        }
+    }
+
+    res = handle(event, None)
+
+    exp = {
+        "statusCode": 400,
+        "body": {
+            "error": "Please specify query parameters"
+        }
+    }
+    assert res == exp
+
+
+def test_post_anime_invalid_query_params(mocked_anime_db):
+    mocked_anime_db.table.query.return_value = {
+        "Items": [
+            {
+                "mal_id": "123"
+            }
+        ]
+    }
+    event = {
+        "requestContext": {
+            "http": {
+                "method": "POST"
+            }
+        },
+        "queryStringParameters": {
+            "aa": "123"
         }
     }
 
@@ -243,6 +274,27 @@ def test_search_no_query_params():
             }
         },
         "queryStringParameters": {
+        }
+    }
+
+    res = handle(event, None)
+
+    exp = {
+        "statusCode": 400,
+        "body": {"error": "Please specify query parameters"}
+    }
+    assert res == exp
+
+
+def test_search_invalid_query_params():
+    event = {
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
+        },
+        "queryStringParameters": {
+            "abc": "123"
         }
     }
 
