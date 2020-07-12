@@ -22,9 +22,10 @@ BUILD_FOLDER = os.path.join(CURRENT_DIR, "..", "..", "build")
 
 class Anime(core.Stack):
 
-    def __init__(self, app: core.App, id: str, mal_client_id: str, **kwargs) -> None:
+    def __init__(self, app: core.App, id: str, mal_client_id: str, anidb_client: str, **kwargs) -> None:
         super().__init__(app, id, **kwargs)
         self.mal_client_id = mal_client_id
+        self.anidb_client = anidb_client
         self.layers = {}
         self.lambdas = {}
         self._create_buckets()
@@ -131,7 +132,8 @@ class Anime(core.Stack):
             "crons-titles_updater": {
                 "layers": ["utils", "databases"],
                 "variables": {
-                    "ANIDB_TITLES_BUCKET": self.anidb_titles_bucket.bucket_name
+                    "ANIDB_TITLES_BUCKET": self.anidb_titles_bucket.bucket_name,
+                    "ANIDB_CLIENT": self.anidb_client
                 },
                 "concurrent_executions": 1,
                 "policies": [
