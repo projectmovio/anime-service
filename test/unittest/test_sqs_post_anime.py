@@ -4,7 +4,7 @@ import shutil
 import time
 from unittest import mock
 
-from sqs_handlers.post_anime import handler
+from sqs_handlers.post_anime import handle
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 ANIME_XML = os.path.join(CURRENT_DIR, "files", "anime.xml")
@@ -47,7 +47,7 @@ def update_item_params_mock(*a, **k):
 
 
 @mock.patch("requests.get")
-def test_handler(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, mocked_episodes_db):
+def test_handle(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, mocked_episodes_db):
     mocked_params_db.table.get_item.return_value = {
         "Item": {
             "timestamp": int(time.time()) - 10
@@ -71,7 +71,7 @@ def test_handler(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, mo
             }
         ]
     }
-    handler(event, None)
+    handle(event, None)
 
     assert ":timestamp" in UPDATED_PARAM
     assert ":anime_id" in UPDATED_PARAM
@@ -81,7 +81,7 @@ def test_handler(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, mo
 
 
 @mock.patch("requests.get")
-def test_handler_to_early(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, mocked_episodes_db):
+def test_handle_to_early(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, mocked_episodes_db):
     mocked_params_db.table.get_item.return_value = {
         "Item": {
             "timestamp": int(time.time()) + 2
@@ -105,7 +105,7 @@ def test_handler_to_early(mocked_get, mocked_params_db, mocked_anime_db, mocked_
             }
         ]
     }
-    handler(event, None)
+    handle(event, None)
 
     assert ":timestamp" in UPDATED_PARAM
     assert ":anime_id" in UPDATED_PARAM
@@ -114,7 +114,7 @@ def test_handler_to_early(mocked_get, mocked_params_db, mocked_anime_db, mocked_
         os.remove("titles.json")
 
 
-def test_handler_already_exist_skipped(mocked_params_db, mocked_anime_db, mocked_anidb, mocked_episodes_db):
+def test_handle_already_exist_skipped(mocked_params_db, mocked_anime_db, mocked_anidb, mocked_episodes_db):
     mocked_params_db.table.get_item.return_value = {
         "Item": {
             "timestamp": int(time.time()) - 10
@@ -131,11 +131,11 @@ def test_handler_already_exist_skipped(mocked_params_db, mocked_anime_db, mocked
             }
         ]
     }
-    handler(event, None)
+    handle(event, None)
 
 
 @mock.patch("requests.get")
-def test_handler_no_anidb_match(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, mocked_episodes_db):
+def test_handle_no_anidb_match(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, mocked_episodes_db):
     mocked_params_db.table.get_item.return_value = {
         "Item": {
             "timestamp": int(time.time()) - 10
@@ -159,7 +159,7 @@ def test_handler_no_anidb_match(mocked_get, mocked_params_db, mocked_anime_db, m
             }
         ]
     }
-    handler(event, None)
+    handle(event, None)
 
     assert ":timestamp" in UPDATED_PARAM
     assert ":anime_id" in UPDATED_PARAM
