@@ -30,7 +30,7 @@ def _get_sqs_queue():
 def handle(event, context):
     log.debug(f"Received event: {event}")
 
-    method = event["http"]["method"]
+    method = event["requestContext"]["http"]["method"]
 
     mal_id = event["queryStringParameters"].get("mal_id")
     search = event["queryStringParameters"].get("search")
