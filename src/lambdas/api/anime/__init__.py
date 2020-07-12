@@ -40,7 +40,7 @@ def handle(event, context):
             "body": json.dumps({"error": "Please specify query parameters"})
         }
 
-    mal_id = int(query_params.get("mal_id"))
+    mal_id = query_params.get("mal_id")
     search = query_params.get("search")
 
     if method == "POST":
@@ -59,7 +59,7 @@ def _post_anime(mal_id):
         }
 
     try:
-        anime_db.get_anime_by_mal_id(mal_id)
+        anime_db.get_anime_by_mal_id(int(mal_id))
     except anime_db.NotFoundError:
         pass
     else:
@@ -85,7 +85,7 @@ def _search_anime(mal_id, search):
 
     if mal_id:
         try:
-            res = anime_db.get_anime_by_mal_id(mal_id)
+            res = anime_db.get_anime_by_mal_id(int(mal_id))
         except anime_db.NotFoundError:
             log.debug(f"Anime with mal_id: {mal_id} not found in DB, use API")
         else:

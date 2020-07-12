@@ -91,7 +91,7 @@ def test_post_anime_invalid_query_params(mocked_anime_db):
     mocked_anime_db.table.query.return_value = {
         "Items": [
             {
-                "mal_id": "123"
+                "mal_id": 123
             }
         ]
     }
