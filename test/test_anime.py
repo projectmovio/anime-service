@@ -11,8 +11,10 @@ def test_post_anime(mocked_anime_db, mocked_anime):
     mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
     mocked_anime.sqs_queue.send_message.return_value = True
     event = {
-        "http": {
-            "method": "POST"
+        "requestContext": {
+            "http": {
+                "method": "POST"
+            }
         },
         "queryStringParameters": {
             "mal_id": "123"
@@ -36,8 +38,10 @@ def test_post_anime_already_exist(mocked_anime_db):
         ]
     }
     event = {
-        "http": {
-            "method": "POST"
+        "requestContext": {
+            "http": {
+                "method": "POST"
+            }
         },
         "queryStringParameters": {
             "mal_id": "123"
@@ -61,8 +65,10 @@ def test_post_anime_no_id_provided(mocked_anime_db):
         ]
     }
     event = {
-        "http": {
-            "method": "POST"
+        "requestContext": {
+            "http": {
+                "method": "POST"
+            }
         },
         "queryStringParameters": {
         }
@@ -86,8 +92,10 @@ def test_search(mocked_mal):
     }
     mocked_mal.return_value.search.return_value = exp_res
     event = {
-        "http": {
-            "method": "GET"
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
         },
         "queryStringParameters": {
             "search": "naruto"
@@ -107,8 +115,10 @@ def test_search(mocked_mal):
 def test_search_http_error(mocked_mal_api):
     mocked_mal_api.return_value.search.side_effect = mal.HTTPError
     event = {
-        "http": {
-            "method": "GET"
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
         },
         "queryStringParameters": {
             "search": "naruto"
@@ -133,8 +143,10 @@ def test_search_mal_id_in_db(mocked_anime_db):
         ]
     }
     event = {
-        "http": {
-            "method": "GET"
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
         },
         "queryStringParameters": {
             "mal_id": "123"
@@ -158,8 +170,10 @@ def test_search_mal_id_not_found_in_db(mocked_mal_api, mocked_anime_db):
     mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
     mocked_mal_api.return_value.get_anime.return_value = exp_res
     event = {
-        "http": {
-            "method": "GET"
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
         },
         "queryStringParameters": {
             "mal_id": "123"
@@ -180,8 +194,10 @@ def test_search_mal_id_not_found(mocked_mal_api, mocked_anime_db):
     mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
     mocked_mal_api.return_value.get_anime.side_effect = mal.NotFoundError
     event = {
-        "http": {
-            "method": "GET"
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
         },
         "queryStringParameters": {
             "mal_id": "123"
@@ -201,8 +217,10 @@ def test_search_mal_id_http_error(mocked_mal_api, mocked_anime_db):
     mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
     mocked_mal_api.return_value.get_anime.side_effect = mal.HTTPError
     event = {
-        "http": {
-            "method": "GET"
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
         },
         "queryStringParameters": {
             "mal_id": "123"
@@ -219,8 +237,10 @@ def test_search_mal_id_http_error(mocked_mal_api, mocked_anime_db):
 
 def test_search_no_query_params():
     event = {
-        "http": {
-            "method": "GET"
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
         },
         "queryStringParameters": {
         }
@@ -237,8 +257,10 @@ def test_search_no_query_params():
 
 def test_unsupported_method(mocked_anime_db, mocked_anime):
     event = {
-        "http": {
-            "method": "AA"
+        "requestContext": {
+            "http": {
+                "method": "AA"
+            }
         },
         "queryStringParameters": {
             "mal_id": "123"
