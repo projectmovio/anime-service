@@ -96,12 +96,12 @@ def _search_anime(mal_id, search):
         except mal.NotFoundError:
             return {"statusCode": 404}
         except mal.HTTPError:
-            return {"statusCode": 500}
+            return {"statusCode": 503}
         else:
             return {"statusCode": 200, "body": json.dumps(res)}
     elif search:
         try:
             res = mal.MalApi().search(search)
-        except mal.HTTPError:
-            return {"statusCode": 500}
+        except mal.HTTPError as e:
+            return {"statusCode": 503, "body": str(e)}
         return {"statusCode": 200, "body": json.dumps(res)}

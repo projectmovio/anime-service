@@ -145,7 +145,7 @@ def test_search(mocked_mal):
 
 @mock.patch("mal.MalApi")
 def test_search_http_error(mocked_mal_api):
-    mocked_mal_api.return_value.search.side_effect = mal.HTTPError
+    mocked_mal_api.return_value.search.side_effect = mal.HTTPError("TEST MESSAGE")
     event = {
         "requestContext": {
             "http": {
@@ -160,7 +160,8 @@ def test_search_http_error(mocked_mal_api):
     res = handle(event, None)
 
     exp = {
-        "statusCode": 500,
+        "statusCode": 503,
+        "body": "TEST MESSAGE"
     }
     assert res == exp
 
@@ -262,7 +263,7 @@ def test_search_mal_id_http_error(mocked_mal_api, mocked_anime_db):
     res = handle(event, None)
 
     exp = {
-        "statusCode": 500,
+        "statusCode": 503,
     }
     assert res == exp
 
