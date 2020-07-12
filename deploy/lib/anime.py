@@ -90,7 +90,7 @@ class Anime(core.Stack):
                 "concurrent_executions": 100,
                 "policies": [
                     PolicyStatement(
-                        actions=["dynamodb:Query"],
+                        actions=["dynamodb:Query", "dynamodb:GetItem"],
                         resources=[self.anime_table.table_arn]
                     )
                 ]
@@ -103,7 +103,7 @@ class Anime(core.Stack):
                 "concurrent_executions": 100,
                 "policies": [
                     PolicyStatement(
-                        actions=["dynamodb:Query"],
+                        actions=["dynamodb:GetItem", "dynamodb:PutItem"],
                         resources=[self.anime_episodes.table_arn]
                     )
                 ]
@@ -156,7 +156,7 @@ class Anime(core.Stack):
                         resources=[self.anime_episodes.table_arn]
                     ),
                     PolicyStatement(
-                        actions=["dynamodb:UpdateItem"],
+                        actions=["dynamodb:UpdateItem", "dynamodb:GetItem"],
                         resources=[self.anime_params.table_arn]
                     )
                 ]
