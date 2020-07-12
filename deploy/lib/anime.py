@@ -6,6 +6,8 @@ from aws_cdk import core
 from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, LambdaProxyIntegration, CfnAuthorizer, CfnRoute, \
     HttpIntegration, HttpIntegrationType, PayloadFormatVersion
 from aws_cdk.aws_dynamodb import Table, Attribute, AttributeType, BillingMode
+from aws_cdk.aws_events import Rule, Schedule
+from aws_cdk.aws_events_targets import LambdaFunction
 from aws_cdk.aws_iam import Role, ServicePrincipal, PolicyStatement, ManagedPolicy
 from aws_cdk.aws_lambda import LayerVersion, Code, Runtime, Function
 from aws_cdk.aws_lambda_event_sources import SqsEventSource
@@ -256,6 +258,13 @@ class Anime(core.Stack):
                 )
 
         self.lambdas["sqs_handlers-post_anime"].add_event_source(SqsEventSource(self.post_anime_queue))
+
+        Rule(
+            self,
+            "titles_updater",
+            schedule=Schedule.cron(hour="2", minute="10"),
+            targets=[LambdaFunction(self.lambdas["crons-titles_updater"])]
+        )
 
     def _create_gateway(self):
         http_api = HttpApi(self, "anime_gateway")
