@@ -133,7 +133,6 @@ class Anime(core.Stack):
                 "layers": ["utils", "databases"],
                 "variables": {
                     "ANIDB_TITLES_BUCKET": self.anidb_titles_bucket.bucket_name,
-                    "ANIDB_CLIENT": self.anidb_client
                 },
                 "concurrent_executions": 1,
                 "policies": [
@@ -149,7 +148,9 @@ class Anime(core.Stack):
                     "ANIME_DATABASE_NAME": self.anime_table.table_name,
                     "ANIME_EPISODES_DATABASE_NAME": self.anime_episodes.table_name,
                     "ANIME_PARAMS_DATABASE_NAME": self.anime_params.table_name,
-                    "MAL_CLIENT_ID": self.mal_client_id
+                    "MAL_CLIENT_ID": self.mal_client_id,
+                    "ANIDB_TITLES_BUCKET": self.anidb_titles_bucket.bucket_name,
+                    "ANIDB_CLIENT": self.anidb_client
                 },
                 "concurrent_executions": 1,
                 "policies": [
