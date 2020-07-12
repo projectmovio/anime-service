@@ -120,7 +120,7 @@ def _download_titles(file_path):
         raise HTTPError("Didn't get 200 status from titles request")
 
     # Write titles zip to temporary file
-    gzip_file = "titles.gz"
+    gzip_file = os.path.join("/", "tmp", "titles.gz")
     with open(gzip_file, 'wb') as f:
         f.write(r.content)
 
