@@ -8,6 +8,7 @@ from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, LambdaProxyIntegration
 from aws_cdk.aws_dynamodb import Table, Attribute, AttributeType, BillingMode
 from aws_cdk.aws_iam import Role, ServicePrincipal, PolicyStatement, ManagedPolicy
 from aws_cdk.aws_lambda import LayerVersion, Code, Runtime, Function
+from aws_cdk.aws_lambda_event_sources import SqsEventSource
 from aws_cdk.aws_s3 import Bucket, BlockPublicAccess
 from aws_cdk.aws_sqs import Queue, DeadLetterQueue
 
@@ -228,6 +229,10 @@ class Anime(core.Stack):
                     reserved_concurrent_executions=lambda_config["concurrent_executions"],
                     role=lambda_role,
                 )
+
+        self.lambdas["sqs_handlers-post_anime"].add_event_source(SqsEventSource(self.post_anime_queue))
+
+
 
     def _create_gateway(self):
         http_api = HttpApi(self, "anime_gateway")
