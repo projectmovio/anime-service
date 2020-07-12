@@ -25,13 +25,13 @@ date_yesterday = (now - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 
 def download_file_mock(key, location):
     if key == f"{date_today}.json":
-        return None
+        return False
 
-    mocked_json_titles = {
+    mocked_download_content = {
         "Seikai no Monshou": 1
     }
     with open("titles.json", "w") as f:
-        json.dump(mocked_json_titles, f)
+        json.dump(mocked_download_content, f)
 
     shutil.copy2("titles.json", location)
     return True
@@ -141,11 +141,14 @@ def test_save_json_titles(mocked_anidb):
 
 @mock.patch.dict(os.environ, ENV)
 def test_download_file(mocked_anidb):
-    exp = "MOCKED_FILE"
-    mocked_anidb.s3_bucket.download_file = lambda *args: exp
+    mocked_anidb.s3_bucket.download_file.return_value = True
+    open("test.json", "w").close()
 
-    ret = mocked_anidb._download_file("TEST", "TEST")
-    assert ret == exp
+    ret = mocked_anidb._download_file("TEST", "test.json")
+    assert ret
+
+    if os.path.isfile("test.json"):
+        os.remove("test.json")
 
 
 @mock.patch.dict(os.environ, ENV)
@@ -153,7 +156,7 @@ def test_download_file_not_found(mocked_anidb):
     mocked_anidb.s3_bucket.download_file.side_effect = ClientError({"Error": {"Code": "404"}}, "TEST_OPERATION")
 
     ret = mocked_anidb._download_file("TEST", "TEST")
-    assert ret is None
+    assert not ret
 
 
 @mock.patch.dict(os.environ, ENV)

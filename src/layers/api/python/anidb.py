@@ -150,9 +150,9 @@ def download_xml(download_path):
     """Try downloading XML file from S3 bucket, if it doesn't exist get it from AniDbApi"""
     file_name = os.path.basename(download_path)
 
-    xml_file = _download_file(file_name, download_path)
+    download_success = _download_file(file_name, download_path)
 
-    if xml_file is None:
+    if not download_success:
         log.info(f"Downloading new titles file: {file_name} to path: {download_path}")
 
         _download_titles(download_path)
@@ -162,11 +162,11 @@ def download_xml(download_path):
 
 def _download_file(key, location):
     try:
-        s3_file = _get_s3_bucket().download_file(key, location)
-        return s3_file
+        _get_s3_bucket().download_file(key, location)
+        return os.path.isfile(location)
     except ClientError as exc:
         if exc.response['Error']['Code'] == '404':
-            return None
+            return False
         raise
 
 
@@ -190,14 +190,14 @@ def get_json_titles(download_folder):
 
     today_file = f"{date_today}.json"
     file_path = os.path.join(download_folder, today_file)
-    titles_file = _download_file(today_file, file_path)
+    download_success = _download_file(today_file, file_path)
 
-    if titles_file is None:
+    if not download_success:
         yesterday_file = f"{date_yesterday}.json"
         file_path = os.path.join(download_folder, yesterday_file)
-        titles_file = _download_file(yesterday_file, file_path)
+        download_success = _download_file(yesterday_file, file_path)
 
-    if titles_file is None:
+    if not download_success:
         raise TitlesNotFound(f"No titles found for dates: {date_today}, {date_yesterday}")
 
     with open(file_path, "r") as f:
