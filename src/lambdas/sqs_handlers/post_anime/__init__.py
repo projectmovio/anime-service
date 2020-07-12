@@ -24,7 +24,7 @@ def handler(event, context):
     mal_id = event["Records"][0]["body"]
 
     try:
-        anime_db.get_anime(mal_id)
+        anime_db.get_anime_by_mal_id(mal_id)
     except anime_db.NotFoundError:
         pass
     else:
