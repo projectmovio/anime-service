@@ -130,7 +130,7 @@ class Anime(core.Stack):
                 ]
             },
             "crons-titles_updater": {
-                "layers": ["utils", "databases"],
+                "layers": ["utils", "databases", "api"],
                 "variables": {
                     "ANIDB_TITLES_BUCKET": self.anidb_titles_bucket.bucket_name,
                 },
