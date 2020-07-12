@@ -91,6 +91,7 @@ class Anime(core.Stack):
                 "layers": ["utils", "databases"],
                 "variables": {
                     "ANIME_DATABASE_NAME": self.anime_table.table_name,
+                    "LOG_LEVEL": "INFO",
                 },
                 "concurrent_executions": 100,
                 "policies": [
@@ -105,6 +106,7 @@ class Anime(core.Stack):
                 "layers": ["utils", "databases"],
                 "variables": {
                     "ANIME_EPISODES_DATABASE_NAME": self.anime_episodes.table_name,
+                    "LOG_LEVEL": "INFO",
                 },
                 "concurrent_executions": 100,
                 "policies": [
@@ -121,6 +123,7 @@ class Anime(core.Stack):
                     "ANIME_DATABASE_NAME": self.anime_table.table_name,
                     "POST_ANIME_SQS_QUEUE_URL": self.post_anime_queue.queue_url,
                     "MAL_CLIENT_ID": self.mal_client_id,
+                    "LOG_LEVEL": "INFO",
                 },
                 "concurrent_executions": 100,
                 "policies": [
@@ -139,6 +142,7 @@ class Anime(core.Stack):
                 "layers": ["utils", "databases", "api"],
                 "variables": {
                     "ANIDB_TITLES_BUCKET": self.anidb_titles_bucket.bucket_name,
+                    "LOG_LEVEL": "INFO",
                 },
                 "concurrent_executions": 1,
                 "policies": [
@@ -161,7 +165,8 @@ class Anime(core.Stack):
                     "ANIME_PARAMS_DATABASE_NAME": self.anime_params.table_name,
                     "MAL_CLIENT_ID": self.mal_client_id,
                     "ANIDB_TITLES_BUCKET": self.anidb_titles_bucket.bucket_name,
-                    "ANIDB_CLIENT": self.anidb_client
+                    "ANIDB_CLIENT": self.anidb_client,
+                    "LOG_LEVEL": "DEBUG",
                 },
                 "concurrent_executions": 1,
                 "policies": [
