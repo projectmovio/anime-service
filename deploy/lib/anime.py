@@ -95,7 +95,8 @@ class Anime(core.Stack):
                         actions=["dynamodb:GetItem"],
                         resources=[self.anime_table.table_arn]
                     )
-                ]
+                ],
+                "timeout": 3
             },
             "api-anime_episodes": {
                 "layers": ["utils", "databases"],
@@ -108,7 +109,8 @@ class Anime(core.Stack):
                         actions=["dynamodb:Query"],
                         resources=[self.anime_episodes.table_arn]
                     )
-                ]
+                ],
+                "timeout": 3
             },
             "api-anime": {
                 "layers": ["utils", "databases", "api"],
@@ -127,7 +129,8 @@ class Anime(core.Stack):
                         actions=["sqs:SendMessage"],
                         resources=[self.post_anime_queue.queue_arn]
                     ),
-                ]
+                ],
+                "timeout": 10
             },
             "crons-titles_updater": {
                 "layers": ["utils", "databases", "api"],
@@ -144,7 +147,8 @@ class Anime(core.Stack):
                         actions=["s3:GetItem", "s3:PutItem"],
                         resources=[self.anidb_titles_bucket.arn_for_objects("*")]
                     )
-                ]
+                ],
+                "timeout": 120
             },
             "sqs_handlers-post_anime": {
                 "layers": ["utils", "databases", "api"],
@@ -178,7 +182,8 @@ class Anime(core.Stack):
                         actions=["s3:ListBucket"],
                         resources=[self.anidb_titles_bucket.bucket_arn]
                     )
-                ]
+                ],
+                "timeout": 15
             },
         }
 
@@ -242,6 +247,7 @@ class Anime(core.Stack):
                     environment=lambda_config["variables"],
                     reserved_concurrent_executions=lambda_config["concurrent_executions"],
                     role=lambda_role,
+                    timeout=lambda_config["timeout"]
                 )
 
         self.lambdas["sqs_handlers-post_anime"].add_event_source(SqsEventSource(self.post_anime_queue))
