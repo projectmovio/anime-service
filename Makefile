@@ -1,8 +1,8 @@
 .PHONY: test
 test:
-	pip install -U -r test/requirements.txt
+	pip install -U -r test/unittest/requirements.txt
 	PYTHONPATH=./src/layers/api/python:./src/layers/common/python:./src/layers/utils/python:./src/lambdas/:./src/layers/databases/python \
-		pytest --cov-report html --cov=src -vv
+		pytest test/unittest --cov-report html --cov=src -vv
 
 .PHONY: format
 format:
