@@ -11,7 +11,7 @@ import logger
 log = logger.get_logger("sqs_hanlders.anime")
 
 
-def handler(event, context):
+def handle(event, context):
     last_timestamp = params_db.get_last_post_anime_update()
 
     current_timestamp = int(time.time())

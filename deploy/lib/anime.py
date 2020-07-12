@@ -232,8 +232,6 @@ class Anime(core.Stack):
 
         self.lambdas["sqs_handlers-post_anime"].add_event_source(SqsEventSource(self.post_anime_queue))
 
-
-
     def _create_gateway(self):
         http_api = HttpApi(self, "anime_gateway")
 
