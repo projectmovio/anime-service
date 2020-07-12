@@ -68,7 +68,6 @@ def get_anime_by_mal_id(mal_id):
 
 def get_anime(anime_id):
     res = _get_table().query(
-        IndexName='id',
         KeyConditionExpression=Key('id').eq(anime_id)
     )
 
