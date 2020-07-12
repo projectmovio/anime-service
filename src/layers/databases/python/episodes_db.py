@@ -32,8 +32,7 @@ def put_episodes(anime_id, episodes):
 
 def get_episodes(anime_id):
     res = _get_table().query(
-        IndexName='id',
-        KeyConditionExpression=Key('id').eq(anime_id)
+        KeyConditionExpression=Key('anime_id').eq(anime_id)
     )
 
     if not res["Items"]:

@@ -8,10 +8,8 @@ def test_handler(mocked_anime_db):
         "id": "123",
         "title": "naruto",
     }
-    mocked_anime_db.table.query.return_value = {
-        "Items": [
-            exp_item
-        ]
+    mocked_anime_db.table.get_item.return_value = {
+        "Item": exp_item
     }
     event = {
         "pathParameters": {

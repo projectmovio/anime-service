@@ -120,10 +120,8 @@ def test_handler_already_exist_skipped(mocked_params_db, mocked_anime_db, mocked
             "timestamp": int(time.time()) - 10
         }
     }
-    mocked_anime_db.table.query.return_value = {
-        "Items": [
-            TEST_MAL_RESPONSE
-        ]
+    mocked_anime_db.table.get_item.return_value = {
+        "Item": TEST_MAL_RESPONSE
     }
 
     event = {
