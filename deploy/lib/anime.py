@@ -173,6 +173,10 @@ class Anime(core.Stack):
                     PolicyStatement(
                         actions=["dynamodb:UpdateItem", "dynamodb:GetItem"],
                         resources=[self.anime_params.table_arn]
+                    ),
+                    PolicyStatement(
+                        actions=["s3:ListBucket"],
+                        resources=[self.anidb_titles_bucket.bucket_arn]
                     )
                 ]
             },
