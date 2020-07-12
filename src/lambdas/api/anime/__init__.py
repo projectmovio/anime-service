@@ -40,7 +40,7 @@ def handle(event, context):
             "body": json.dumps({"error": "Please specify query parameters"})
         }
 
-    mal_id = query_params.get("mal_id")
+    mal_id = int(query_params.get("mal_id"))
     search = query_params.get("search")
 
     if method == "POST":

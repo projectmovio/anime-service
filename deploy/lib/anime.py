@@ -58,7 +58,7 @@ class Anime(core.Stack):
             billing_mode=BillingMode.PAY_PER_REQUEST,
         )
         self.anime_table.add_global_secondary_index(
-            partition_key=Attribute(name="mal_id", type=AttributeType.STRING),
+            partition_key=Attribute(name="mal_id", type=AttributeType.NUMBER),
             index_name="mal_id"
         )
 
