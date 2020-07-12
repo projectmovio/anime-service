@@ -14,6 +14,6 @@ def get_logger(name):
     formatter = jsonlogger.JsonFormatter(fmt='%(asctime)s %(levelname)s %(name)s %(message)s')
     handler.setFormatter(formatter)
     handler.setLevel(LOG_LEVEL)
-    logger.addHandler(handler)
+    #logger.addHandler(handler)
 
     return logger
