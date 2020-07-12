@@ -7,3 +7,8 @@
 # Testing
 
 * `make test`
+
+# Deploy
+
+* `export MAL_CLIENT_ID=<MAL_CLIENT_ID>`
+* `cdk deploy`

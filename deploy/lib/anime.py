@@ -21,8 +21,9 @@ BUILD_FOLDER = os.path.join(CURRENT_DIR, "..", "..", "build")
 
 class Anime(core.Stack):
 
-    def __init__(self, app: core.App, id: str, **kwargs) -> None:
+    def __init__(self, app: core.App, id: str, mal_client_id: str, **kwargs) -> None:
         super().__init__(app, id, **kwargs)
+        self.mal_client_id = mal_client_id
         self.layers = {}
         self.lambdas = {}
         self._create_buckets()
@@ -112,6 +113,7 @@ class Anime(core.Stack):
                 "variables": {
                     "ANIME_DATABASE_NAME": self.anime_table.table_name,
                     "POST_ANIME_SQS_QUEUE_URL": self.post_anime_queue.queue_url,
+                    "MAL_CLIENT_ID": self.mal_client_id,
                 },
                 "concurrent_executions": 100,
                 "policies": [

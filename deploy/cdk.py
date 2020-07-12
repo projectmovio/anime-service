@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import os
+
 from aws_cdk import core
 
 from lib.anime import Anime
@@ -10,6 +12,10 @@ app = core.App()
 
 env = {"region": "eu-west-1"}
 
-Anime(app, "anime", env=env)
+mal_client_id = os.getenv("MAL_CLIENT_ID")
+if mal_client_id is None:
+    raise RuntimeError("Please set the MAL_CLIENT_ID environment variable")
+
+Anime(app, "anime", mal_client_id, env=env)
 
 app.synth()
