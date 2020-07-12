@@ -145,6 +145,7 @@ class Anime(core.Stack):
                     "ANIME_DATABASE_NAME": self.anime_table.table_name,
                     "ANIME_EPISODES_DATABASE_NAME": self.anime_episodes.table_name,
                     "ANIME_PARAMS_DATABASE_NAME": self.anime_params.table_name,
+                    "MAL_CLIENT_ID": self.mal_client_id
                 },
                 "concurrent_executions": 1,
                 "policies": [
