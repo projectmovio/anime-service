@@ -1,3 +1,4 @@
+import json
 import os
 import boto3
 
@@ -36,7 +37,7 @@ def handle(event, context):
     if not query_params:
         return {
             "statusCode": 400,
-            "body": {"error": "Please specify query parameters"}
+            "body": json.dumps({"error": "Please specify query parameters"})
         }
 
     mal_id = query_params.get("mal_id")
@@ -54,7 +55,7 @@ def _post_anime(mal_id):
     if mal_id is None:
         return {
             "statusCode": 400,
-            "body": {"error": "Please specify the 'mal_id' query parameter"}
+            "body": json.dumps({"error": "Please specify the 'mal_id' query parameter"})
         }
 
     try:
@@ -79,7 +80,7 @@ def _search_anime(mal_id, search):
     if search is None and mal_id is None:
         return {
             "statusCode": 400,
-            "body": {"error": "Please specify either 'search' or 'mal_id' query parameter"}
+            "body": json.dumps({"error": "Please specify either 'search' or 'mal_id' query parameter"})
         }
 
     if mal_id:
@@ -88,7 +89,7 @@ def _search_anime(mal_id, search):
         except anime_db.NotFoundError:
             log.debug(f"Anime with mal_id: {mal_id} not found in DB, use API")
         else:
-            return {"statusCode": 200, "body": res}
+            return {"statusCode": 200, "body": json.dumps(res)}
 
         try:
             res = mal.MalApi().get_anime(mal_id)
@@ -97,10 +98,10 @@ def _search_anime(mal_id, search):
         except mal.HTTPError:
             return {"statusCode": 500}
         else:
-            return {"statusCode": 200, "body": res}
+            return {"statusCode": 200, "body": json.dumps(res)}
     elif search:
         try:
             res = mal.MalApi().search(search)
         except mal.HTTPError:
             return {"statusCode": 500}
-        return {"statusCode": 200, "body": res}
+        return {"statusCode": 200, "body": json.dumps(res)}

@@ -1,3 +1,4 @@
+import json
 from unittest import mock
 
 import pytest
@@ -79,9 +80,9 @@ def test_post_anime_no_query_params(mocked_anime_db):
 
     exp = {
         "statusCode": 400,
-        "body": {
+        "body": json.dumps({
             "error": "Please specify query parameters"
-        }
+        })
     }
     assert res == exp
 
@@ -109,9 +110,9 @@ def test_post_anime_invalid_query_params(mocked_anime_db):
 
     exp = {
         "statusCode": 400,
-        "body": {
+        "body": json.dumps({
             "error": "Please specify the 'mal_id' query parameter"
-        }
+        })
     }
     assert res == exp
 
@@ -137,7 +138,7 @@ def test_search(mocked_mal):
 
     exp = {
         "statusCode": 200,
-        "body": exp_res
+        "body": json.dumps(exp_res)
     }
     assert res == exp
 
@@ -188,7 +189,7 @@ def test_search_mal_id_in_db(mocked_anime_db):
 
     exp = {
         "statusCode": 200,
-        "body": exp_res
+        "body": json.dumps(exp_res)
     }
     assert res == exp
 
@@ -215,7 +216,7 @@ def test_search_mal_id_not_found_in_db(mocked_mal_api, mocked_anime_db):
 
     exp = {
         "statusCode": 200,
-        "body": exp_res
+        "body": json.dumps(exp_res)
     }
     assert res == exp
 
@@ -281,7 +282,7 @@ def test_search_no_query_params():
 
     exp = {
         "statusCode": 400,
-        "body": {"error": "Please specify query parameters"}
+        "body": json.dumps({"error": "Please specify query parameters"})
     }
     assert res == exp
 
@@ -302,7 +303,7 @@ def test_search_invalid_query_params():
 
     exp = {
         "statusCode": 400,
-        "body": {"error": "Please specify either 'search' or 'mal_id' query parameter"}
+        "body": json.dumps({"error": "Please specify either 'search' or 'mal_id' query parameter"})
     }
     assert res == exp
 

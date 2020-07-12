@@ -1,3 +1,5 @@
+import json
+
 from api.anime_episodes import handle
 
 
@@ -25,7 +27,7 @@ def test_handler(mocked_episodes_db):
 
     exp = {
         "statusCode": 200,
-        "body": exp_eps
+        "body": json.dumps(exp_eps)
     }
     assert res == exp
 
