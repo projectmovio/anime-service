@@ -28,6 +28,11 @@ def test_handler(mocked_anidb):
     with open(json_path) as fs:
         assert exp_json_titles == json.load(fs)
 
+    if os.path.isfile(json_path):
+        os.remove(json_path)
+    if os.path.isfile(xml_path):
+        os.remove(xml_path)
+
 
 @mock.patch("requests.get")
 def test_handler_no_s3_file(mocked_get, mocked_anidb):

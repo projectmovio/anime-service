@@ -174,15 +174,13 @@ def test_get_json_titles_yesterday_file(mocked_anidb):
     mocked_anidb.get_json_titles(CURRENT_DIR)
 
     # Cleanup
-    if os.path.isfile("titles.json"):
-        os.remove("titles.json")
-    if os.path.isfile(f"{date_yesterday}.json"):
-        os.remove(f"{date_yesterday}.json")
+    if os.path.isfile(os.path.join(CURRENT_DIR, f"{date_yesterday}.json")):
+        os.remove(os.path.join(CURRENT_DIR, f"{date_yesterday}.json"))
 
 
 @mock.patch.dict(os.environ, ENV)
 def test_get_json_titles_no_file(mocked_anidb):
-    mocked_anidb.s3_bucket.download_file.return_value = None
+    mocked_anidb.s3_bucket.download_file.return_value = False
 
     with pytest.raises(mocked_anidb.TitlesNotFound):
         mocked_anidb.get_json_titles(CURRENT_DIR)
