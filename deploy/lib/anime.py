@@ -145,7 +145,7 @@ class Anime(core.Stack):
                         resources=[self.anidb_titles_bucket.bucket_arn]
                     ),
                     PolicyStatement(
-                        actions=["s3:GetItem", "s3:PutItem"],
+                        actions=["s3:GetObject", "s3:PutObject"],
                         resources=[self.anidb_titles_bucket.arn_for_objects("*")]
                     )
                 ],
