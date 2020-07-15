@@ -14,7 +14,7 @@ class HttpError(object):
 def handle(event, context):
     log.debug(f"Received event: {event}")
 
-    anime_id = event["pathParameters"].get("anime_id")
+    anime_id = event["pathParameters"].get("id")
 
     try:
         res = episodes_db.get_episodes(anime_id)
