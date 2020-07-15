@@ -4,6 +4,7 @@ import boto3
 
 import anime_db
 import logger
+import decimal_encoder
 import mal
 
 SQS_QUEUE_URL = os.getenv("POST_ANIME_SQS_QUEUE_URL")
@@ -98,7 +99,7 @@ def _search_anime(mal_id, search):
         except mal.HTTPError:
             return {"statusCode": 503}
         else:
-            return {"statusCode": 200, "body": json.dumps(res)}
+            return {"statusCode": 200, "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
     elif search:
         try:
             res = mal.MalApi().search(search)
