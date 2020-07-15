@@ -3,9 +3,13 @@ import os
 import boto3
 from boto3.dynamodb.conditions import Key
 
+import logger
+
 DATABASE_NAME = os.getenv("ANIME_EPISODES_DATABASE_NAME")
 
 table = None
+
+log = logger.get_logger(__name__)
 
 
 class Error(Exception):
@@ -34,6 +38,7 @@ def get_episodes(anime_id):
     res = _get_table().query(
         KeyConditionExpression=Key('anime_id').eq(str(anime_id))
     )
+    log.debug(f"get_episodes response: {res}")
 
     if not res["Items"]:
         raise NotFoundError(f"Anime with id: {anime_id} not found")
