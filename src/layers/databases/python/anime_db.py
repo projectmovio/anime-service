@@ -59,6 +59,7 @@ def get_anime_by_mal_id(mal_id):
         IndexName='mal_id',
         KeyConditionExpression=Key('mal_id').eq(mal_id)
     )
+    log.debug(f"get_anime_by_mal_id res: {res}")
 
     if not res["Items"]:
         raise NotFoundError(f"Anime with mal_id: {mal_id} not found")
