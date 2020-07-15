@@ -66,7 +66,7 @@ class Anime(core.Stack):
             self,
             "anime_episodes",
             partition_key=Attribute(name="anime_id", type=AttributeType.STRING),
-            sort_key=Attribute(name="episode_number", type=AttributeType.NUMBER),
+            sort_key=Attribute(name="episode_number", type=AttributeType.STRING),
             billing_mode=BillingMode.PAY_PER_REQUEST,
         )
 
