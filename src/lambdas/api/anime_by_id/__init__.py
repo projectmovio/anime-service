@@ -1,6 +1,7 @@
 import json
 
 import anime_db
+import decimal_encoder
 import logger
 
 log = logger.get_logger("anime_by_id")
@@ -21,4 +22,4 @@ def handle(event, context):
         log.debug(f"Anime with id: {anime_id} not found in DB")
         return {"statusCode": 404}
     else:
-        return {"statusCode": 200, "body": json.dumps(res)}
+        return {"statusCode": 200, "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
