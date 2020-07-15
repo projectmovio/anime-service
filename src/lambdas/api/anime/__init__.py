@@ -90,7 +90,7 @@ def _search_anime(mal_id, search):
         except anime_db.NotFoundError:
             log.debug(f"Anime with mal_id: {mal_id} not found in DB, use API")
         else:
-            return {"statusCode": 200, "body": json.dumps(res)}
+            return {"statusCode": 200, "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
 
         try:
             res = mal.MalApi().get_anime(mal_id)
@@ -99,7 +99,7 @@ def _search_anime(mal_id, search):
         except mal.HTTPError:
             return {"statusCode": 503}
         else:
-            return {"statusCode": 200, "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
+            return {"statusCode": 200, "body": json.dumps(res)}
     elif search:
         try:
             res = mal.MalApi().search(search)
