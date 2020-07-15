@@ -88,7 +88,7 @@ class AniDbApi:
                 title = title.text
 
             ep = {
-                "id": episode.attrib.get("id"),
+                "id": int(episode.attrib.get("id")),
                 "episode_number": epno.text,
                 "length": self._get_property(episode, "length"),
                 "air_date": self._get_property(episode, "airdate"),
@@ -141,7 +141,7 @@ def _anime_titles(file_path):
 
         for title in titles:
             yield {
-                "id": anime_id,
+                "id": int(anime_id),
                 "title": title.text,
             }
 

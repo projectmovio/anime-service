@@ -21,7 +21,7 @@ def handle(event, context):
 
     # batch size always 1, sleep and throttle could increase runtime close to lambda timeout
     # split it up in 1 update per lambda instead. This will also make the code cleaner.
-    mal_id = event["Records"][0]["body"]
+    mal_id = int(event["Records"][0]["body"])
 
     try:
         anime_db.get_anime_by_mal_id(mal_id)
