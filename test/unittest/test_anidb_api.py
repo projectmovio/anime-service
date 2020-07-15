@@ -124,13 +124,13 @@ def test_save_json_titles(mocked_anidb):
         json_data = json.load(f)
 
     exp = {
-        "CotS": 1,
-        "Crest of the Stars": 1,
-        "Hvězdný erb": 1,
-        "Seikai no Monshou": 1,
-        "SnM": 1,
-        "星界の紋章": 1,
-        "星界之纹章": 1
+        "CotS": "1",
+        "Crest of the Stars": "1",
+        "Hvězdný erb": "1",
+        "Seikai no Monshou": "1",
+        "SnM": "1",
+        "星界の紋章": "1",
+        "星界之纹章": "1"
     }
 
     assert json_data == exp

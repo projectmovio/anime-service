@@ -23,8 +23,8 @@ def test_handler(mocked_anidb):
 
     assert filecmp.cmp(xml_path, TEST_TITLES)
 
-    exp_json_titles = {'CotS': 1, 'Crest of the Stars': 1, 'Hvězdný erb': 1, 'Seikai no Monshou': 1, 'SnM': 1,
-                       '星界の紋章': 1, '星界之纹章': 1}
+    exp_json_titles = {'CotS': "1", 'Crest of the Stars': "1", 'Hvězdný erb': "1", 'Seikai no Monshou': "1", 'SnM': "1",
+                       '星界の紋章': "1", '星界之纹章': "1"}
     with open(json_path) as fs:
         assert exp_json_titles == json.load(fs)
 
@@ -46,8 +46,8 @@ def test_handler_no_s3_file(mocked_get, mocked_anidb):
 
     assert filecmp.cmp(xml_path, TEST_TITLES)
 
-    exp_json_titles = {'CotS': 1, 'Crest of the Stars': 1, 'Hvězdný erb': 1, 'Seikai no Monshou': 1, 'SnM': 1,
-                       '星界の紋章': 1, '星界之纹章': 1}
+    exp_json_titles = {'CotS': "1", 'Crest of the Stars': "1", 'Hvězdný erb': "1", 'Seikai no Monshou': "1", 'SnM': "1",
+                       '星界の紋章': "1", '星界之纹章': "1"}
     with open(json_path) as fs:
         assert exp_json_titles == json.load(fs)
 
