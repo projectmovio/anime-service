@@ -82,7 +82,8 @@ class Anime(core.Stack):
         self.post_anime_queue = Queue(
             self,
             "anime",
-            dead_letter_queue=DeadLetterQueue(max_receive_count=5, queue=post_anime_dl)
+            dead_letter_queue=DeadLetterQueue(max_receive_count=5, queue=post_anime_dl),
+            receive_message_wait_time=Duration.seconds(10)
         )
 
     def _create_lambdas_config(self):
