@@ -1,5 +1,6 @@
 import json
 
+import decimal_encoder
 import episodes_db
 import logger
 
@@ -21,4 +22,4 @@ def handle(event, context):
         log.debug(f"No episodes found for anime with id: {anime_id}")
         return {"statusCode": 404}
     else:
-        return {"statusCode": 200, "body": json.dumps(res)}
+        return {"statusCode": 200, "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
