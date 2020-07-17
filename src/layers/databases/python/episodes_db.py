@@ -47,6 +47,7 @@ def get_episodes(anime_id, limit=100, start=1):
     res = []
     for p in _episodes_generator(anime_id, limit):
         if start_page < start:
+            start_page += 1
             continue
         res = p
         break
