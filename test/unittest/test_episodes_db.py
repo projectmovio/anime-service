@@ -40,6 +40,32 @@ def test_get_episodes_with_offset(mocked_episodes_db):
     assert ret == [{"ep_2"}]
 
 
+def test_get_episodes_with_to_large_offset(mocked_episodes_db):
+    m = MagicMock()
+    mocked_episodes_db.client.get_paginator.return_value = m
+    m.paginate.return_value = [
+        {"Items": [{"ep_1"}]},
+        {"Items": [{"ep_2"}]},
+        {"Items": [{"ep_3"}]},
+    ]
+
+    with pytest.raises(mocked_episodes_db.InvalidStartOffset):
+        mocked_episodes_db.get_episodes("123", limit=1, start=4)
+
+
+def test_get_episodes_with_to_small_offset(mocked_episodes_db):
+    m = MagicMock()
+    mocked_episodes_db.client.get_paginator.return_value = m
+    m.paginate.return_value = [
+        {"Items": [{"ep_1"}]},
+        {"Items": [{"ep_2"}]},
+        {"Items": [{"ep_3"}]},
+    ]
+
+    with pytest.raises(mocked_episodes_db.InvalidStartOffset):
+        mocked_episodes_db.get_episodes("123", limit=1, start=0)
+
+
 def test_episodes_generator(mocked_episodes_db):
     m = MagicMock()
     mocked_episodes_db.client.get_paginator.return_value = m

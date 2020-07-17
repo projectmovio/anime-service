@@ -21,6 +21,10 @@ class NotFoundError(Error):
     pass
 
 
+class InvalidStartOffset(Error):
+    pass
+
+
 def _get_table():
     global table
     if table is None:
@@ -72,5 +76,3 @@ def _episodes_generator(anime_id, limit):
 
     for p in page_iterator:
         yield p["Items"]
-
-
