@@ -29,10 +29,10 @@ def _get_table():
 
 
 def _get_client():
-    global table
-    if table is None:
-        table = boto3.resource("dynamodb")
-    return table
+    global client
+    if client is None:
+        client = boto3.resource("dynamodb")
+    return client
 
 
 def put_episodes(anime_id, episodes):
