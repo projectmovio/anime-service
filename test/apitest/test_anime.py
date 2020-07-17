@@ -23,6 +23,7 @@ def test_search_by_mal_id():
     item = res.json()
     assert item["mal_id"] == 20
     assert item["title"] == "Naruto"
+    time.sleep(1)
 
 
 def test_get_anime_by_id():
@@ -33,6 +34,7 @@ def test_get_anime_by_id():
     item = res.json()
     assert item["mal_id"] == 20
     assert item["title"] == "Naruto"
+    time.sleep(1)
 
 
 def test_get_anime_episodes():
@@ -68,4 +70,10 @@ def test_get_anime_episodes_with_changed_start_and_limit():
     assert len(item) == 10
     assert item[0]["episode_number"] == "210"
     assert item[-1]["episode_number"] == "201"
+    time.sleep(1)
+
+
+def test_post_anime():
+    res = requests.post(f"{API_URL}/anime?mal_id=20", headers=BASE_HEADERS)
+    assert res.status_code == 202
     time.sleep(1)
