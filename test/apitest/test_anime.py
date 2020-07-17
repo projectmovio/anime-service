@@ -61,11 +61,11 @@ def test_get_anime_episodes_with_changed_limit():
 
 def test_get_anime_episodes_with_changed_start_and_limit():
     anime_id = str(uuid.uuid5(uuid.NAMESPACE_OID, "20"))
-    res = requests.get(f"{API_URL}/anime/{anime_id}/episodes?limit=10&start=100", headers=BASE_HEADERS)
+    res = requests.get(f"{API_URL}/anime/{anime_id}/episodes?limit=10&start=2", headers=BASE_HEADERS)
 
     assert res.status_code == 200
     item = res.json()
     assert len(item) == 10
-    assert item[0]["episode_number"] == "100"
-    assert item[-1]["episode_number"] == "91"
+    assert item[0]["episode_number"] == "210"
+    assert item[-1]["episode_number"] == "201"
     time.sleep(1)
