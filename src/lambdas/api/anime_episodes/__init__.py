@@ -38,5 +38,8 @@ def handle(event, context):
     except episodes_db.NotFoundError:
         log.debug(f"No episodes found for anime with id: {anime_id}")
         return {"statusCode": 404}
+    except episodes_db.InvalidStartOffset:
+        log.debug(f"Invalid start offset: {start}")
+        return {"statusCode": 400, "body": json.dumps({"message": "Invalid offset"})}
     else:
         return {"statusCode": 200, "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
