@@ -19,8 +19,9 @@ def handle(event, context):
     start = 1
 
     query_params = event.get("queryStringParameters")
-    if query_params:
+    if query_params and "limit" in query_params:
         limit = query_params.get("limit")
+    if query_params and "start" in query_params:
         start = query_params.get("start")
 
     try:
