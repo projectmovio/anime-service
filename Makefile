@@ -9,3 +9,7 @@ format:
 	pip install yapf isort
 	find . -name '*.py' -exec yapf -i -vv {} \+
 	isort -rc .
+
+.PHONY: apitest
+apitest:
+	PYTHONPATH=test pytest test/apitest -vv
