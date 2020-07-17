@@ -4,7 +4,7 @@ import subprocess
 
 from aws_cdk import core
 from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, LambdaProxyIntegration, CfnAuthorizer, CfnRoute, \
-    HttpIntegration, HttpIntegrationType, PayloadFormatVersion
+    HttpIntegration, HttpIntegrationType, PayloadFormatVersion, CfnStage
 from aws_cdk.aws_dynamodb import Table, Attribute, AttributeType, BillingMode
 from aws_cdk.aws_events import Rule, Schedule
 from aws_cdk.aws_events_targets import LambdaFunction
@@ -273,7 +273,7 @@ class Anime(core.Stack):
         )
 
     def _create_gateway(self):
-        http_api = HttpApi(self, "anime_gateway")
+        http_api = HttpApi(self, "anime_gateway", create_default_stage=False)
 
         authorizer = CfnAuthorizer(
             self,
@@ -336,3 +336,15 @@ class Anime(core.Stack):
                 principal=ServicePrincipal("apigateway.amazonaws.com"),
                 source_arn=f"arn:aws:execute-api:{self.region}:{self.account}:{http_api.http_api_id}/*"
             )
+
+        CfnStage(
+            self,
+            "live",
+            api_id=http_api.http_api_id,
+            auto_deploy=True,
+            default_route_settings={
+                "ThrottlingBurstLimit": 1,
+                "ThrottlingRateLimit": 1
+            },
+            stage_name="live"
+        )
