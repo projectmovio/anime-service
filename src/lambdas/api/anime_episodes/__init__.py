@@ -31,7 +31,7 @@ def handle(event, context):
     try:
         start = int(start)
     except ValueError:
-        return {"statusCode": 400, "body": json.dumps({"message": "Invalid limit type"})}
+        return {"statusCode": 400, "body": json.dumps({"message": "Invalid start type"})}
 
     try:
         res = episodes_db.get_episodes(anime_id, limit=limit, start=start)
