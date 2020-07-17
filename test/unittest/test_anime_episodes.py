@@ -1,4 +1,5 @@
 import json
+from unittest.mock import MagicMock
 
 from api.anime_episodes import handle
 
@@ -14,9 +15,12 @@ def test_handler(mocked_episodes_db):
             "title": "ep2",
         }
     ]
-    mocked_episodes_db.table.query.return_value = {
-        "Items": exp_eps
-    }
+    m = MagicMock()
+    mocked_episodes_db.client.get_paginator.return_value = m
+    m.paginate.return_value = [
+        {"Items": exp_eps}
+    ]
+
     event = {
         "pathParameters": {
             "anime_id": "123"
@@ -33,7 +37,12 @@ def test_handler(mocked_episodes_db):
 
 
 def test_handler_not_found(mocked_episodes_db):
-    mocked_episodes_db.table.query.side_effect = mocked_episodes_db.NotFoundError
+    m = MagicMock()
+    mocked_episodes_db.client.get_paginator.return_value = m
+    m.paginate.return_value = [
+        {"Items": []}
+    ]
+
     event = {
         "pathParameters": {
             "anime_id": "123"
