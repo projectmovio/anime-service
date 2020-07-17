@@ -8,6 +8,7 @@ import logger
 DATABASE_NAME = os.getenv("ANIME_EPISODES_DATABASE_NAME")
 
 table = None
+client = None
 
 log = logger.get_logger(__name__)
 
@@ -27,6 +28,13 @@ def _get_table():
     return table
 
 
+def _get_client():
+    global table
+    if table is None:
+        table = boto3.resource("dynamodb")
+    return table
+
+
 def put_episodes(anime_id, episodes):
     with _get_table().batch_writer() as batch:
         for ep in episodes:
@@ -34,13 +42,36 @@ def put_episodes(anime_id, episodes):
             batch.put_item(Item=ep)
 
 
-def get_episodes(anime_id):
-    res = _get_table().query(
-        KeyConditionExpression=Key('anime_id').eq(str(anime_id))
-    )
+def get_episodes(anime_id, limit=100, start=1):
+    start_page = 1
+    res = []
+    for p in _episodes_generator(anime_id, limit):
+        if start_page < start:
+            continue
+        res = p
+        break
+
     log.debug(f"get_episodes response: {res}")
 
-    if not res["Items"]:
+    if not res:
         raise NotFoundError(f"Anime with id: {anime_id} not found")
 
-    return res["Items"]
+    return res
+
+
+def _episodes_generator(anime_id, limit):
+    paginator = _get_client().get_paginator('query')
+
+    page_iterator = paginator.paginate(
+        TableName=DATABASE_NAME,
+        KeyConditionExpression="anime_id = :anime_id",
+        ExpressionAttributeValues={":anime_id": {"S": str(anime_id)}},
+        Limit=limit
+    )
+
+    for p in page_iterator:
+        yield p["Items"]
+
+    yield None
+
+
