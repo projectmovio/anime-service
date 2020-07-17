@@ -1,7 +1,7 @@
 import os
 
 import boto3
-from boto3.dynamodb.conditions import Key
+from dynamodb_json import json_util
 
 import logger
 
@@ -81,4 +81,7 @@ def _episodes_generator(anime_id, limit):
     )
 
     for p in page_iterator:
-        yield p["Items"]
+        items = []
+        for i in p["Items"]:
+            items.append(json_util.loads(i))
+        yield items

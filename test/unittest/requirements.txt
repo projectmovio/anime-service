@@ -3,3 +3,4 @@ pytest-cov
 pytest-html
 boto3
 python-json-logger
+python-json-logger
