@@ -25,6 +25,15 @@ def handle(event, context):
         start = query_params.get("start")
 
     try:
+        limit = int(limit)
+    except ValueError:
+        return {"statusCode": 400, "body": json.dumps({"message": "Invalid limit type"})}
+    try:
+        start = int(start)
+    except ValueError:
+        return {"statusCode": 400, "body": json.dumps({"message": "Invalid limit type"})}
+
+    try:
         res = episodes_db.get_episodes(anime_id, limit=limit, start=start)
     except episodes_db.NotFoundError:
         log.debug(f"No episodes found for anime with id: {anime_id}")
