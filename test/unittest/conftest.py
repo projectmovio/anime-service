@@ -29,6 +29,7 @@ def mocked_episodes_db():
     import episodes_db
 
     episodes_db.table = MagicMock()
+    episodes_db.client = MagicMock()
 
     return episodes_db
 
