@@ -43,9 +43,10 @@ def test_get_anime_episodes():
 
     assert res.status_code == 200
     item = res.json()
-    assert len(item) == 100
-    assert item[0]["episode_number"] == "220"
-    assert item[-1]["episode_number"] == "121"
+    assert len(item["items"]) == 100
+    assert item["items"][0]["episode_number"] == "220"
+    assert item["items"][-1]["episode_number"] == "121"
+    assert item["total"] == 220
     time.sleep(1)
 
 
@@ -55,9 +56,10 @@ def test_get_anime_episodes_with_changed_limit():
 
     assert res.status_code == 200
     item = res.json()
-    assert len(item) == 10
-    assert item[0]["episode_number"] == "220"
-    assert item[-1]["episode_number"] == "211"
+    assert len(item["items"]) == 10
+    assert item["items"][0]["episode_number"] == "220"
+    assert item["items"][-1]["episode_number"] == "211"
+    assert item["total"] == 220
     time.sleep(1)
 
 
@@ -67,9 +69,10 @@ def test_get_anime_episodes_with_changed_start_and_limit():
 
     assert res.status_code == 200
     item = res.json()
-    assert len(item) == 10
-    assert item[0]["episode_number"] == "210"
-    assert item[-1]["episode_number"] == "201"
+    assert len(item["items"]) == 10
+    assert item["items"][0]["episode_number"] == "210"
+    assert item["items"][-1]["episode_number"] == "201"
+    assert item["total"] == 220
     time.sleep(1)
 
 
