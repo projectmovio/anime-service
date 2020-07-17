@@ -14,7 +14,6 @@ def mocked_anidb():
     return anidb
 
 
-
 @pytest.fixture(scope='function')
 def mocked_anime_db():
     import anime_db

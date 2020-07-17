@@ -35,7 +35,7 @@ def _get_table():
 def _get_client():
     global client
     if client is None:
-        client = boto3.resource("dynamodb")
+        client = boto3.client("dynamodb")
     return client
 
 
