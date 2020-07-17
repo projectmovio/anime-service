@@ -72,6 +72,4 @@ def _episodes_generator(anime_id, limit):
     for p in page_iterator:
         yield p["Items"]
 
-    yield None
-
 
