@@ -25,7 +25,7 @@ def test_get_episodes_with_limit(mocked_episodes_db):
     ]
 
     ret = mocked_episodes_db.get_episodes("123", limit=1)
-    assert ret == [{"ep_name": "ep_1"}]
+    assert ret == {"items": [{"ep_name": "ep_1"}], "total": 3}
 
 
 def test_get_episodes_with_offset(mocked_episodes_db):
@@ -38,7 +38,7 @@ def test_get_episodes_with_offset(mocked_episodes_db):
     ]
 
     ret = mocked_episodes_db.get_episodes("123", limit=1, start=2)
-    assert ret == [{"ep_name": "ep_2"}]
+    assert ret == {"items": [{"ep_name": "ep_2"}], "total": 3}
 
 
 def test_get_episodes_with_to_large_offset(mocked_episodes_db):

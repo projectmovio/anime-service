@@ -31,7 +31,7 @@ def test_handler(mocked_episodes_db):
 
     exp = {
         "statusCode": 200,
-        "body": json.dumps(exp_eps)
+        "body": json.dumps({"items": exp_eps, "total": 2})
     }
     assert res == exp
 
@@ -88,7 +88,7 @@ def test_handler_with_limit(mocked_episodes_db):
 
     exp = {
         "statusCode": 200,
-        "body": json.dumps([exp_eps[0]])
+        "body": json.dumps({"items": [exp_eps[0]], "total": 2})
     }
     assert res == exp
 
@@ -124,7 +124,7 @@ def test_handler_with_start(mocked_episodes_db):
 
     exp = {
         "statusCode": 200,
-        "body": json.dumps([exp_eps[1]])
+        "body": json.dumps({"items": [exp_eps[1]], "total": 2})
     }
     assert res == exp
 
@@ -161,7 +161,7 @@ def test_handler_with_limit_and_start(mocked_episodes_db):
 
     exp = {
         "statusCode": 200,
-        "body": json.dumps([exp_eps[1]])
+        "body": json.dumps({"items": [exp_eps[1]], "total": 2})
     }
     assert res == exp
 
