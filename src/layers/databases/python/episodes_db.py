@@ -77,7 +77,8 @@ def _episodes_generator(anime_id, limit):
         TableName=DATABASE_NAME,
         KeyConditionExpression="anime_id = :anime_id",
         ExpressionAttributeValues={":anime_id": {"S": str(anime_id)}},
-        Limit=limit
+        Limit=limit,
+        ScanIndexForward=False
     )
 
     for p in page_iterator:
