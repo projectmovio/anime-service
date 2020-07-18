@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<animetitles>
+	<anime aid="1">
+		<title type="short" xml:lang="en">CotS</title>
+		<title xml:lang="pl" type="official">Crest of the Stars</title>
+		<title type="official" xml:lang="fr">Crest of the Stars</title>
+		<title type="official" xml:lang="en">Crest of the Stars</title>
+		<title type="syn" xml:lang="cs">Hvězdný erb</title>
+		<title xml:lang="x-jat" type="main">Seikai no Monshou</title>
+		<title xml:lang="x-jat" type="short">SnM</title>
+		<title xml:lang="ja" type="official">星界の紋章</title>
+		<title type="syn" xml:lang="zh-Hans">星界之纹章</title>
+	</anime>
+</animetitles>

@@ -2,3 +2,9 @@
 *.pyc
 config.json
 cache/
+
+.coverage
+htmlcov/
+
+cdk.out/*
+build/*
