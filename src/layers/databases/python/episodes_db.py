@@ -48,18 +48,19 @@ def put_episodes(anime_id, episodes):
 
 def get_episodes(anime_id, limit=100, start=1):
     start_page = 0
+    total_pages = 0
     res = []
 
     if start <= 0:
         raise InvalidStartOffset
 
     for p in _episodes_generator(anime_id, limit):
+        total_pages += 1
         start_page += 1
         if start_page == start:
             res = p
-            break
 
-    if start_page < start:
+    if start > start_page:
         raise InvalidStartOffset
 
     log.debug(f"get_episodes response: {res}")
@@ -69,25 +70,8 @@ def get_episodes(anime_id, limit=100, start=1):
 
     return {
         "items": res,
-        "total": _episodes_count(anime_id)
+        "total_pages": total_pages
     }
-
-
-def _episodes_count(anime_id):
-    paginator = _get_client().get_paginator('query')
-
-    page_iterator = paginator.paginate(
-        TableName=DATABASE_NAME,
-        KeyConditionExpression="anime_id = :anime_id",
-        ExpressionAttributeValues={":anime_id": {"S": str(anime_id)}},
-        Limit=100,
-        ScanIndexForward=False
-    )
-
-    count = 0
-    for p in page_iterator:
-        count += len(p["Items"])
-    return count
 
 
 def _episodes_generator(anime_id, limit):
