@@ -66,6 +66,7 @@ def _post_anime(mal_id):
     else:
         return {
             "statusCode": 202,
+            "anime_id": anime_db.create_anime_uuid(mal_id)
         }
 
     _get_sqs_queue().send_message(
@@ -74,6 +75,7 @@ def _post_anime(mal_id):
 
     return {
         "statusCode": 202,
+        "anime_id": anime_db.create_anime_uuid(mal_id)
     }
 
 
