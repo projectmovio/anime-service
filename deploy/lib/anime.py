@@ -361,7 +361,7 @@ class Anime(core.Stack):
 
         CfnStage(
             self,
-            "live",
+            "v1",
             api_id=http_api.http_api_id,
             auto_deploy=True,
             default_route_settings=CfnStage.RouteSettingsProperty(
