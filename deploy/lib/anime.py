@@ -292,7 +292,7 @@ class Anime(core.Stack):
 
         http_api = HttpApi(
             self,
-            "anime_gateway",
+            "anime",
             create_default_stage=False,
         )
 
