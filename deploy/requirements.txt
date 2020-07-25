@@ -8,3 +8,4 @@ aws_cdk.aws_apigatewayv2==1.49.1
 aws_cdk.aws_lambda_event_sources==1.49.1
 aws_cdk.aws_events==1.49.1
 aws_cdk.aws_events_targets==1.49.1
+aws_cdk.aws_certificatemanager==1.49.1
