@@ -3,8 +3,10 @@ import shutil
 import subprocess
 
 from aws_cdk import core
-from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, LambdaProxyIntegration, CfnAuthorizer, CfnRoute, \
+from aws_cdk.aws_apigateway import DomainName
+from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, CfnAuthorizer, CfnRoute, \
     HttpIntegration, HttpIntegrationType, PayloadFormatVersion, CfnStage
+from aws_cdk.aws_certificatemanager import Certificate, ValidationMethod, CertificateValidation
 from aws_cdk.aws_dynamodb import Table, Attribute, AttributeType, BillingMode
 from aws_cdk.aws_events import Rule, Schedule
 from aws_cdk.aws_events_targets import LambdaFunction
@@ -25,10 +27,11 @@ BUILD_FOLDER = os.path.join(CURRENT_DIR, "..", "..", "build")
 
 class Anime(core.Stack):
 
-    def __init__(self, app: core.App, id: str, mal_client_id: str, anidb_client: str, **kwargs) -> None:
+    def __init__(self, app: core.App, id: str, mal_client_id: str, anidb_client: str, domain_name: str, **kwargs) -> None:
         super().__init__(app, id, **kwargs)
         self.mal_client_id = mal_client_id
         self.anidb_client = anidb_client
+        self.domain_name = domain_name
         self.layers = {}
         self.lambdas = {}
         self._create_buckets()

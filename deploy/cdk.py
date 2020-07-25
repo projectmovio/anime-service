@@ -20,7 +20,10 @@ anidb_client = os.getenv("ANIDB_CLIENT")
 if mal_client_id is None:
     raise RuntimeError("Please set the ANIDB_CLIENT environment variable")
 
+domain_name = os.getenv("DOMAIN_NAME")
+if domain_name is None:
+    raise RuntimeError("Please set the DOMAIN_NAME environment variable")
 
-Anime(app, "anime", mal_client_id, anidb_client, env=env)
+Anime(app, "anime", mal_client_id, anidb_client, domain_name, env=env)
 
 app.synth()

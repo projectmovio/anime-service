@@ -12,4 +12,5 @@
 
 * `export MAL_CLIENT_ID=<MAL_CLIENT_ID>`
 * `export ANIDB_CLIENT=<ANIDB_CLIENT>`
+* `export DOMAIN_NAME=<DOMAIN_NAME>`
 * `cdk deploy`
