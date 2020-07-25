@@ -3,7 +3,7 @@ import shutil
 import subprocess
 
 from aws_cdk import core
-from aws_cdk.aws_apigateway import DomainName
+from aws_cdk.aws_apigateway import DomainName, SecurityPolicy
 from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, CfnAuthorizer, CfnRoute, \
     HttpIntegration, HttpIntegrationType, PayloadFormatVersion, CfnStage, DefaultDomainMappingOptions, HttpApiMapping
 from aws_cdk.aws_certificatemanager import Certificate, ValidationMethod
@@ -287,7 +287,8 @@ class Anime(core.Stack):
             self,
             "domain",
             domain_name=self.domain_name,
-            certificate=cert
+            certificate=cert,
+            security_policy=SecurityPolicy.TLS_1_2
         )
 
         http_api = HttpApi(
