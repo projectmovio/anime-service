@@ -293,8 +293,9 @@ class Anime(core.Stack):
 
         http_api = HttpApi(
             self,
-            "anime",
+            "anime_gateway",
             create_default_stage=False,
+            api_name="anime"
         )
 
         authorizer = CfnAuthorizer(
