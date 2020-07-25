@@ -6,7 +6,7 @@ from aws_cdk import core
 from aws_cdk.aws_apigateway import DomainName
 from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, CfnAuthorizer, CfnRoute, \
     HttpIntegration, HttpIntegrationType, PayloadFormatVersion, CfnStage
-from aws_cdk.aws_certificatemanager import Certificate, ValidationMethod, CertificateValidation
+from aws_cdk.aws_certificatemanager import Certificate, ValidationMethod
 from aws_cdk.aws_dynamodb import Table, Attribute, AttributeType, BillingMode
 from aws_cdk.aws_events import Rule, Schedule
 from aws_cdk.aws_events_targets import LambdaFunction
@@ -359,3 +359,5 @@ class Anime(core.Stack):
             ),
             stage_name="live"
         )
+
+
