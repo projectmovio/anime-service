@@ -5,7 +5,7 @@ import subprocess
 from aws_cdk import core
 from aws_cdk.aws_apigateway import DomainName
 from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, CfnAuthorizer, CfnRoute, \
-    HttpIntegration, HttpIntegrationType, PayloadFormatVersion, CfnStage, DefaultDomainMappingOptions
+    HttpIntegration, HttpIntegrationType, PayloadFormatVersion, CfnStage, DefaultDomainMappingOptions, HttpApiMapping
 from aws_cdk.aws_certificatemanager import Certificate, ValidationMethod
 from aws_cdk.aws_dynamodb import Table, Attribute, AttributeType, BillingMode
 from aws_cdk.aws_events import Rule, Schedule
@@ -294,7 +294,6 @@ class Anime(core.Stack):
             self,
             "anime_gateway",
             create_default_stage=False,
-            default_domain_mapping=DefaultDomainMappingOptions(domain_name=domain_name, mapping_key="live")
         )
 
         authorizer = CfnAuthorizer(
@@ -359,7 +358,7 @@ class Anime(core.Stack):
                 source_arn=f"arn:aws:execute-api:{self.region}:{self.account}:{http_api.http_api_id}/*"
             )
 
-        CfnStage(
+        stage = CfnStage(
             self,
             "v1",
             api_id=http_api.http_api_id,
@@ -369,4 +368,12 @@ class Anime(core.Stack):
                 throttling_rate_limit=1
             ),
             stage_name="live"
+        )
+
+        HttpApiMapping(
+            self,
+            "mapping",
+            api=http_api,
+            domain_name=domain_name,
+            stage=stage
         )
