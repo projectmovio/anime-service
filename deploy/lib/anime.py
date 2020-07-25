@@ -27,7 +27,8 @@ BUILD_FOLDER = os.path.join(CURRENT_DIR, "..", "..", "build")
 
 class Anime(core.Stack):
 
-    def __init__(self, app: core.App, id: str, mal_client_id: str, anidb_client: str, domain_name: str, **kwargs) -> None:
+    def __init__(self, app: core.App, id: str, mal_client_id: str, anidb_client: str, domain_name: str,
+                 **kwargs) -> None:
         super().__init__(app, id, **kwargs)
         self.mal_client_id = mal_client_id
         self.anidb_client = anidb_client
@@ -276,13 +277,18 @@ class Anime(core.Stack):
         )
 
     def _create_gateway(self):
-        Certificate(
+        cert = Certificate(
             self,
             "certificate",
             domain_name=self.domain_name,
             validation_method=ValidationMethod.DNS
         )
-
+        domain_name = DomainName(
+            self,
+            "domain",
+            domain_name=self.domain_name,
+            certificate=cert.certificate_arn
+        )
 
         http_api = HttpApi(self, "anime_gateway", create_default_stage=False)
 
@@ -359,5 +365,3 @@ class Anime(core.Stack):
             ),
             stage_name="live"
         )
-
-
