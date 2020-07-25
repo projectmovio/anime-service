@@ -314,22 +314,22 @@ class Anime(core.Stack):
         routes = {
             "get_anime": {
                 "method": "GET",
-                "route": "/anime",
+                "route": "/v1/anime",
                 "target_lambda": self.lambdas["api-anime"]
             },
             "post_anime": {
                 "method": "POST",
-                "route": "/anime",
+                "route": "/v1/anime",
                 "target_lambda": self.lambdas["api-anime"]
             },
             "get_anime_by_id": {
                 "method": "GET",
-                "route": "/anime/{id}",
+                "route": "/v1/anime/{id}",
                 "target_lambda": self.lambdas["api-anime_by_id"]
             },
             "get_anime_episodes": {
                 "method": "GET",
-                "route": "/anime/{id}/episodes",
+                "route": "/v1/anime/{id}/episodes",
                 "target_lambda": self.lambdas["api-anime_episodes"]
             }
         }
@@ -362,7 +362,7 @@ class Anime(core.Stack):
 
         stage = CfnStage(
             self,
-            "v1",
+            "live",
             api_id=http_api.http_api_id,
             auto_deploy=True,
             default_route_settings=CfnStage.RouteSettingsProperty(
