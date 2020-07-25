@@ -287,10 +287,18 @@ class Anime(core.Stack):
             self,
             "domain",
             domain_name=self.domain_name,
-            certificate=cert.certificate_arn
+            certificate=cert
         )
 
-        http_api = HttpApi(self, "anime_gateway", create_default_stage=False)
+        http_api = HttpApi(
+            self,
+            "anime_gateway",
+            create_default_stage=False,
+            # default_domain_mapping={
+            #     "domain_name": domain_name,
+            #     "mapping_key": "live"
+            # }
+        )
 
         authorizer = CfnAuthorizer(
             self,
