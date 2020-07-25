@@ -276,6 +276,14 @@ class Anime(core.Stack):
         )
 
     def _create_gateway(self):
+        Certificate(
+            self,
+            "certificate",
+            domain_name=self.domain_name,
+            validation_method=ValidationMethod.DNS
+        )
+
+
         http_api = HttpApi(self, "anime_gateway", create_default_stage=False)
 
         authorizer = CfnAuthorizer(
