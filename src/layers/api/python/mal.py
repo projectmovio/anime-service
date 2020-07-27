@@ -40,7 +40,7 @@ class MalApi:
         res = []
         for a in ret.json()["data"]:
             res.append(a["node"])
-        return res
+        return {"items": res, "total_pages": len(res)}
 
     def get_anime(self, anime_id):
         url = f"{self.base_url}/anime/{anime_id}"
@@ -57,7 +57,7 @@ class MalApi:
 
         res = ret.json()
         res["mal_id"] = res.pop("id")
-        return {"items": res, "total_pages": len(res)}
+        return res
 
 
 def get_all_titles(anime):
