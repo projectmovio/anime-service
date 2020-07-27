@@ -5,7 +5,7 @@ import subprocess
 from aws_cdk import core
 from aws_cdk.aws_apigateway import DomainName, SecurityPolicy
 from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, CfnAuthorizer, CfnRoute, \
-    HttpIntegration, HttpIntegrationType, PayloadFormatVersion, CfnStage, HttpApiMapping
+    HttpIntegration, HttpIntegrationType, PayloadFormatVersion, CfnStage, HttpApiMapping, CorsPreflightOptions
 from aws_cdk.aws_certificatemanager import Certificate, ValidationMethod
 from aws_cdk.aws_dynamodb import Table, Attribute, AttributeType, BillingMode
 from aws_cdk.aws_events import Rule, Schedule
@@ -295,7 +295,11 @@ class Anime(core.Stack):
             self,
             "anime_gateway",
             create_default_stage=False,
-            api_name="anime"
+            api_name="anime",
+            cors_preflight=CorsPreflightOptions(
+                allow_methods=[HttpMethod.GET, HttpMethod.POST],
+                allow_origins=["https://moshan.tv"]
+            )
         )
 
         authorizer = CfnAuthorizer(
