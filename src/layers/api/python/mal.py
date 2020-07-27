@@ -57,7 +57,7 @@ class MalApi:
 
         res = ret.json()
         res["mal_id"] = res.pop("id")
-        return res
+        return {"items": res, "total_pages": len(res)}
 
 
 def get_all_titles(anime):
