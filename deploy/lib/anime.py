@@ -310,7 +310,7 @@ class Anime(core.Stack):
             identity_source=["$request.header.Authorization"],
             name="cognito",
             jwt_configuration=CfnAuthorizer.JWTConfigurationProperty(
-                audience=["2uqacp9st5av58h7kfhcq1eoa6"],
+                audience=["68v5rahd0sdvrmf7fgbq2o1a9u"],
                 issuer="https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_sJ3Y4kSv6"
             )
         )
