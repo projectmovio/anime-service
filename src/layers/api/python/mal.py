@@ -40,7 +40,7 @@ class MalApi:
         res = []
         for a in ret.json()["data"]:
             res.append(a["node"])
-        return {"items": res, "total_pages": len(res)}
+        return {"items": res, "total_pages": "1"} # TODO: Implement pagination
 
     def get_anime(self, anime_id):
         url = f"{self.base_url}/anime/{anime_id}"
