@@ -299,7 +299,7 @@ class Anime(core.Stack):
             cors_preflight=CorsPreflightOptions(
                 allow_methods=[HttpMethod.GET, HttpMethod.POST],
                 allow_origins=["https://moshan.tv"],
-                allow_headers=["authorization"]
+                allow_headers=["authorization", "content-type"]
             )
         )
 
