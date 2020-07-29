@@ -88,6 +88,7 @@ def get_anime(anime_ids):
         RequestItems={
             DATABASE_NAME: {
                 "Keys": [{"id": {"S": anime_id}} for anime_id in anime_ids],
+                "AttributesToGet": ["id", "main_picture", "start_date"]
             }
         }
     )
