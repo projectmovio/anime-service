@@ -7,6 +7,7 @@ from boto3.dynamodb.conditions import Key
 import logger
 
 DATABASE_NAME = os.getenv("ANIME_DATABASE_NAME")
+ANIME_UUID_NAMESPACE = uuid.UUID("e27bf9e0-e54a-4260-bcdc-7baad9a3c36b")
 
 table = None
 
@@ -36,7 +37,7 @@ def new_anime(mal_info):
 
 
 def create_anime_uuid(mal_id):
-    return str(uuid.uuid5(uuid.NAMESPACE_OID, str(mal_id)))
+    return str(uuid.uuid5(ANIME_UUID_NAMESPACE, str(mal_id)))
 
 
 def update_anime(anime_id, data):
