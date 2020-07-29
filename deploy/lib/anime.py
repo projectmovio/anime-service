@@ -371,8 +371,8 @@ class Anime(core.Stack):
             api_id=http_api.http_api_id,
             auto_deploy=True,
             default_route_settings=CfnStage.RouteSettingsProperty(
-                throttling_burst_limit=1,
-                throttling_rate_limit=1
+                throttling_burst_limit=10,
+                throttling_rate_limit=5
             ),
             stage_name="live"
         )
