@@ -101,8 +101,8 @@ def get_anime_posters(anime_ids):
         }
     )
 
-    for item in res["Responses"]:
-        anime_id = item["anime_id"]["S"]
+    for item in res["Responses"][DATABASE_NAME]:
+        anime_id = item["id"]["S"]
         poster = item["main_picture"]["M"]["medium"]["S"]
         ret[anime_id] = poster
 
