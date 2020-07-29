@@ -101,7 +101,7 @@ class Anime(core.Stack):
                 "concurrent_executions": 100,
                 "policies": [
                     PolicyStatement(
-                        actions=["dynamodb:GetItem"],
+                        actions=["dynamodb:BatchGetItem"],
                         resources=[self.anime_table.table_arn]
                     )
                 ],
@@ -199,21 +199,6 @@ class Anime(core.Stack):
                         actions=["s3:GetObject"],
                         resources=[self.anidb_titles_bucket.arn_for_objects("*")]
                     )
-                ],
-                "timeout": 15
-            },
-            "api-anime_posters": {
-                "layers": ["utils", "databases"],
-                "variables": {
-                    "ANIME_DATABASE_NAME": self.anime_table.table_name,
-                    "LOG_LEVEL": "INFO",
-                },
-                "concurrent_executions": 100,
-                "policies": [
-                    PolicyStatement(
-                        actions=["dynamodb:BatchGetItem"],
-                        resources=[self.anime_table.table_arn]
-                    ),
                 ],
                 "timeout": 15
             },
@@ -344,18 +329,13 @@ class Anime(core.Stack):
             },
             "get_anime_by_id": {
                 "method": "GET",
-                "route": "/v1/anime/{id}",
+                "route": "/v1/anime/{ids}",
                 "target_lambda": self.lambdas["api-anime_by_id"]
             },
             "get_anime_episodes": {
                 "method": "GET",
                 "route": "/v1/anime/{id}/episodes",
                 "target_lambda": self.lambdas["api-anime_episodes"]
-            },
-            "get_anime_posters": {
-                "method": "GET",
-                "route": "/v1/anime/{ids}/posters",
-                "target_lambda": self.lambdas["api-anime_posters"]
             }
         }
 
