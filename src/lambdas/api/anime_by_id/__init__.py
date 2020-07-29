@@ -16,5 +16,9 @@ def handle(event, context):
 
     anime_ids = event["pathParameters"].get("ids")
 
-    res = anime_db.get_anime(anime_ids.split(","))
+    ids = anime_ids.split(",")
+    if len(ids) > 20:
+        return {"statusCode": 400, "body": json.dumps({"error": "Max allowed IDs to get is 20"})}
+
+    res = anime_db.get_anime(ids)
     return {"statusCode": 200, "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
