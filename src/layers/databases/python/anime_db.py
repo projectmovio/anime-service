@@ -79,3 +79,17 @@ def get_anime(anime_id):
         raise NotFoundError(f"Anime with mal_id: {anime_id} not found")
 
     return res["Item"]
+
+
+def get_ids(mal_items):
+    id_map = {}
+    for mal_item in mal_items:
+        mal_id = mal_item["id"]
+        try:
+            res = get_anime_by_mal_id(mal_item["id"])
+            id_map[mal_id] = res["id"]
+        except NotFoundError:
+            pass
+
+    return id_map
+
