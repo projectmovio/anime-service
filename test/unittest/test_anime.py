@@ -153,6 +153,44 @@ def test_search(mocked_mal, mocked_anime_db):
 
 
 @mock.patch("mal.MalApi")
+def test_search_found_id(mocked_mal, mocked_anime_db):
+    exp_res = {
+        "items": [
+            {
+                "id": "123"
+            }
+        ],
+    }
+    mocked_mal.return_value.search.return_value = exp_res
+
+    mocked_anime_db.table.query.return_value = {
+        "Items": [
+            {"id": "ANIME_ID"}
+        ]
+    }
+
+    event = {
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
+        },
+        "queryStringParameters": {
+            "search": "naruto"
+        }
+    }
+
+    res = handle(event, None)
+
+    exp_res["id_map"] = {"123": "ANIME_ID"}
+    exp = {
+        "statusCode": 200,
+        "body": json.dumps(exp_res),
+    }
+    assert res == exp
+
+
+@mock.patch("mal.MalApi")
 def test_search_http_error(mocked_mal_api):
     mocked_mal_api.return_value.search.side_effect = mal.HTTPError("TEST MESSAGE")
     event = {
