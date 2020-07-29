@@ -96,7 +96,7 @@ def get_anime_posters(anime_ids):
         RequestItems={
             DATABASE_NAME: {
                 "Keys": [{"id": {"S": anime_id} for anime_id in anime_ids}],
-                "AttributesToGet": ["main_picture"]
+                "AttributesToGet": ["id", "main_picture"]
             }
         }
     )
