@@ -16,5 +16,5 @@ def handle(event, context):
 
     anime_ids = event["pathParameters"].get("ids")
 
-    res = anime_db.get_anime(anime_ids)
+    res = anime_db.get_anime(anime_ids.split(","))
     return {"statusCode": 200, "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
