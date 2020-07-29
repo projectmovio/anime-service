@@ -95,7 +95,7 @@ def get_anime_posters(anime_ids):
     res = _get_client().batch_get_item(
         RequestItems={
             DATABASE_NAME: {
-                "Keys": [{"anime_id": {"S": anime_id} for anime_id in anime_ids}],
+                "Keys": [{"id": {"S": anime_id} for anime_id in anime_ids}],
                 "AttributesToGet": ["main_picture"]
             }
         }
