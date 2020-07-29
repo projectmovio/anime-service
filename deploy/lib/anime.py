@@ -211,7 +211,7 @@ class Anime(core.Stack):
                 "concurrent_executions": 100,
                 "policies": [
                     PolicyStatement(
-                        actions=["dynamodb:Query"],
+                        actions=["dynamodb:BatchGetItem"],
                         resources=[self.anime_table.table_arn]
                     ),
                 ],
