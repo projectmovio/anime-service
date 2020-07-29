@@ -3,6 +3,7 @@ import uuid
 
 import boto3
 from boto3.dynamodb.conditions import Key
+from dynamodb_json import json_util
 
 import logger
 
@@ -92,9 +93,8 @@ def get_anime(anime_ids):
     )
 
     for item in res["Responses"][DATABASE_NAME]:
-        anime_id = item["id"]["S"]
-        poster = item["main_picture"]["M"]["medium"]["S"]
-        ret[anime_id] = poster
+        anime_id = item.pop("id")["S"]
+        ret[anime_id] = json_util.loads(item)
 
     return ret
 
