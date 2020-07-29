@@ -202,6 +202,21 @@ class Anime(core.Stack):
                 ],
                 "timeout": 15
             },
+            "api-anime_posters": {
+                "layers": ["utils", "databases"],
+                "variables": {
+                    "ANIME_DATABASE_NAME": self.anime_table.table_name,
+                    "LOG_LEVEL": "INFO",
+                },
+                "concurrent_executions": 100,
+                "policies": [
+                    PolicyStatement(
+                        actions=["dynamodb:Query"],
+                        resources=[self.anime_table.table_arn]
+                    ),
+                ],
+                "timeout": 15
+            },
         }
 
     def _create_layers(self):
@@ -336,6 +351,11 @@ class Anime(core.Stack):
                 "method": "GET",
                 "route": "/v1/anime/{id}/episodes",
                 "target_lambda": self.lambdas["api-anime_episodes"]
+            },
+            "get_anime_posters": {
+                "method": "GET",
+                "route": "/v1/anime/{ids}/posters",
+                "target_lambda": self.lambdas["api-anime_posters"]
             }
         }
 

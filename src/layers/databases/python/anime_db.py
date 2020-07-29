@@ -10,6 +10,7 @@ DATABASE_NAME = os.getenv("ANIME_DATABASE_NAME")
 ANIME_UUID_NAMESPACE = uuid.UUID("e27bf9e0-e54a-4260-bcdc-7baad9a3c36b")
 
 table = None
+client = None
 
 log = logger.get_logger(__name__)
 
@@ -27,6 +28,13 @@ def _get_table():
     if table is None:
         table = boto3.resource("dynamodb").Table(DATABASE_NAME)
     return table
+
+
+def _get_client():
+    global client
+    if client is None:
+        client = boto3.client("dynamodb")
+    return client
 
 
 def new_anime(mal_info):
@@ -81,6 +89,26 @@ def get_anime(anime_id):
     return res["Item"]
 
 
+def get_anime_posters(anime_ids):
+    ret = {}
+
+    res = _get_client().batch_get_item(
+        RequestItems={
+            DATABASE_NAME: {
+                "Keys": [{"anime_id": {"S": anime_id} for anime_id in anime_ids}],
+                "AttributesToGet": "main_picture"
+            }
+        }
+    )
+
+    for item in res["Responses"]:
+        anime_id = item["anime_id"]["S"]
+        poster = item["main_picture"]["M"]["medium"]["S"]
+        ret[anime_id] = poster
+
+    return ret
+
+
 def get_ids(mal_items):
     id_map = {}
     for mal_item in mal_items:
@@ -92,4 +120,3 @@ def get_ids(mal_items):
             pass
 
     return id_map
-
