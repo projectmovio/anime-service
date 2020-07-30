@@ -19,6 +19,7 @@ def mocked_anime_db():
     import anime_db
 
     anime_db.table = MagicMock()
+    anime_db.client = MagicMock()
 
     return anime_db
 

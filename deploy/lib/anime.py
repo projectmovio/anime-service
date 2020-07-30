@@ -3,8 +3,10 @@ import shutil
 import subprocess
 
 from aws_cdk import core
-from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, LambdaProxyIntegration, CfnAuthorizer, CfnRoute, \
-    HttpIntegration, HttpIntegrationType, PayloadFormatVersion, CfnStage
+from aws_cdk.aws_apigateway import DomainName, SecurityPolicy
+from aws_cdk.aws_apigatewayv2 import HttpApi, HttpMethod, CfnAuthorizer, CfnRoute, \
+    HttpIntegration, HttpIntegrationType, PayloadFormatVersion, CfnStage, HttpApiMapping, CorsPreflightOptions
+from aws_cdk.aws_certificatemanager import Certificate, ValidationMethod
 from aws_cdk.aws_dynamodb import Table, Attribute, AttributeType, BillingMode
 from aws_cdk.aws_events import Rule, Schedule
 from aws_cdk.aws_events_targets import LambdaFunction
@@ -25,10 +27,12 @@ BUILD_FOLDER = os.path.join(CURRENT_DIR, "..", "..", "build")
 
 class Anime(core.Stack):
 
-    def __init__(self, app: core.App, id: str, mal_client_id: str, anidb_client: str, **kwargs) -> None:
+    def __init__(self, app: core.App, id: str, mal_client_id: str, anidb_client: str, domain_name: str,
+                 **kwargs) -> None:
         super().__init__(app, id, **kwargs)
         self.mal_client_id = mal_client_id
         self.anidb_client = anidb_client
+        self.domain_name = domain_name
         self.layers = {}
         self.lambdas = {}
         self._create_buckets()
@@ -97,7 +101,7 @@ class Anime(core.Stack):
                 "concurrent_executions": 100,
                 "policies": [
                     PolicyStatement(
-                        actions=["dynamodb:GetItem"],
+                        actions=["dynamodb:BatchGetItem"],
                         resources=[self.anime_table.table_arn]
                     )
                 ],
@@ -273,7 +277,31 @@ class Anime(core.Stack):
         )
 
     def _create_gateway(self):
-        http_api = HttpApi(self, "anime_gateway", create_default_stage=False)
+        cert = Certificate(
+            self,
+            "certificate",
+            domain_name=self.domain_name,
+            validation_method=ValidationMethod.DNS
+        )
+        domain_name = DomainName(
+            self,
+            "domain",
+            domain_name=self.domain_name,
+            certificate=cert,
+            security_policy=SecurityPolicy.TLS_1_2
+        )
+
+        http_api = HttpApi(
+            self,
+            "anime_gateway",
+            create_default_stage=False,
+            api_name="anime",
+            cors_preflight=CorsPreflightOptions(
+                allow_methods=[HttpMethod.GET, HttpMethod.POST],
+                allow_origins=["https://moshan.tv"],
+                allow_headers=["authorization", "content-type"]
+            )
+        )
 
         authorizer = CfnAuthorizer(
             self,
@@ -283,7 +311,7 @@ class Anime(core.Stack):
             identity_source=["$request.header.Authorization"],
             name="cognito",
             jwt_configuration=CfnAuthorizer.JWTConfigurationProperty(
-                audience=["2uqacp9st5av58h7kfhcq1eoa6"],
+                audience=["68v5rahd0sdvrmf7fgbq2o1a9u"],
                 issuer="https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_sJ3Y4kSv6"
             )
         )
@@ -291,22 +319,22 @@ class Anime(core.Stack):
         routes = {
             "get_anime": {
                 "method": "GET",
-                "route": "/anime",
+                "route": "/v1/anime",
                 "target_lambda": self.lambdas["api-anime"]
             },
             "post_anime": {
                 "method": "POST",
-                "route": "/anime",
+                "route": "/v1/anime",
                 "target_lambda": self.lambdas["api-anime"]
             },
             "get_anime_by_id": {
                 "method": "GET",
-                "route": "/anime/{id}",
+                "route": "/v1/anime/{ids}",
                 "target_lambda": self.lambdas["api-anime_by_id"]
             },
             "get_anime_episodes": {
                 "method": "GET",
-                "route": "/anime/{id}/episodes",
+                "route": "/v1/anime/{id}/episodes",
                 "target_lambda": self.lambdas["api-anime_episodes"]
             }
         }
@@ -337,14 +365,22 @@ class Anime(core.Stack):
                 source_arn=f"arn:aws:execute-api:{self.region}:{self.account}:{http_api.http_api_id}/*"
             )
 
-        CfnStage(
+        stage = CfnStage(
             self,
             "live",
             api_id=http_api.http_api_id,
             auto_deploy=True,
             default_route_settings=CfnStage.RouteSettingsProperty(
-                throttling_burst_limit=1,
-                throttling_rate_limit=1
+                throttling_burst_limit=10,
+                throttling_rate_limit=5
             ),
             stage_name="live"
+        )
+
+        HttpApiMapping(
+            self,
+            "mapping",
+            api=http_api,
+            domain_name=domain_name,
+            stage=stage
         )

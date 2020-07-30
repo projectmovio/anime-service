@@ -105,6 +105,8 @@ def _search_anime(mal_id, search):
     elif search:
         try:
             res = mal.MalApi().search(search)
+            id_map = anime_db.get_ids(res["items"])
+            res["id_map"] = id_map
         except mal.HTTPError as e:
             return {"statusCode": 503, "body": str(e)}
         return {"statusCode": 200, "body": json.dumps(res)}

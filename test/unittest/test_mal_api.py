@@ -26,17 +26,22 @@ BASE_NARUTO_ANIME = {
 @mock.patch.dict(os.environ, ENV)
 @patch.object(requests, "get")
 def test_search(req_mock):
-    exp = [{
-        "id": 20,
-        "title": "Naruto",
-        "main_picture": {
-            "medium": "17405.jpg",
-            "large": "17405l.jpg"
-        },
-    }]
+    exp = {
+        "items": [
+            {
+                "id": 20,
+                "title": "Naruto",
+                "main_picture": {
+                    "medium": "17405.jpg",
+                    "large": "17405l.jpg"
+                }
+            }
+        ],
+        "total_pages": "1"
+    }
 
     req_mock.return_value.status_code = 200
-    req_mock.return_value.json.return_value = {"data": [{"node": exp[0]}]}
+    req_mock.return_value.json.return_value = {"data": [{"node": exp["items"][0]}]}
 
     mal_api = MalApi()
     ret = mal_api.search("Naruto")

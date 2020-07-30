@@ -25,7 +25,7 @@ def test_post_anime(mocked_anime_db, mocked_anime):
     res = handle(event, None)
 
     exp = {
-        "body": json.dumps({"anime_id": "3bce8de0-ab5d-5f8d-9b53-f3adce131b94"}),
+        "body": json.dumps({"anime_id": "7e2c8ee2-66cf-598f-aedf-cdfba825613b"}),
         "statusCode": 202
     }
     assert res == exp
@@ -53,7 +53,7 @@ def test_post_anime_already_exist(mocked_anime_db):
     res = handle(event, None)
 
     exp = {
-        "body": json.dumps({"anime_id": "3bce8de0-ab5d-5f8d-9b53-f3adce131b94"}),
+        "body": json.dumps({"anime_id": "7e2c8ee2-66cf-598f-aedf-cdfba825613b"}),
         "statusCode": 202
     }
     assert res == exp
@@ -120,11 +120,17 @@ def test_post_anime_invalid_query_params(mocked_anime_db):
 
 
 @mock.patch("mal.MalApi")
-def test_search(mocked_mal):
+def test_search(mocked_mal, mocked_anime_db):
     exp_res = {
-        "id": "123"
+        "items": [
+            {
+                "id": "123"
+            }
+        ],
     }
     mocked_mal.return_value.search.return_value = exp_res
+
+    mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
     event = {
         "requestContext": {
             "http": {
@@ -138,9 +144,48 @@ def test_search(mocked_mal):
 
     res = handle(event, None)
 
+    exp_res["id_map"] = {}
     exp = {
         "statusCode": 200,
-        "body": json.dumps(exp_res)
+        "body": json.dumps(exp_res),
+    }
+    assert res == exp
+
+
+@mock.patch("mal.MalApi")
+def test_search_found_id(mocked_mal, mocked_anime_db):
+    exp_res = {
+        "items": [
+            {
+                "id": "123"
+            }
+        ],
+    }
+    mocked_mal.return_value.search.return_value = exp_res
+
+    mocked_anime_db.table.query.return_value = {
+        "Items": [
+            {"id": "ANIME_ID"}
+        ]
+    }
+
+    event = {
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
+        },
+        "queryStringParameters": {
+            "search": "naruto"
+        }
+    }
+
+    res = handle(event, None)
+
+    exp_res["id_map"] = {"123": "ANIME_ID"}
+    exp = {
+        "statusCode": 200,
+        "body": json.dumps(exp_res),
     }
     assert res == exp
 

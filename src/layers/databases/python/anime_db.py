@@ -3,12 +3,15 @@ import uuid
 
 import boto3
 from boto3.dynamodb.conditions import Key
+from dynamodb_json import json_util
 
 import logger
 
 DATABASE_NAME = os.getenv("ANIME_DATABASE_NAME")
+ANIME_UUID_NAMESPACE = uuid.UUID("e27bf9e0-e54a-4260-bcdc-7baad9a3c36b")
 
 table = None
+client = None
 
 log = logger.get_logger(__name__)
 
@@ -28,6 +31,13 @@ def _get_table():
     return table
 
 
+def _get_client():
+    global client
+    if client is None:
+        client = boto3.client("dynamodb")
+    return client
+
+
 def new_anime(mal_info):
     anime_id = create_anime_uuid(mal_info["mal_id"])
     update_anime(anime_id, mal_info)
@@ -36,7 +46,7 @@ def new_anime(mal_info):
 
 
 def create_anime_uuid(mal_id):
-    return str(uuid.uuid5(uuid.NAMESPACE_OID, str(mal_id)))
+    return str(uuid.uuid5(ANIME_UUID_NAMESPACE, str(mal_id)))
 
 
 def update_anime(anime_id, data):
@@ -71,10 +81,33 @@ def get_anime_by_mal_id(mal_id):
     return res["Items"][0]
 
 
-def get_anime(anime_id):
-    res = _get_table().get_item(Key={"id": anime_id})
+def get_anime(anime_ids):
+    ret = {}
 
-    if "Item" not in res:
-        raise NotFoundError(f"Anime with mal_id: {anime_id} not found")
+    res = _get_client().batch_get_item(
+        RequestItems={
+            DATABASE_NAME: {
+                "Keys": [{"id": {"S": anime_id}} for anime_id in anime_ids],
+                "AttributesToGet": ["id", "title", "main_picture", "start_date"]
+            }
+        }
+    )
 
-    return res["Item"]
+    for item in res["Responses"][DATABASE_NAME]:
+        anime_id = item.pop("id")["S"]
+        ret[anime_id] = json_util.loads(item)
+
+    return ret
+
+
+def get_ids(mal_items):
+    id_map = {}
+    for mal_item in mal_items:
+        mal_id = mal_item["id"]
+        try:
+            res = get_anime_by_mal_id(mal_item["id"])
+            id_map[mal_id] = res["id"]
+        except NotFoundError:
+            pass
+
+    return id_map
