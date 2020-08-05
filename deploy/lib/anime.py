@@ -349,7 +349,7 @@ class Anime(core.Stack):
             },
             "get_anime_by_ids": {
                 "method": "GET",
-                "route": "/v1/anime/{ids}",
+                "route": "/v1/animes/{ids}",
                 "target_lambda": self.lambdas["api-anime_by_ids"]
             },
             "get_anime_episodes": {
