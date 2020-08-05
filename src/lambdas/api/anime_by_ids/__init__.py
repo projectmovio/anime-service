@@ -4,7 +4,7 @@ import anime_db
 import decimal_encoder
 import logger
 
-log = logger.get_logger("anime_by_id")
+log = logger.get_logger("anime_by_ids")
 
 
 class HttpError(object):
