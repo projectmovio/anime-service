@@ -1,6 +1,6 @@
 import json
 
-from api.anime_by_id import handle
+from api.anime_by_ids import handle
 from dynamodb_json import json_util
 
 
