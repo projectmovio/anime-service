@@ -81,7 +81,16 @@ def get_anime_by_mal_id(mal_id):
     return res["Items"][0]
 
 
-def get_anime(anime_ids):
+def get_anime_by_id(anime_id):
+    res = _get_table().get_item(Key={"id": anime_id})
+
+    if "Item" not in res:
+        raise NotFoundError(f"Anime with id: {anime_id} not found")
+
+    return res["Item"]
+
+
+def get_anime_by_ids(anime_ids):
     ret = {}
 
     res = _get_client().batch_get_item(
