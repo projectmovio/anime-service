@@ -101,6 +101,21 @@ class Anime(core.Stack):
                 "concurrent_executions": 100,
                 "policies": [
                     PolicyStatement(
+                        actions=["dynamodb:GetItem"],
+                        resources=[self.anime_table.table_arn]
+                    )
+                ],
+                "timeout": 3
+            },
+            "api-anime_by_ids": {
+                "layers": ["utils", "databases"],
+                "variables": {
+                    "ANIME_DATABASE_NAME": self.anime_table.table_name,
+                    "LOG_LEVEL": "INFO",
+                },
+                "concurrent_executions": 100,
+                "policies": [
+                    PolicyStatement(
                         actions=["dynamodb:BatchGetItem"],
                         resources=[self.anime_table.table_arn]
                     )
@@ -329,8 +344,13 @@ class Anime(core.Stack):
             },
             "get_anime_by_id": {
                 "method": "GET",
-                "route": "/v1/anime/{ids}",
+                "route": "/v1/anime/{id}",
                 "target_lambda": self.lambdas["api-anime_by_id"]
+            },
+            "get_anime_by_ids": {
+                "method": "GET",
+                "route": "/v1/anime/{ids}",
+                "target_lambda": self.lambdas["api-anime_by_ids"]
             },
             "get_anime_episodes": {
                 "method": "GET",
