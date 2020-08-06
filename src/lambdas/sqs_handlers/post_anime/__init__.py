@@ -1,5 +1,6 @@
 import os
 import time
+from difflib import SequenceMatcher
 
 import anidb
 import params_db
@@ -60,9 +61,12 @@ def _get_anidb_id(all_titles):
     anidb_titles = anidb.get_json_titles(download_folder)
 
     for title in all_titles:
-        anidb_id = anidb_titles.get(title)
-        if anidb_id:
-            return anidb_id
+        for anidb_title in anidb_titles:
+            compare_ratio = SequenceMatcher(None, title, anidb_title).ratio()
+            if compare_ratio > 0.9:
+                return anidb_titles[anidb_title]
+            elif compare_ratio > 0.6:
+                log.info(f"Found 60% match for mal title: {title}. Anidb title: {anidb_title}")
 
     log.warning(f"Could not find anidb_id for titles: {all_titles}")
     return None
