@@ -64,6 +64,7 @@ def _get_anidb_id(all_titles):
         for anidb_title in anidb_titles:
             compare_ratio = SequenceMatcher(None, title, anidb_title).ratio()
             if compare_ratio > 0.9:
+                log.info(f"Found anidb match >90%. Mal title: {title}. Anidb title: {anidb_title}")
                 return anidb_titles[anidb_title]
             elif compare_ratio > 0.6:
                 log.debug(f"Found 60%-90% match for mal title: {title}. Anidb title: {anidb_title}")
