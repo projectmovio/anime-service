@@ -57,17 +57,25 @@ def handle(event, context):
 
 
 def _get_anidb_id(all_titles):
-    download_folder = os.path.join("/", "tmp")
-    anidb_titles = anidb.get_json_titles(download_folder)
-
     for title in all_titles:
-        for anidb_title in anidb_titles:
-            compare_ratio = SequenceMatcher(None, title, anidb_title).ratio()
+        for anidb_title in _titles():
+            compare_ratio = SequenceMatcher(None, title, anidb_title['title']).ratio()
             if compare_ratio > 0.9:
-                log.info(f"Found anidb match >90%. Mal title: {title}. Anidb title: {anidb_title}")
-                return anidb_titles[anidb_title]
+                log.info(f"Found anidb match >90%. Mal title: {title}. Anidb title: {anidb_title['title']}")
+                return anidb_title["id"]
             elif compare_ratio > 0.6:
-                log.info(f"Found 60%-90% match for mal title: {title}. Anidb title: {anidb_title}")
+                log.info(f"Found 60%-90% match for mal title: {title}. Anidb title: {anidb_title['title']}")
 
     log.warning(f"Could not find anidb_id for titles: {all_titles}")
     return None
+
+
+def _titles():
+    download_folder = os.path.join("/", "tmp")
+    anidb_titles = anidb.get_json_titles(download_folder)
+
+    for title in anidb_titles:
+        yield {
+            "title": title,
+            "id": anidb_titles[title]
+        }
