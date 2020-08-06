@@ -64,5 +64,5 @@ def _get_anidb_id(all_titles):
         if anidb_id:
             return anidb_id
 
-    log.warning("Could not find anidb_id for mal_id: {mal_id}")
+    log.warning(f"Could not find anidb_id for titles: {all_titles}")
     return None
