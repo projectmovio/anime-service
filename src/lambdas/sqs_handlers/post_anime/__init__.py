@@ -67,7 +67,7 @@ def _get_anidb_id(all_titles):
                 log.info(f"Found anidb match >90%. Mal title: {title}. Anidb title: {anidb_title}")
                 return anidb_titles[anidb_title]
             elif compare_ratio > 0.6:
-                log.debug(f"Found 60%-90% match for mal title: {title}. Anidb title: {anidb_title}")
+                log.info(f"Found 60%-90% match for mal title: {title}. Anidb title: {anidb_title}")
 
     log.warning(f"Could not find anidb_id for titles: {all_titles}")
     return None
