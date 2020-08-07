@@ -105,7 +105,8 @@ class Anime(core.Stack):
                         resources=[self.anime_table.table_arn]
                     )
                 ],
-                "timeout": 3
+                "timeout": 3,
+                "memory": 128
             },
             "api-anime_by_ids": {
                 "layers": ["utils", "databases"],
@@ -120,7 +121,8 @@ class Anime(core.Stack):
                         resources=[self.anime_table.table_arn]
                     )
                 ],
-                "timeout": 3
+                "timeout": 3,
+                "memory": 128
             },
             "api-anime_episodes": {
                 "layers": ["utils", "databases"],
@@ -135,7 +137,8 @@ class Anime(core.Stack):
                         resources=[self.anime_episodes.table_arn]
                     )
                 ],
-                "timeout": 3
+                "timeout": 3,
+                "memory": 512
             },
             "api-anime": {
                 "layers": ["utils", "databases", "api"],
@@ -156,7 +159,8 @@ class Anime(core.Stack):
                         resources=[self.post_anime_queue.queue_arn]
                     ),
                 ],
-                "timeout": 10
+                "timeout": 10,
+                "memory": 128
             },
             "crons-titles_updater": {
                 "layers": ["utils", "databases", "api"],
@@ -175,7 +179,8 @@ class Anime(core.Stack):
                         resources=[self.anidb_titles_bucket.arn_for_objects("*")]
                     )
                 ],
-                "timeout": 120
+                "timeout": 120,
+                "memory": 128
             },
             "sqs_handlers-post_anime": {
                 "layers": ["utils", "databases", "api"],
@@ -215,7 +220,8 @@ class Anime(core.Stack):
                         resources=[self.anidb_titles_bucket.arn_for_objects("*")]
                     )
                 ],
-                "timeout": 15
+                "timeout": 15,
+                "memory": 1024
             },
         }
 
@@ -279,7 +285,8 @@ class Anime(core.Stack):
                     environment=lambda_config["variables"],
                     reserved_concurrent_executions=lambda_config["concurrent_executions"],
                     role=lambda_role,
-                    timeout=Duration.seconds(lambda_config["timeout"])
+                    timeout=Duration.seconds(lambda_config["timeout"]),
+                    memory_size=lambda_config["memory"]
                 )
 
         self.lambdas["sqs_handlers-post_anime"].add_event_source(SqsEventSource(self.post_anime_queue))
