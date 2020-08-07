@@ -89,4 +89,5 @@ def _episodes_generator(anime_id, limit):
         items = []
         for i in p["Items"]:
             items.append(json_util.loads(i))
-        yield items
+        if items:
+            yield items
