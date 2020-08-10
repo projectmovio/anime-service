@@ -67,7 +67,7 @@ def test_handle(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, moc
     event = {
         "Records": [
             {
-                "body": TEST_MAL_ID
+                "body": json.dumps({"mal_id": TEST_MAL_ID})
             }
         ]
     }
@@ -101,7 +101,7 @@ def test_handle_to_early(mocked_get, mocked_params_db, mocked_anime_db, mocked_a
     event = {
         "Records": [
             {
-                "body": TEST_MAL_ID
+                "body": json.dumps({"mal_id": TEST_MAL_ID})
             }
         ]
     }
@@ -127,7 +127,7 @@ def test_handle_already_exist_skipped(mocked_params_db, mocked_anime_db, mocked_
     event = {
         "Records": [
             {
-                "body": TEST_MAL_ID
+                "body": json.dumps({"mal_id": TEST_MAL_ID})
             }
         ]
     }
@@ -155,7 +155,7 @@ def test_handle_no_anidb_match(mocked_get, mocked_params_db, mocked_anime_db, mo
     event = {
         "Records": [
             {
-                "body": TEST_MAL_ID
+                "body": json.dumps({"mal_id": TEST_MAL_ID})
             }
         ]
     }

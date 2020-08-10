@@ -49,7 +49,7 @@ def put_episodes(anime_id, episodes):
 
 
 def _create_episode_uuid(anime_id, episode_id):
-    return str(uuid.uuid5(anime_id, str(episode_id)))
+    return str(uuid.uuid5(uuid.UUID(anime_id), str(episode_id)))
 
 
 def get_episodes(anime_id, limit=100, start=1):
