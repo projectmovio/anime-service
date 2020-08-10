@@ -66,13 +66,13 @@ def get_episodes(anime_id, limit=100, start=1):
         if start_page == start:
             res = p
 
+    if start_page == 0:
+        raise NotFoundError(f"Episodes for anime with id: {anime_id} not found")
+
     if start > start_page:
         raise InvalidStartOffset
 
     log.debug(f"get_episodes response: {res}")
-
-    if not res:
-        raise NotFoundError(f"Anime with id: {anime_id} not found")
 
     return {
         "items": res,
