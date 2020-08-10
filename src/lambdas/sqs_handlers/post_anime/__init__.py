@@ -1,3 +1,4 @@
+import json
 import os
 import time
 from difflib import SequenceMatcher
@@ -22,7 +23,8 @@ def handle(event, context):
 
     # batch size always 1, sleep and throttle could increase runtime close to lambda timeout
     # split it up in 1 update per lambda instead. This will also make the code cleaner.
-    mal_id = int(event["Records"][0]["body"])
+    body = json.loads(event["Records"][0]["body"])
+    mal_id = body["mal_id"]
 
 
     try:
