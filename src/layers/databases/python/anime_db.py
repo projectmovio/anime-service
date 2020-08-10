@@ -38,9 +38,9 @@ def _get_client():
     return client
 
 
-def new_anime(mal_info):
-    anime_id = create_anime_uuid(mal_info["mal_id"])
-    update_anime(anime_id, mal_info)
+def new_anime(anime_info):
+    anime_id = create_anime_uuid(anime_info["mal_id"])
+    update_anime(anime_id, anime_info)
 
     return anime_id
 

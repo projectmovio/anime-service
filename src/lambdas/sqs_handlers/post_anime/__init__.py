@@ -25,21 +25,26 @@ def handle(event, context):
     # split it up in 1 update per lambda instead. This will also make the code cleaner.
     body = json.loads(event["Records"][0]["body"])
     mal_id = body["mal_id"]
-
+    force_update = "force_update" in body and body["force_update"]
+    anidb_id = None
 
     try:
-        anime_db.get_anime_by_mal_id(mal_id)
+        ret = anime_db.get_anime_by_mal_id(mal_id)
+        anidb_id = ret["anidb_id"]
     except anime_db.NotFoundError:
         pass
     else:
-        log.debug(f"Anime with mal_id: {mal_id} already present, ignore update")
-        return
+        if not force_update:
+            log.debug(f"Anime with mal_id: {mal_id} already present, ignore update")
+            return
 
     mal_api = mal.MalApi()
     anime_data = mal_api.get_anime(mal_id)
 
-    titles = mal.get_all_titles(anime_data)
-    anidb_id = _get_anidb_id(titles)
+    if anidb_id is None:
+        titles = mal.get_all_titles(anime_data)
+        anidb_id = _get_anidb_id(titles)
+
     episodes = None
     if anidb_id:
         log.debug(f"Found matching anidb_id: {anidb_id} for mal_id: {mal_id}")
