@@ -1,4 +1,5 @@
 import os
+import uuid
 
 import boto3
 from dynamodb_json import json_util
@@ -42,8 +43,13 @@ def _get_client():
 def put_episodes(anime_id, episodes):
     with _get_table().batch_writer() as batch:
         for ep in episodes:
+            ep["id"] = _create_episode_uuid(anime_id, ep["episode_number"])
             ep["anime_id"] = anime_id
             batch.put_item(Item=ep)
+
+
+def _create_episode_uuid(anime_id, episode_id):
+    return str(uuid.uuid5(anime_id, str(episode_id)))
 
 
 def get_episodes(anime_id, limit=100, start=1):
