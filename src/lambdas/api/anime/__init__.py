@@ -70,7 +70,7 @@ def _post_anime(mal_id):
         }
 
     _get_sqs_queue().send_message(
-        MessageBody=str(mal_id)
+        MessageBody=json.dumps({"mal_id": mal_id})
     )
 
     return {
