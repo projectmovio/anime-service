@@ -14,6 +14,7 @@ log = logger.get_logger("sqs_hanlders.anime")
 
 
 def handle(event, context):
+    log.debug(f"Received event: {event}")
     last_timestamp = params_db.get_last_post_anime_update()
 
     current_timestamp = int(time.time())
@@ -24,6 +25,8 @@ def handle(event, context):
     # batch size always 1, sleep and throttle could increase runtime close to lambda timeout
     # split it up in 1 update per lambda instead. This will also make the code cleaner.
     body = json.loads(event["Records"][0]["body"])
+    log.debug(f"Message Body: {body}")
+
     mal_id = body["mal_id"]
     force_update = "force_update" in body and body["force_update"]
     anidb_id = None
