@@ -61,7 +61,8 @@ def handle(event, context):
 
     anime_id = anime_db.new_anime(anime_data)
 
-    if episodes and anime_data["media_type"] != "Movie":
+    skip_episodes = anime_data["media_type"] == "Movie" and anime_data["num_episodes"] == 1
+    if episodes and not skip_episodes:
         log.debug("Updating episodes")
         episodes_db.put_episodes(anime_id, episodes)
 
