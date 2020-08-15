@@ -46,7 +46,7 @@ class MalApi:
         url = f"{self.base_url}/anime/{anime_id}"
         fields = [
             "related_anime", "alternative_titles", "media_type", "start_date", "end_date", "average_episode_duration",
-            "synopsis", "broadcast", "num_episodes"
+            "synopsis", "broadcast", "num_episodes", "broadcast"
         ]
         url_params = {"fields": ",".join(fields)}
         ret = requests.get(url, params=url_params, headers=self.default_headers)
