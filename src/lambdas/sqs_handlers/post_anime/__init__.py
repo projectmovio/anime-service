@@ -62,6 +62,7 @@ def handle(event, context):
     anime_id = anime_db.new_anime(anime_data)
 
     if episodes:
+        log.debug("Updating episodes")
         episodes_db.put_episodes(anime_id, episodes)
 
     params_db.set_last_post_anime_update(int(time.time()), anime_id)
