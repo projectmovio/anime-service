@@ -16,7 +16,9 @@ TEST_MAL_RESPONSE = {
     "main_picture": {
         "medium": "https://api-cdn.myanimelist.net/images/anime/13/17405.jpg",
         "large": "https://api-cdn.myanimelist.net/images/anime/13/17405l.jpg"
-    }
+    },
+    "media_type": "TV Series",
+    "num_episodes": 10
 }
 UPDATED_PARAM = ""
 
