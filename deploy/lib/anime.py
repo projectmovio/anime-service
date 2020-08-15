@@ -191,7 +191,7 @@ class Anime(core.Stack):
                     "MAL_CLIENT_ID": self.mal_client_id,
                     "ANIDB_TITLES_BUCKET": self.anidb_titles_bucket.bucket_name,
                     "ANIDB_CLIENT": self.anidb_client,
-                    "LOG_LEVEL": "INFO",
+                    "LOG_LEVEL": "DEBUG",
                 },
                 "concurrent_executions": 1,
                 "policies": [
