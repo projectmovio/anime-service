@@ -65,10 +65,10 @@ class Anime(core.Stack):
             partition_key=Attribute(name="mal_id", type=AttributeType.NUMBER),
             index_name="mal_id"
         )
-        self.anime_table.add_local_secondary_index(
-            sort_key=Attribute(name="broadcast_day", type=AttributeType.STRING),
-            index_name="broadcast_day"
-        )
+        # self.anime_table.add_local_secondary_index(
+        #     sort_key=Attribute(name="broadcast_day", type=AttributeType.STRING),
+        #     index_name="broadcast_day"
+        # )
 
         self.anime_episodes = Table(
             self,
@@ -193,8 +193,9 @@ class Anime(core.Stack):
             "crons-episodes_updater": {
                 "layers": ["utils", "databases"],
                 "variables": {
-                    "LOG_LEVEL": "INFO",
+                    "LOG_LEVEL": "DEBUG",
                     "POST_ANIME_SQS_QUEUE_URL": self.post_anime_queue.queue_url,
+                    "ANIME_DATABASE_NAME": self.anime_table.table_name,
                 },
                 "concurrent_executions": 1,
                 "policies": [
@@ -219,7 +220,7 @@ class Anime(core.Stack):
                     "MAL_CLIENT_ID": self.mal_client_id,
                     "ANIDB_TITLES_BUCKET": self.anidb_titles_bucket.bucket_name,
                     "ANIDB_CLIENT": self.anidb_client,
-                    "LOG_LEVEL": "DEBUG",
+                    "LOG_LEVEL": "INFO",
                 },
                 "concurrent_executions": 1,
                 "policies": [
