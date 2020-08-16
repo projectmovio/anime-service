@@ -135,8 +135,5 @@ def anime_by_broadcast_generator(day_of_week, limit=100):
     )
 
     for p in page_iterator:
-        items = []
         for i in p["Items"]:
-            items.append(json_util.loads(i))
-        if items:
-            yield items
+            yield json_util.loads(i)
