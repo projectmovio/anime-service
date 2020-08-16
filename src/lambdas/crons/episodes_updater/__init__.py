@@ -1,11 +1,10 @@
 import json
-from datetime import datetime
-
+import os
 import boto3
-
 import logger
 import anime_db
-from api.anime import _get_sqs_queue
+
+from datetime import datetime
 
 log = logger.get_logger("episode_updater")
 
