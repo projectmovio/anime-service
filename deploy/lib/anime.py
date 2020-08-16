@@ -66,7 +66,6 @@ class Anime(core.Stack):
             index_name="mal_id"
         )
         self.anime_table.add_local_secondary_index(
-            partition_key=Attribute(name="id", type=AttributeType.NUMBER),
             sort_key=Attribute(name="broadcast_day", type=AttributeType.STRING),
             index_name="broadcast_day"
         )
