@@ -120,3 +120,23 @@ def get_ids(mal_items):
             pass
 
     return id_map
+
+
+def anime_by_broadcast_generator(day_of_week, limit=100):
+    paginator = _get_client().get_paginator('query')
+
+    page_iterator = paginator.paginate(
+        TableName=DATABASE_NAME,
+        IndexName="broadcast_day",
+        KeyConditionExpression="broadcast_day=:day_of_week",
+        ExpressionAttributeValues={":day_of_week": {"S": str(day_of_week)}},
+        Limit=limit,
+        ScanIndexForward=False
+    )
+
+    for p in page_iterator:
+        items = []
+        for i in p["Items"]:
+            items.append(json_util.loads(i))
+        if items:
+            yield items
