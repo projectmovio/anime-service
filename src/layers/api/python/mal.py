@@ -57,6 +57,10 @@ class MalApi:
 
         res = ret.json()
         res["mal_id"] = res.pop("id")
+
+        if "broadcast" in res and "day_of_the_week" in res["broadcast"]:
+            # need a top level broadcast_day for dynamodb sort key
+            res["broadcast_day"] = res["broadcast"]["day_of_the_week"]
         return res
 
 
