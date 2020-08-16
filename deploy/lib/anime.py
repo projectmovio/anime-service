@@ -191,6 +191,26 @@ class Anime(core.Stack):
                 "timeout": 120,
                 "memory": 128
             },
+            "crons-episodes_updater": {
+                "layers": ["utils", "databases"],
+                "variables": {
+                    "LOG_LEVEL": "INFO",
+                    "POST_ANIME_SQS_QUEUE_URL": self.post_anime_queue.queue_url,
+                },
+                "concurrent_executions": 1,
+                "policies": [
+                    PolicyStatement(
+                        actions=["dynamodb:Query"],
+                        resources=[f"{self.anime_table.table_arn}/index/broadcast_day"]
+                    ),
+                    PolicyStatement(
+                        actions=["sqs:SendMessage"],
+                        resources=[self.post_anime_queue.queue_arn]
+                    ),
+                ],
+                "timeout": 120,
+                "memory": 128
+            },
             "sqs_handlers-post_anime": {
                 "layers": ["utils", "databases", "api"],
                 "variables": {
@@ -305,6 +325,12 @@ class Anime(core.Stack):
             "titles_updater",
             schedule=Schedule.cron(hour="2", minute="10"),
             targets=[LambdaFunction(self.lambdas["crons-titles_updater"])]
+        )
+        Rule(
+            self,
+            "episodes_updater",
+            schedule=Schedule.cron(hour="4", minute="10"),
+            targets=[LambdaFunction(self.lambdas["crons-episodes_updater"])]
         )
 
     def _create_gateway(self):
