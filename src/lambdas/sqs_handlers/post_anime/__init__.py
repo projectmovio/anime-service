@@ -27,7 +27,7 @@ def handle(event, context):
     body = json.loads(event["Records"][0]["body"])
     log.debug(f"Message Body: {body}")
 
-    mal_id = body["mal_id"]
+    mal_id = int(body["mal_id"])
     force_update = "force_update" in body and body["force_update"]
     anidb_id = None
 
