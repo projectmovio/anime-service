@@ -25,7 +25,7 @@ def handle(event, context):
     log.info(f"Updating anime with broadcast_day: {day_of_week}")
 
     for anime in anime_db.anime_by_broadcast_generator(day_of_week):
-        if "end_date" not in anime:
+        if "end_date" not in anime or anime["end_date"] is None:
             log.debug(f"Sending SQS message for anime with id: ${anime['id']}")
             _get_sqs_queue().send_message(
                 MessageBody=json.dumps({
