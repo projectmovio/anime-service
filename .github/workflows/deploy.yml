@@ -30,4 +30,6 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          MAL_CLIENT_ID: ${{ secrets.MAL_CLIENT_ID }}
+          ANIDB_CLIENT: ${{ secrets.ANIDB_CLIENT }}
           AWS_DEFAULT_REGION: eu-west-1
