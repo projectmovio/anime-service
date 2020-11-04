@@ -65,6 +65,10 @@ class Anime(core.Stack):
             partition_key=Attribute(name="mal_id", type=AttributeType.NUMBER),
             index_name="mal_id"
         )
+        self.anime_table.add_global_secondary_index(
+            partition_key=Attribute(name="broadcast_day", type=AttributeType.STRING),
+            index_name="broadcast_day"
+        )
 
         self.anime_episodes = Table(
             self,
@@ -72,6 +76,10 @@ class Anime(core.Stack):
             partition_key=Attribute(name="anime_id", type=AttributeType.STRING),
             sort_key=Attribute(name="episode_number", type=AttributeType.NUMBER),
             billing_mode=BillingMode.PAY_PER_REQUEST,
+        )
+        self.anime_episodes.add_local_secondary_index(
+            sort_key=Attribute(name="id", type=AttributeType.STRING),
+            index_name="episode_id"
         )
 
         self.anime_params = Table(
@@ -178,6 +186,27 @@ class Anime(core.Stack):
                         actions=["s3:GetObject", "s3:PutObject"],
                         resources=[self.anidb_titles_bucket.arn_for_objects("*")]
                     )
+                ],
+                "timeout": 120,
+                "memory": 128
+            },
+            "crons-episodes_updater": {
+                "layers": ["utils", "databases"],
+                "variables": {
+                    "LOG_LEVEL": "DEBUG",
+                    "POST_ANIME_SQS_QUEUE_URL": self.post_anime_queue.queue_url,
+                    "ANIME_DATABASE_NAME": self.anime_table.table_name,
+                },
+                "concurrent_executions": 1,
+                "policies": [
+                    PolicyStatement(
+                        actions=["dynamodb:Query"],
+                        resources=[f"{self.anime_table.table_arn}/index/broadcast_day"]
+                    ),
+                    PolicyStatement(
+                        actions=["sqs:SendMessage"],
+                        resources=[self.post_anime_queue.queue_arn]
+                    ),
                 ],
                 "timeout": 120,
                 "memory": 128
@@ -296,6 +325,12 @@ class Anime(core.Stack):
             "titles_updater",
             schedule=Schedule.cron(hour="2", minute="10"),
             targets=[LambdaFunction(self.lambdas["crons-titles_updater"])]
+        )
+        Rule(
+            self,
+            "episodes_updater",
+            schedule=Schedule.cron(hour="4", minute="10"),
+            targets=[LambdaFunction(self.lambdas["crons-episodes_updater"])]
         )
 
     def _create_gateway(self):
