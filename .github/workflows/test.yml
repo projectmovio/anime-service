@@ -37,4 +37,5 @@ jobs:
 
     - name: Test
       run: |
-        PYTHONPATH=./src/layers/api/python:./src/layers/common/python:./src/layers/utils/python:./src/lambdas/:./src/layers/databases/python pytest test/unittest
+        PYTHONPATH=./src/layers/api/python:./src/layers/common/python:./src/layers/utils/python:./src/lambdas/:./src/layers/databases/python \
+          pytest test/unittest
