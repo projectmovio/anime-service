@@ -2,16 +2,13 @@ name: deploy
 
 on:
   push:
-    branches: [ master, github-cdk-action ]
+    branches: [ master ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
-        uses: actions/checkout@v2
-        with:
-          repository: 'projectmovio/anime-service'
+      - uses: actions/checkout@v2
 
       - name: cdk diff
         uses: youyo/aws-cdk-github-actions@v1.1.10
