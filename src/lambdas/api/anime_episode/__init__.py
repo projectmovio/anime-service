@@ -18,7 +18,7 @@ def handle(event, context):
     episode_id = event["pathParameters"].get("episode_id")
 
     try:
-        res = episodes_db.get_episode(anime_id, episode_id)
+        res = episodes_db.get_episode(anime_id, episode_id
     except episodes_db.NotFoundError:
         log.debug(f"No episodes found for anime with id: {anime_id}")
         return {"statusCode": 404}
