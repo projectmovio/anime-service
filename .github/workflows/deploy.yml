@@ -1,4 +1,4 @@
-name: dryrun
+name: deploy
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - '*'
 
 jobs:
-  dryrun:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
