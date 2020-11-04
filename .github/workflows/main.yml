@@ -1,7 +1,7 @@
 - name: CDK Synth
   uses: youyo/aws-cdk-github-actions@v1.1.10
   with:
-    cdk_stack: *
-    cdk_version: 1.49.1
-    cdk_subcommand: synth
-    debug_log: true
+    cdk_stack: "*"
+    cdk_version: "1.49.1"
+    cdk_subcommand: "synth"
+    debug_log: "true"
