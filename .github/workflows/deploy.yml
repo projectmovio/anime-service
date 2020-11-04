@@ -18,11 +18,10 @@ jobs:
         id: diff
         uses: youyo/aws-cdk-github-actions@v1.1.10
         with:
-          cdk_stack: 'anime'
           cdk_version: 1.49.1
           cdk_subcommand: diff
           debug_log: true
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: "eu-west-1"
+          AWS_DEFAULT_REGION: eu-west-1
