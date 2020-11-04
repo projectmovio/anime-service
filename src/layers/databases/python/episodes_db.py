@@ -2,13 +2,11 @@ import os
 import uuid
 
 import boto3
-from boto3.dynamodb.conditions import Key
 from dynamodb_json import json_util
 
 import logger
 
 DATABASE_NAME = os.getenv("ANIME_EPISODES_DATABASE_NAME")
-EPISODE_ID_INDEX_NAME = "episode_id"
 
 table = None
 client = None
@@ -25,10 +23,6 @@ class NotFoundError(Error):
 
 
 class InvalidStartOffset(Error):
-    pass
-
-
-class InvalidAmountOfEpisodes(Error):
     pass
 
 
@@ -56,21 +50,6 @@ def put_episodes(anime_id, episodes):
 
 def _create_episode_uuid(anime_id, episode_id):
     return str(uuid.uuid5(uuid.UUID(anime_id), str(episode_id)))
-
-
-def get_episode(anime_id, episode_id):
-    res = table.query(
-        IndexName=EPISODE_ID_INDEX_NAME,
-        KeyConditionExpression=Key("anime_id").eq(anime_id) & Key("id").eq(episode_id)
-    )
-
-    if "Items" not in res or not res["Items"]:
-        raise NotFoundError(f"Episode with ID: {episode_id} and anime_id: {anime_id} not found")
-
-    if res["Count"] != 1:
-        raise InvalidAmountOfEpisodes(f"Episode with ID: {episode_id} and anime_id: {anime_id} has {res['Count']} results")
-
-    return res["Items"][0]
 
 
 def get_episodes(anime_id, limit=100, start=1):
