@@ -1,13 +1,8 @@
-# This is a basic workflow to help you get started with Actions
-
 name: deploy
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
   push:
     branches: [ master, github-cdk-action ]
-
 
 jobs:
   deploy:
@@ -19,12 +14,26 @@ jobs:
           repository: 'projectmovio/anime-service'
 
       - name: cdk diff
-        id: diff
         uses: youyo/aws-cdk-github-actions@v1.1.10
         with:
           cdk_stack: anime
           cdk_version: 1.49.1
           cdk_subcommand: diff
+          debug_log: true
+          working_dir: deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          MAL_CLIENT_ID: ${{ secrets.MAL_CLIENT_ID }}
+          ANIDB_CLIENT: ${{ secrets.ANIDB_CLIENT }}
+          AWS_DEFAULT_REGION: eu-west-1
+
+      - name: cdk synth
+        uses: youyo/aws-cdk-github-actions@v1.1.10
+        with:
+          cdk_stack: anime
+          cdk_version: 1.49.1
+          cdk_subcommand: synth
           debug_log: true
           working_dir: deploy
         env:
