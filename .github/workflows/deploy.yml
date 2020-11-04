@@ -18,7 +18,7 @@ jobs:
         id: diff
         uses: youyo/aws-cdk-github-actions@v1.1.10
         with:
-          cdk_stack: "*"
+          cdk_stack: "anime"
           cdk_version: "1.49.1"
           cdk_subcommand: "diff"
           debug_log: true
