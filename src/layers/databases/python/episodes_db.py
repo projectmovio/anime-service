@@ -1,4 +1,5 @@
 import os
+import uuid
 
 import boto3
 from dynamodb_json import json_util
@@ -42,8 +43,13 @@ def _get_client():
 def put_episodes(anime_id, episodes):
     with _get_table().batch_writer() as batch:
         for ep in episodes:
+            ep["id"] = _create_episode_uuid(anime_id, ep["episode_number"])
             ep["anime_id"] = anime_id
             batch.put_item(Item=ep)
+
+
+def _create_episode_uuid(anime_id, episode_id):
+    return str(uuid.uuid5(uuid.UUID(anime_id), str(episode_id)))
 
 
 def get_episodes(anime_id, limit=100, start=1):
@@ -60,13 +66,13 @@ def get_episodes(anime_id, limit=100, start=1):
         if start_page == start:
             res = p
 
+    if start_page == 0:
+        raise NotFoundError(f"Episodes for anime with id: {anime_id} not found")
+
     if start > start_page:
         raise InvalidStartOffset
 
     log.debug(f"get_episodes response: {res}")
-
-    if not res:
-        raise NotFoundError(f"Anime with id: {anime_id} not found")
 
     return {
         "items": res,
@@ -89,4 +95,5 @@ def _episodes_generator(anime_id, limit):
         items = []
         for i in p["Items"]:
             items.append(json_util.loads(i))
-        yield items
+        if items:
+            yield items

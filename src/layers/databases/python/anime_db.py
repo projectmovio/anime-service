@@ -38,9 +38,9 @@ def _get_client():
     return client
 
 
-def new_anime(mal_info):
-    anime_id = create_anime_uuid(mal_info["mal_id"])
-    update_anime(anime_id, mal_info)
+def new_anime(anime_info):
+    anime_id = create_anime_uuid(anime_info["mal_id"])
+    update_anime(anime_id, anime_info)
 
     return anime_id
 
@@ -120,3 +120,20 @@ def get_ids(mal_items):
             pass
 
     return id_map
+
+
+def anime_by_broadcast_generator(day_of_week, limit=100):
+    paginator = _get_client().get_paginator('query')
+
+    page_iterator = paginator.paginate(
+        TableName=DATABASE_NAME,
+        IndexName="broadcast_day",
+        KeyConditionExpression="broadcast_day=:day_of_week",
+        ExpressionAttributeValues={":day_of_week": {"S": str(day_of_week)}},
+        Limit=limit,
+        ScanIndexForward=False
+    )
+
+    for p in page_iterator:
+        for i in p["Items"]:
+            yield json_util.loads(i)

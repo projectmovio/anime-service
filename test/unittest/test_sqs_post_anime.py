@@ -16,7 +16,9 @@ TEST_MAL_RESPONSE = {
     "main_picture": {
         "medium": "https://api-cdn.myanimelist.net/images/anime/13/17405.jpg",
         "large": "https://api-cdn.myanimelist.net/images/anime/13/17405l.jpg"
-    }
+    },
+    "media_type": "TV Series",
+    "num_episodes": 10
 }
 UPDATED_PARAM = ""
 
@@ -67,7 +69,7 @@ def test_handle(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, moc
     event = {
         "Records": [
             {
-                "body": TEST_MAL_ID
+                "body": json.dumps({"mal_id": TEST_MAL_ID})
             }
         ]
     }
@@ -101,7 +103,7 @@ def test_handle_to_early(mocked_get, mocked_params_db, mocked_anime_db, mocked_a
     event = {
         "Records": [
             {
-                "body": TEST_MAL_ID
+                "body": json.dumps({"mal_id": TEST_MAL_ID})
             }
         ]
     }
@@ -127,7 +129,7 @@ def test_handle_already_exist_skipped(mocked_params_db, mocked_anime_db, mocked_
     event = {
         "Records": [
             {
-                "body": TEST_MAL_ID
+                "body": json.dumps({"mal_id": TEST_MAL_ID})
             }
         ]
     }
@@ -155,7 +157,7 @@ def test_handle_no_anidb_match(mocked_get, mocked_params_db, mocked_anime_db, mo
     event = {
         "Records": [
             {
-                "body": TEST_MAL_ID
+                "body": json.dumps({"mal_id": TEST_MAL_ID})
             }
         ]
     }

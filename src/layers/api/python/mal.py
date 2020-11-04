@@ -46,7 +46,7 @@ class MalApi:
         url = f"{self.base_url}/anime/{anime_id}"
         fields = [
             "related_anime", "alternative_titles", "media_type", "start_date", "end_date", "average_episode_duration",
-            "synopsis", "broadcast", "num_episodes"
+            "synopsis", "broadcast", "num_episodes", "broadcast"
         ]
         url_params = {"fields": ",".join(fields)}
         ret = requests.get(url, params=url_params, headers=self.default_headers)
@@ -57,6 +57,10 @@ class MalApi:
 
         res = ret.json()
         res["mal_id"] = res.pop("id")
+
+        if "broadcast" in res and "day_of_the_week" in res["broadcast"]:
+            # need a top level broadcast_day for dynamodb sort key
+            res["broadcast_day"] = res["broadcast"]["day_of_the_week"]
         return res
 
 

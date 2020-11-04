@@ -45,7 +45,7 @@ def test_handler_not_found(mocked_episodes_db):
 
     event = {
         "pathParameters": {
-            "anime_id": "123"
+            "id": "123"
         }
     }
 
