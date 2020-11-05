@@ -27,5 +27,3 @@ jobs:
           ANIDB_CLIENT: ${{ secrets.ANIDB_CLIENT }}
           AWS_DEFAULT_REGION: eu-west-1
           PIP_NO_CACHE_DIR: off
-
-      - name: apitest
