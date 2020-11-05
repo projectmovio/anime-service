@@ -23,7 +23,7 @@ def test_handler(mocked_episodes_db):
 
     event = {
         "pathParameters": {
-            "anime_id": "123"
+            "id": "123"
         }
     }
 
