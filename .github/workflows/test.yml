@@ -39,3 +39,8 @@ jobs:
       run: |
         PYTHONPATH=./src/layers/api/python:./src/layers/common/python:./src/layers/utils/python:./src/lambdas/:./src/layers/databases/python \
           pytest test/unittest
+
+    - name: Coveralls
+      uses: coverallsapp/github-action@v1.1.2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
