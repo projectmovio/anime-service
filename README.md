@@ -1,5 +1,6 @@
-[![Build Status](https://travis-ci.com/projectmovio/anime-service.svg?branch=master)](https://travis-ci.com/projectmovio/anime-service)
 [![Coverage Status](https://coveralls.io/repos/github/projectmovio/anime-service/badge.svg?branch=master)](https://coveralls.io/github/projectmovio/anime-service?branch=master)
+![dryrun](https://github.com/projectmovio/anime-service/workflows/dryrun/badge.svg)
+![test](https://github.com/projectmovio/anime-service/workflows/test/badge.svg)
 # Formatting
 
 * `make format`
