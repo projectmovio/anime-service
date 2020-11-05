@@ -1,8 +1,8 @@
 name: dryrun
 
 on:
-  push:
-    branches: '*'
+  pull_request:
+    branches: [ $default-branch ]
 
 jobs:
   dryrun:
