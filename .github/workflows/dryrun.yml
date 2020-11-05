@@ -3,7 +3,8 @@ name: dryrun
 on:
   pull_request:
     branches: [ $default-branch ]
-  branches: $default-branch
+  push:
+    branches: $default-branch
 
 jobs:
   dryrun:
