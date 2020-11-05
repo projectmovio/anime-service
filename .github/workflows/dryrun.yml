@@ -2,7 +2,7 @@ name: dryrun
 
 on:
   pull_request:
-    branches: [ $default-branch ]
+    branches: '*'
 
 jobs:
   dryrun:
