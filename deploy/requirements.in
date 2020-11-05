@@ -9,3 +9,5 @@ aws_cdk.aws_lambda_event_sources==1.50.0
 aws_cdk.aws_events==1.50.0
 aws_cdk.aws_events_targets==1.50.0
 aws_cdk.aws_certificatemanager==1.50.0
+
+wheel

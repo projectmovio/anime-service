@@ -268,7 +268,7 @@ class Anime(core.Stack):
 
             if os.path.isfile(requirements_path):
                 packages_folder = os.path.join(build_folder, "python", "lib", "python3.8", "site-packages")
-                print(f"Installing layer requirements to target: {os.path.abspath(packages_folder)}")
+                # print(f"Installing layer requirements to target: {os.path.abspath(packages_folder)}")
                 subprocess.check_output(["pip", "install", "-r", requirements_path, "-t", packages_folder])
                 clean_pycache()
 

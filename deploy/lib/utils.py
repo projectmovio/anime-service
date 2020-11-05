@@ -10,3 +10,6 @@ def clean_pycache():
         for d in dirs:
             if d == "__pycache__":
                 shutil.rmtree(os.path.join(root, d))
+        for f in files:
+            if ".so" in f:
+                os.remove(os.path.join(root, f))
