@@ -59,7 +59,7 @@ def _create_episode_uuid(anime_id, episode_id):
 
 
 def get_episode(anime_id, episode_id):
-    res = table.query(
+    res = _get_table().query(
         IndexName=EPISODE_ID_INDEX_NAME,
         KeyConditionExpression=Key("anime_id").eq(anime_id) & Key("id").eq(episode_id)
     )
