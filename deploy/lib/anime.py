@@ -158,7 +158,7 @@ class Anime(core.Stack):
                 "policies": [
                     PolicyStatement(
                         actions=["dynamodb:Query"],
-                        resources=[self.anime_episodes.table_arn]
+                        resources=[f"{self.anime_episodes.table_arn}/index/episode_id"]
                     )
                 ],
                 "timeout": 3,
