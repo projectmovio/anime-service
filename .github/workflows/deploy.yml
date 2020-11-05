@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - '*'
-    branches:
-      - skip-re-deploy-layers
 
 jobs:
   deploy:
