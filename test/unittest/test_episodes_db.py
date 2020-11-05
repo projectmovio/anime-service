@@ -101,3 +101,46 @@ def test_episodes_generator_low_limit(mocked_episodes_db):
         eps += p
 
     assert eps == [{"ep_name": "ep_1"}, {"ep_name": "ep_2"}, {"ep_name": "ep_3"}]
+
+
+def test_get_episode(mocked_episodes_db):
+    mocked_episodes_db.table.query.return_value = {
+        "Items": [
+            {"ep_name": "ep_1"}
+        ],
+        "Count": 1,
+    }
+
+    ret = mocked_episodes_db.get_episode("TEST_ANIME_ID", "TEST_EPISODE_ID")
+    assert ret == {"ep_name": "ep_1"}
+
+
+def test_get_episode_empty_items_response(mocked_episodes_db):
+    mocked_episodes_db.table.query.return_value = {
+        "Items": [],
+        "Count": 1,
+    }
+
+    with pytest.raises(mocked_episodes_db.NotFoundError):
+        mocked_episodes_db.get_episode("TEST_ANIME_ID", "TEST_EPISODE_ID")
+
+
+def test_get_episode_no_items_field(mocked_episodes_db):
+    mocked_episodes_db.table.query.return_value = {
+        "Count": 1,
+    }
+
+    with pytest.raises(mocked_episodes_db.NotFoundError):
+        mocked_episodes_db.get_episode("TEST_ANIME_ID", "TEST_EPISODE_ID")
+
+
+def test_get_episode_count_not_one(mocked_episodes_db):
+    mocked_episodes_db.table.query.return_value = {
+        "Items": [
+            {"ep_name": "ep_1"}
+        ],
+        "Count": 10,
+    }
+
+    with pytest.raises(mocked_episodes_db.InvalidAmountOfEpisodes):
+        mocked_episodes_db.get_episode("TEST_ANIME_ID", "TEST_EPISODE_ID")

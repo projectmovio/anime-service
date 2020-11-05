@@ -148,6 +148,22 @@ class Anime(core.Stack):
                 "timeout": 3,
                 "memory": 512
             },
+            "api-anime_episode": {
+                "layers": ["utils", "databases"],
+                "variables": {
+                    "ANIME_EPISODES_DATABASE_NAME": self.anime_episodes.table_name,
+                    "LOG_LEVEL": "INFO",
+                },
+                "concurrent_executions": 100,
+                "policies": [
+                    PolicyStatement(
+                        actions=["dynamodb:Query"],
+                        resources=[self.anime_episodes.table_arn]
+                    )
+                ],
+                "timeout": 3,
+                "memory": 512
+            },
             "api-anime": {
                 "layers": ["utils", "databases", "api"],
                 "variables": {
@@ -398,6 +414,11 @@ class Anime(core.Stack):
                 "method": "GET",
                 "route": "/v1/anime/{id}/episodes",
                 "target_lambda": self.lambdas["api-anime_episodes"]
+            },
+            "get_anime_episode": {
+                "method": "GET",
+                "route": "/v1/anime/{id}/episode/{episode_id}",
+                "target_lambda": self.lambdas["api-anime_episode"]
             }
         }
 
