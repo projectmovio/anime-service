@@ -24,6 +24,7 @@ jobs:
           MAL_CLIENT_ID: ${{ secrets.MAL_CLIENT_ID }}
           ANIDB_CLIENT: ${{ secrets.ANIDB_CLIENT }}
           AWS_DEFAULT_REGION: eu-west-1
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: cdk synth
         uses: youyo/aws-cdk-github-actions@v1.1.10
@@ -39,3 +40,4 @@ jobs:
           MAL_CLIENT_ID: ${{ secrets.MAL_CLIENT_ID }}
           ANIDB_CLIENT: ${{ secrets.ANIDB_CLIENT }}
           AWS_DEFAULT_REGION: eu-west-1
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
