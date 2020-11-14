@@ -59,7 +59,7 @@ def test_handle(mocked_get, mocked_params_db, mocked_anime_db, mocked_anidb, moc
     # MAL request mock
     mocked_get.return_value.status_code = 200
     mocked_get.return_value.json = lambda *a, **k: TEST_MAL_RESPONSE.copy()
-
+    mocked_anidb.s3_bucket.download_file = download_file_mock
     # ANIDB request mock
     with open(ANIME_XML) as fs:
         mocked_get.return_value.text = fs.read()
