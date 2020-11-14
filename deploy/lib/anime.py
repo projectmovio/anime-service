@@ -265,8 +265,8 @@ class Anime(core.Stack):
                         resources=[self.anidb_titles_bucket.arn_for_objects("*")]
                     )
                 ],
-                "timeout": 15,
-                "memory": 1024
+                "timeout": 60,
+                "memory": 2048
             },
         }
 

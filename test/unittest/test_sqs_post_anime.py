@@ -4,7 +4,7 @@ import shutil
 import time
 from unittest import mock
 
-from sqs_handlers.post_anime import handle
+from sqs_handlers.post_anime import handle, _get_anidb_id
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 ANIME_XML = os.path.join(CURRENT_DIR, "files", "anime.xml")
@@ -168,3 +168,35 @@ def test_handle_no_anidb_match(mocked_get, mocked_params_db, mocked_anime_db, mo
 
     if os.path.isfile("titles.json"):
         os.remove("titles.json")
+
+
+def test_get_anidb_id(mocked_anidb):
+    mocked_anidb.s3_bucket.download_file = download_file_mock
+
+    anidb_id = _get_anidb_id(["Seikai no Monshou"])
+
+    assert anidb_id == 1
+
+
+def test_get_anidb_id_close_match(mocked_anidb):
+    mocked_anidb.s3_bucket.download_file = download_file_mock
+
+    anidb_id = _get_anidb_id(["Seikai no Monsh"])
+
+    assert anidb_id == 1
+
+
+def test_get_anidb_id_no_match(mocked_anidb):
+    mocked_anidb.s3_bucket.download_file = download_file_mock
+
+    anidb_id = _get_anidb_id(["abc"])
+
+    assert anidb_id is None
+
+
+def test_get_anidb_id_multiple_matches(mocked_anidb):
+    mocked_anidb.s3_bucket.download_file = download_file_mock
+
+    anidb_id = _get_anidb_id(["Seikai no Monsh", "Seikai no Monshou"])
+
+    assert anidb_id == 1

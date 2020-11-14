@@ -70,19 +70,22 @@ def handle(event, context):
 
 
 def _get_anidb_id(all_titles):
-    max_ratio_title = (None, 0)
+    max_ratio_id = (None, 0)
     for title in all_titles:
         for anidb_title in _titles():
             compare_ratio = SequenceMatcher(None, title, anidb_title['title']).ratio()
-            if compare_ratio > 0.9 and compare_ratio > max_ratio_title[1]:
+            if compare_ratio == 1:
+                log.info(f"Found 100% equal anidb match. Mal title: {title}. Anidb title: {anidb_title['title']}")
+                return anidb_title['id']
+            if compare_ratio > 0.9 and compare_ratio > max_ratio_id[1]:
                 log.info(f"Found better anidb match: {compare_ratio*100}%. Mal title: {title}. Anidb title: {anidb_title['title']}")
-                max_ratio_title = (anidb_title['title'], compare_ratio)
+                max_ratio_id = (anidb_title['id'], compare_ratio)
             elif compare_ratio > 0.6:
                 log.info(f"Found 60%-90% match for mal title: {title}. Anidb title: {anidb_title['title']}")
 
-    if max_ratio_title is None:
+    if max_ratio_id[0] is None:
         log.warning(f"Could not find anidb_id for titles: {all_titles}")
-    return max_ratio_title[0]
+    return max_ratio_id[0]
 
 
 def _titles():
