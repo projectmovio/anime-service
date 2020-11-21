@@ -15,7 +15,7 @@ aws-cdk.assets==1.50.0 \
 aws-cdk.aws-apigateway==1.50.0 \
     --hash=sha256:a4b202b99a34dcd49201d566bb2caaf2d6584fa143c767977b231e7f724b15ba \
     --hash=sha256:f0db8561415cfbc1258d6932673f35c0c1ae396681b04f70a0237777648c84a3 \
-    # via aws-cdk.aws-lambda-event-sources, aws-cdk.aws-route53-targets
+    # via -r deploy/requirements.in, aws-cdk.aws-lambda-event-sources, aws-cdk.aws-route53-targets
 aws-cdk.aws-applicationautoscaling==1.50.0 \
     --hash=sha256:357868c5a9cdad9ddf281bc3e5d4daabd837c71175ffd6c7a96b3c5b603bafca \
     --hash=sha256:d43487ea94ccfeb320a71818f54f8ec81b32652d54efa9293a43c7017c96a7ac \

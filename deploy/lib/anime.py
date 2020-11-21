@@ -13,7 +13,7 @@ from aws_cdk.aws_events_targets import LambdaFunction
 from aws_cdk.aws_iam import Role, ServicePrincipal, PolicyStatement, ManagedPolicy
 from aws_cdk.aws_lambda import LayerVersion, Code, Runtime, Function
 from aws_cdk.aws_lambda_event_sources import SqsEventSource
-from aws_cdk.aws_s3 import Bucket, BlockPublicAccess
+from aws_cdk.aws_s3 import Bucket, BlockPublicAccess, LifecycleRule
 from aws_cdk.aws_sqs import Queue, DeadLetterQueue
 from aws_cdk.core import Duration
 
@@ -52,6 +52,9 @@ class Anime(core.Stack):
                 block_public_policy=True,
             ),
             removal_policy=core.RemovalPolicy.DESTROY,
+            lifecycle_rules=[
+                LifecycleRule(expiration=Duration.days(3)),
+            ]
         )
 
     def _create_tables(self):
