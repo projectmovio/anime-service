@@ -54,8 +54,8 @@ def put_episodes(anime_id, episodes):
             batch.put_item(Item=ep)
 
 
-def _create_episode_uuid(anime_id, episode_id):
-    return str(uuid.uuid5(uuid.UUID(anime_id), str(episode_id)))
+def _create_episode_uuid(anime_id, episode_number):
+    return str(uuid.uuid5(uuid.UUID(anime_id), str(episode_number)))
 
 
 def get_episode(anime_id, episode_id):
