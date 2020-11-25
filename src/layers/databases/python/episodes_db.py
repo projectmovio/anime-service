@@ -74,10 +74,13 @@ def get_episode(anime_id, episode_id):
     episode_data = res["Items"][0]
     episode_data["id_links"] = {}
 
-    if "episode_number" in episode_data and episode_data["episode_number"] != 1:
+    if "episode_number" not in episode_data:
+        return episode_data
+
+    if episode_data["episode_number"] != 1:
         episode_data["id_links"]["previous"] = _create_episode_uuid(anime_id, episode_data["episode_number"] - 1)
 
-    if "air_date" in episode_data and datetime.strptime(episode_data["air_date"], '%Y-%m-%d') <= date.today():
+    if "air_date" in episode_data and datetime.strptime(episode_data["air_date"], '%Y-%m-%d').date() <= date.today():
         episode_data["id_links"]["next"] = _create_episode_uuid(anime_id, episode_data["episode_number"] + 1)
 
     return episode_data
