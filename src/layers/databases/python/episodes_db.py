@@ -1,5 +1,6 @@
 import os
 import uuid
+from datetime import datetime, date
 
 import boto3
 from boto3.dynamodb.conditions import Key
@@ -54,8 +55,8 @@ def put_episodes(anime_id, episodes):
             batch.put_item(Item=ep)
 
 
-def _create_episode_uuid(anime_id, episode_id):
-    return str(uuid.uuid5(uuid.UUID(anime_id), str(episode_id)))
+def _create_episode_uuid(anime_id, episode_number):
+    return str(uuid.uuid5(uuid.UUID(anime_id), str(episode_number)))
 
 
 def get_episode(anime_id, episode_id):
@@ -70,7 +71,20 @@ def get_episode(anime_id, episode_id):
     if res["Count"] != 1:
         raise InvalidAmountOfEpisodes(f"Episode with ID: {episode_id} and anime_id: {anime_id} has {res['Count']} results")
 
-    return res["Items"][0]
+    episode_data = res["Items"][0]
+
+    if "episode_number" not in episode_data:
+        return episode_data
+
+    episode_data["id_links"] = {}
+
+    if episode_data["episode_number"] != 1:
+        episode_data["id_links"]["previous"] = _create_episode_uuid(anime_id, episode_data["episode_number"] - 1)
+
+    if "air_date" in episode_data and datetime.strptime(episode_data["air_date"], '%Y-%m-%d').date() <= date.today():
+        episode_data["id_links"]["next"] = _create_episode_uuid(anime_id, episode_data["episode_number"] + 1)
+
+    return episode_data
 
 
 def get_episodes(anime_id, limit=100, start=1):
