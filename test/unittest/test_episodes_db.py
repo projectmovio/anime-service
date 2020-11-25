@@ -3,6 +3,7 @@ from dynamodb_json import json_util
 
 import pytest
 
+TEST_ANIME_ID = "d8451df1-d25a-4ee6-a11a-1505b870c233"
 
 def test_get_episodes_not_found(mocked_episodes_db):
     m = MagicMock()
@@ -81,7 +82,7 @@ def test_episodes_generator(mocked_episodes_db):
     ]
 
     eps = []
-    for p in mocked_episodes_db._episodes_generator("TEST_ANIME_ID", 1):
+    for p in mocked_episodes_db._episodes_generator(TEST_ANIME_ID, 1):
         eps += p
 
     assert eps == [{"ep_name": "ep_1"}, {"ep_name": "ep_2"}, {"ep_name": "ep_3"}]
@@ -97,7 +98,7 @@ def test_episodes_generator_low_limit(mocked_episodes_db):
     ]
 
     eps = []
-    for p in mocked_episodes_db._episodes_generator("TEST_ANIME_ID", 3):
+    for p in mocked_episodes_db._episodes_generator(TEST_ANIME_ID, 3):
         eps += p
 
     assert eps == [{"ep_name": "ep_1"}, {"ep_name": "ep_2"}, {"ep_name": "ep_3"}]
@@ -111,8 +112,23 @@ def test_get_episode(mocked_episodes_db):
         "Count": 1,
     }
 
-    ret = mocked_episodes_db.get_episode("TEST_ANIME_ID", "TEST_EPISODE_ID")
-    assert ret == {"ep_name": "ep_1"}
+    ret = mocked_episodes_db.get_episode(TEST_ANIME_ID, "TEST_EPISODE_ID")
+    assert ret == {"ep_name": "ep_1", "id_links": {}}
+
+
+def test_get_episode_with_previous_link(mocked_episodes_db):
+    mocked_episodes_db.table.query.return_value = {
+        "Items": [
+            {
+                "ep_name": "ep_1",
+                "episode_number": 2
+            }
+        ],
+        "Count": 1,
+    }
+
+    ret = mocked_episodes_db.get_episode(TEST_ANIME_ID, "TEST_EPISODE_ID")
+    assert ret == {"ep_name": "ep_1", "episode_number": 2, "id_links": {'previous': 'fe94c8c6-1b4a-56c2-ad8e-2d779562fbb0'}}
 
 
 def test_get_episode_empty_items_response(mocked_episodes_db):
@@ -122,7 +138,7 @@ def test_get_episode_empty_items_response(mocked_episodes_db):
     }
 
     with pytest.raises(mocked_episodes_db.NotFoundError):
-        mocked_episodes_db.get_episode("TEST_ANIME_ID", "TEST_EPISODE_ID")
+        mocked_episodes_db.get_episode(TEST_ANIME_ID, "TEST_EPISODE_ID")
 
 
 def test_get_episode_no_items_field(mocked_episodes_db):
@@ -131,7 +147,7 @@ def test_get_episode_no_items_field(mocked_episodes_db):
     }
 
     with pytest.raises(mocked_episodes_db.NotFoundError):
-        mocked_episodes_db.get_episode("TEST_ANIME_ID", "TEST_EPISODE_ID")
+        mocked_episodes_db.get_episode(TEST_ANIME_ID, "TEST_EPISODE_ID")
 
 
 def test_get_episode_count_not_one(mocked_episodes_db):
@@ -143,4 +159,4 @@ def test_get_episode_count_not_one(mocked_episodes_db):
     }
 
     with pytest.raises(mocked_episodes_db.InvalidAmountOfEpisodes):
-        mocked_episodes_db.get_episode("TEST_ANIME_ID", "TEST_EPISODE_ID")
+        mocked_episodes_db.get_episode(TEST_ANIME_ID, "TEST_EPISODE_ID")
