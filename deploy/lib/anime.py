@@ -291,6 +291,7 @@ class Anime(core.Stack):
             self.layers[layer] = LayerVersion(
                 self,
                 layer,
+                layer_version_name=f"anime-{layer}",
                 code=Code.from_asset(path=build_folder),
                 compatible_runtimes=[Runtime.PYTHON_3_8],
             )
