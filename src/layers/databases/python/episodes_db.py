@@ -72,10 +72,11 @@ def get_episode(anime_id, episode_id):
         raise InvalidAmountOfEpisodes(f"Episode with ID: {episode_id} and anime_id: {anime_id} has {res['Count']} results")
 
     episode_data = res["Items"][0]
-    episode_data["id_links"] = {}
 
     if "episode_number" not in episode_data:
         return episode_data
+
+    episode_data["id_links"] = {}
 
     if episode_data["episode_number"] != 1:
         episode_data["id_links"]["previous"] = _create_episode_uuid(anime_id, episode_data["episode_number"] - 1)

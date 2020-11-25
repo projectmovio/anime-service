@@ -114,7 +114,7 @@ def test_get_episode(mocked_episodes_db):
     }
 
     ret = mocked_episodes_db.get_episode(TEST_ANIME_ID, "TEST_EPISODE_ID")
-    assert ret == {"ep_name": "ep_1", "id_links": {}}
+    assert ret == {"ep_name": "ep_1"}
 
 
 def test_get_episode_with_previous_link(mocked_episodes_db):
