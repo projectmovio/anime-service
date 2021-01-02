@@ -16,5 +16,9 @@ def handle(event, context):
 
     anime_id = event["pathParameters"].get("id")
 
-    res = anime_db.get_anime_by_id(anime_id)
+    try:
+        res = anime_db.get_anime_by_id(anime_id)
+    except anime_db.NotFoundError:
+        return {"statusCode": 404}
+
     return {"statusCode": 200, "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
