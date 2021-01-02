@@ -32,5 +32,7 @@ def test_handler_not_found(mocked_anime_db):
         }
     }
 
-    with pytest.raises(mocked_anime_db.NotFoundError):
-        handle(event, None)
+    res = handle(event, None)
+
+    exp = {'statusCode': 404}
+    assert res == exp
