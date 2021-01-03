@@ -394,11 +394,6 @@ class Anime(core.Stack):
         )
 
         routes = {
-            "get_anime": {
-                "method": "GET",
-                "route": "/v1/anime",
-                "target_lambda": self.lambdas["api-anime"]
-            },
             "post_anime": {
                 "method": "POST",
                 "route": "/v1/anime",
@@ -408,11 +403,6 @@ class Anime(core.Stack):
                 "method": "GET",
                 "route": "/v1/anime/{id}",
                 "target_lambda": self.lambdas["api-anime_by_id"]
-            },
-            "get_anime_by_ids": {
-                "method": "GET",
-                "route": "/v1/animes/{ids}",
-                "target_lambda": self.lambdas["api-anime_by_ids"]
             },
             "get_anime_episodes": {
                 "method": "GET",

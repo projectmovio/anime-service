@@ -90,38 +90,6 @@ def get_anime_by_id(anime_id):
     return res["Item"]
 
 
-def get_anime_by_ids(anime_ids):
-    ret = {}
-
-    res = _get_client().batch_get_item(
-        RequestItems={
-            DATABASE_NAME: {
-                "Keys": [{"id": {"S": anime_id}} for anime_id in anime_ids],
-                "AttributesToGet": ["id", "title", "main_picture", "start_date"]
-            }
-        }
-    )
-
-    for item in res["Responses"][DATABASE_NAME]:
-        anime_id = item.pop("id")["S"]
-        ret[anime_id] = json_util.loads(item)
-
-    return ret
-
-
-def get_ids(mal_items):
-    id_map = {}
-    for mal_item in mal_items:
-        mal_id = mal_item["id"]
-        try:
-            res = get_anime_by_mal_id(mal_item["id"])
-            id_map[mal_id] = res["id"]
-        except NotFoundError:
-            pass
-
-    return id_map
-
-
 def anime_by_broadcast_generator(day_of_week, limit=100):
     paginator = _get_client().get_paginator('query')
 
