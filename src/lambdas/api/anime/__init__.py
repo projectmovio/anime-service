@@ -64,12 +64,6 @@ def _post_anime(body):
 
 
 def _post_mal(mal_id):
-    if mal_id is None:
-        return {
-            "statusCode": 400,
-            "body": json.dumps({"error": "Please specify the 'api_id' query parameter"})
-        }
-
     try:
         anime_db.get_anime_by_mal_id(int(mal_id))
     except anime_db.NotFoundError:
