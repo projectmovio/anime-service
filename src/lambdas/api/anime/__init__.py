@@ -1,5 +1,7 @@
 import json
 import os
+from json import JSONDecodeError
+
 import boto3
 
 import anime_db
@@ -44,19 +46,28 @@ def handle(event, context):
 
 def _post_anime(body):
     try:
+        body = json.loads(body)
+    except (TypeError, JSONDecodeError):
+        log.debug(f"Invalid body: {body}")
+        return {
+            "statusCode": 400,
+            "body": "Invalid post body"
+        }
+
+    try:
         schema.validate_schema(POST_SCHEMA_PATH, body)
     except schema.ValidationException as e:
         return {"statusCode": 400, "body": json.dumps({"message": "Invalid post schema", "error": str(e)})}
 
     if body["api_name"] == "mal":
-        _post_mal(body["api_id"])
+        return _post_mal(body["api_id"])
 
 
 def _post_mal(mal_id):
     if mal_id is None:
         return {
             "statusCode": 400,
-            "body": json.dumps({"error": "Please specify the 'mal_id' query parameter"})
+            "body": json.dumps({"error": "Please specify the 'api_id' query parameter"})
         }
 
     try:
