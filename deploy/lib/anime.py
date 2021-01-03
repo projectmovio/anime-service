@@ -109,26 +109,9 @@ class Anime(core.Stack):
                     "ANIME_DATABASE_NAME": self.anime_table.table_name,
                     "LOG_LEVEL": "INFO",
                 },
-                "concurrent_executions": 100,
                 "policies": [
                     PolicyStatement(
                         actions=["dynamodb:GetItem"],
-                        resources=[self.anime_table.table_arn]
-                    )
-                ],
-                "timeout": 3,
-                "memory": 128
-            },
-            "api-anime_by_ids": {
-                "layers": ["utils", "databases"],
-                "variables": {
-                    "ANIME_DATABASE_NAME": self.anime_table.table_name,
-                    "LOG_LEVEL": "INFO",
-                },
-                "concurrent_executions": 100,
-                "policies": [
-                    PolicyStatement(
-                        actions=["dynamodb:BatchGetItem"],
                         resources=[self.anime_table.table_arn]
                     )
                 ],
@@ -141,7 +124,6 @@ class Anime(core.Stack):
                     "ANIME_EPISODES_DATABASE_NAME": self.anime_episodes.table_name,
                     "LOG_LEVEL": "INFO",
                 },
-                "concurrent_executions": 100,
                 "policies": [
                     PolicyStatement(
                         actions=["dynamodb:Query"],
@@ -157,7 +139,6 @@ class Anime(core.Stack):
                     "ANIME_EPISODES_DATABASE_NAME": self.anime_episodes.table_name,
                     "LOG_LEVEL": "INFO",
                 },
-                "concurrent_executions": 100,
                 "policies": [
                     PolicyStatement(
                         actions=["dynamodb:Query"],
@@ -172,10 +153,8 @@ class Anime(core.Stack):
                 "variables": {
                     "ANIME_DATABASE_NAME": self.anime_table.table_name,
                     "POST_ANIME_SQS_QUEUE_URL": self.post_anime_queue.queue_url,
-                    "MAL_CLIENT_ID": self.mal_client_id,
                     "LOG_LEVEL": "INFO",
                 },
-                "concurrent_executions": 100,
                 "policies": [
                     PolicyStatement(
                         actions=["dynamodb:Query"],
@@ -323,20 +302,21 @@ class Anime(core.Stack):
                 lambda_role.add_managed_policy(
                     ManagedPolicy.from_aws_managed_policy_name("service-role/AWSLambdaBasicExecutionRole"))
 
-                self.lambdas[name] = Function(
-                    self,
-                    name,
-                    code=Code.from_asset(root),
-                    handler="__init__.handle",
-                    runtime=Runtime.PYTHON_3_8,
-                    layers=layers,
-                    function_name=name,
-                    environment=lambda_config["variables"],
-                    reserved_concurrent_executions=lambda_config["concurrent_executions"],
-                    role=lambda_role,
-                    timeout=Duration.seconds(lambda_config["timeout"]),
-                    memory_size=lambda_config["memory"]
-                )
+                lambda_args = {
+                    "code": Code.from_asset(root),
+                    "handler": "__init__.handle",
+                    "runtime": Runtime.PYTHON_3_8,
+                    "layers": layers,
+                    "function_name": name,
+                    "environment": lambda_config["variables"],
+                    "role": lambda_role,
+                    "timeout": Duration.seconds(lambda_config["timeout"]),
+                    "memory_size": lambda_config["memory"],
+                }
+                if "concurrent_executions" in lambda_config:
+                    lambda_args["reserved_concurrent_executions"] = lambda_config["concurrent_executions"]
+
+                self.lambdas[name] = Function(self, name, **lambda_args)
 
         self.lambdas["sqs_handlers-post_anime"].add_event_source(SqsEventSource(self.post_anime_queue))
 
