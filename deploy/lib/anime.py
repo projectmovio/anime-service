@@ -282,7 +282,10 @@ class Anime(core.Stack):
         clean_pycache()
 
         for root, dirs, files in os.walk(LAMBDAS_DIR):
-            for _ in files:
+            for f in files:
+                if f != "__init__.py":
+                    continue
+
                 parent_folder = os.path.basename(os.path.dirname(root))
                 lambda_folder = os.path.basename(root)
                 name = f"{parent_folder}-{lambda_folder}"
