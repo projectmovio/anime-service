@@ -459,6 +459,7 @@ class Anime(core.Stack):
             integration_type=HttpIntegrationType.HTTP_PROXY,
             integration_uri="https://api.myanimelist.net/v2/{proxy}",
             method=HttpMethod.ANY,
+            payload_format_version=PayloadFormatVersion.VERSION_2_0,
         )
         CfnRoute(
             self,
@@ -467,7 +468,7 @@ class Anime(core.Stack):
             route_key="ANY /mal_proxy/{proxy+}",
             authorization_type="JWT",
             authorizer_id=authorizer.ref,
-            target="integrations/" + mal_proxy_integration.integration_id
+            target="integrations/" + mal_proxy_integration.integration_id,
         )
 
         stage = CfnStage(
