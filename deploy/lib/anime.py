@@ -376,7 +376,7 @@ class Anime(core.Stack):
             cors_preflight=CorsPreflightOptions(
                 allow_methods=[HttpMethod.GET, HttpMethod.POST],
                 allow_origins=["https://moshan.tv", "https://beta.moshan.tv"],
-                allow_headers=["authorization", "content-type"]
+                allow_headers=["authorization", "content-type", "x-mal-client-id"]
             )
         )
 
@@ -469,7 +469,6 @@ class Anime(core.Stack):
             authorizer_id=authorizer.ref,
             target="integrations/" + mal_proxy_integration.integration_id
         )
-
 
         stage = CfnStage(
             self,
