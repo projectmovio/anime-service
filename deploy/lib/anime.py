@@ -459,7 +459,7 @@ class Anime(core.Stack):
             integration_type=HttpIntegrationType.HTTP_PROXY,
             integration_uri="https://api.myanimelist.net/v2/{proxy}",
             method=HttpMethod.ANY,
-            payload_format_version=PayloadFormatVersion.VERSION_2_0,
+            payload_format_version=PayloadFormatVersion.VERSION_1_0,
         )
         CfnRoute(
             self,
