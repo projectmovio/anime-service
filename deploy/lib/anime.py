@@ -376,7 +376,7 @@ class Anime(core.Stack):
             cors_preflight=CorsPreflightOptions(
                 allow_methods=[HttpMethod.GET, HttpMethod.POST],
                 allow_origins=["https://moshan.tv", "https://beta.moshan.tv"],
-                allow_headers=["authorization", "content-type"]
+                allow_headers=["authorization", "content-type", "x-mal-client-id"]
             )
         )
 
@@ -451,6 +451,24 @@ class Anime(core.Stack):
                 principal=ServicePrincipal("apigateway.amazonaws.com"),
                 source_arn=f"arn:aws:execute-api:{self.region}:{self.account}:{http_api.http_api_id}/*"
             )
+
+        mal_proxy_integration = HttpIntegration(
+            self,
+            "mal_proxy_integration",
+            http_api=http_api,
+            integration_type=HttpIntegrationType.HTTP_PROXY,
+            integration_uri="https://api.myanimelist.net/v2/{proxy}",
+            method=HttpMethod.ANY,
+        )
+        CfnRoute(
+            self,
+            "mal_proxy_route",
+            api_id=http_api.http_api_id,
+            route_key="ANY /mal_proxy/{proxy+}",
+            authorization_type="JWT",
+            authorizer_id=authorizer.ref,
+            target="integrations/" + mal_proxy_integration.integration_id
+        )
 
         stage = CfnStage(
             self,
