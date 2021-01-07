@@ -5,6 +5,7 @@ from json import JSONDecodeError
 import boto3
 
 import anime_db
+import decimal_encoder
 import logger
 import schema
 
@@ -40,6 +41,9 @@ def handle(event, context):
     if method == "POST":
         body = event.get("body")
         return _post_anime(body)
+    elif method == "GET":
+        query_params = event.get("queryStringParameters")
+        return _get_anime_by_api_id(query_params)
     else:
         raise UnsupportedMethod()
 
@@ -65,7 +69,7 @@ def _post_anime(body):
 
 def _post_mal(mal_id):
     try:
-        anime_db.get_anime_by_mal_id(int(mal_id))
+        anime_db.get_anime_by_api_id("mal", int(mal_id))
     except anime_db.NotFoundError:
         pass
     else:
@@ -82,3 +86,18 @@ def _post_mal(mal_id):
         "statusCode": 202,
         "body": json.dumps({"anime_id": anime_db.create_anime_uuid(mal_id)})
     }
+
+
+def _get_anime_by_api_id(query_params):
+    if query_params is not None:
+        return {
+            "statusCode": 400,
+            "body": json.dumps({"error": "Please specify query parameters"})
+        }
+
+    if "mal_id" in query_params:
+        try:
+            res = anime_db.get_anime_by_api_id("mal", query_params["mal_id"])
+            return {"statusCode": 200, "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
+        except anime_db.NotFoundError:
+            return {"statusCode": 404}

@@ -68,15 +68,16 @@ def update_anime(anime_id, data):
     )
 
 
-def get_anime_by_mal_id(mal_id):
+def get_anime_by_api_id(api_name, api_id):
+    api_id_name = f"{api_name}_id"
     res = _get_table().query(
-        IndexName='mal_id',
-        KeyConditionExpression=Key('mal_id').eq(mal_id)
+        IndexName=api_id_name,
+        KeyConditionExpression=Key(api_id_name).eq(api_id)
     )
     log.debug(f"get_anime_by_mal_id res: {res}")
 
     if not res["Items"]:
-        raise NotFoundError(f"Anime with mal_id: {mal_id} not found")
+        raise NotFoundError(f"Anime with {api_id_name}: {api_id} not found")
 
     return res["Items"][0]
 
