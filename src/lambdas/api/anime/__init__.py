@@ -89,7 +89,7 @@ def _post_mal(mal_id):
 
 
 def _get_anime_by_api_id(query_params):
-    if query_params is not None:
+    if not query_params:
         return {
             "statusCode": 400,
             "body": json.dumps({"error": "Please specify query parameters"})
@@ -101,3 +101,5 @@ def _get_anime_by_api_id(query_params):
             return {"statusCode": 200, "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
         except anime_db.NotFoundError:
             return {"statusCode": 404}
+    else:
+        return {"statusCode": 400, "body": json.dumps({"error": "Unsupported query param"})}

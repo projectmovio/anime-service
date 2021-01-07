@@ -32,7 +32,7 @@ def handle(event, context):
     anidb_id = None
 
     try:
-        ret = anime_db.get_anime_by_mal_id(mal_id)
+        ret = anime_db.get_anime_by_api_id("mal", mal_id)
         anidb_id = ret["anidb_id"]
     except anime_db.NotFoundError:
         pass

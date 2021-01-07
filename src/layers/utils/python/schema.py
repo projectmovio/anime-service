@@ -5,7 +5,6 @@ import logger
 
 log = logger.get_logger(__name__)
 
-
 class ValidationException(Exception):
     pass
 
