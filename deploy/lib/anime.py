@@ -377,6 +377,11 @@ class Anime(core.Stack):
         )
 
         routes = {
+            "get_anime": {
+                "method": "GET",
+                "route": "/v1/anime",
+                "target_lambda": self.lambdas["api-anime"]
+            },
             "post_anime": {
                 "method": "POST",
                 "route": "/v1/anime",
