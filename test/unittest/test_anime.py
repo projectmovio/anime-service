@@ -7,22 +7,21 @@ import mal
 
 from api.anime import handle
 
+POST_EVENT = {
+    "requestContext": {
+        "http": {
+            "method": "POST"
+        }
+    },
+    "body": '{ "api_name": "mal", "api_id": "123"}'
+}
+
 
 def test_post_anime(mocked_anime_db, mocked_anime):
     mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
     mocked_anime.sqs_queue.send_message.return_value = True
-    event = {
-        "requestContext": {
-            "http": {
-                "method": "POST"
-            }
-        },
-        "queryStringParameters": {
-            "mal_id": "123"
-        }
-    }
 
-    res = handle(event, None)
+    res = handle(POST_EVENT, None)
 
     exp = {
         "body": json.dumps({"anime_id": "7e2c8ee2-66cf-598f-aedf-cdfba825613b"}),
@@ -39,18 +38,8 @@ def test_post_anime_already_exist(mocked_anime_db):
             }
         ]
     }
-    event = {
-        "requestContext": {
-            "http": {
-                "method": "POST"
-            }
-        },
-        "queryStringParameters": {
-            "mal_id": "123"
-        }
-    }
 
-    res = handle(event, None)
+    res = handle(POST_EVENT, None)
 
     exp = {
         "body": json.dumps({"anime_id": "7e2c8ee2-66cf-598f-aedf-cdfba825613b"}),
@@ -59,7 +48,7 @@ def test_post_anime_already_exist(mocked_anime_db):
     assert res == exp
 
 
-def test_post_anime_no_query_params(mocked_anime_db):
+def test_post_anime_no_body(mocked_anime_db):
     mocked_anime_db.table.query.return_value = {
         "Items": [
             {
@@ -73,7 +62,7 @@ def test_post_anime_no_query_params(mocked_anime_db):
                 "method": "POST"
             }
         },
-        "queryStringParameters": {
+        "body": {
 
         }
     }
@@ -82,14 +71,12 @@ def test_post_anime_no_query_params(mocked_anime_db):
 
     exp = {
         "statusCode": 400,
-        "body": json.dumps({
-            "error": "Please specify query parameters"
-        })
+        "body": "Invalid post body"
     }
     assert res == exp
 
 
-def test_post_anime_invalid_query_params(mocked_anime_db):
+def test_post_anime_invalid_api_name(mocked_anime_db):
     mocked_anime_db.table.query.return_value = {
         "Items": [
             {
@@ -103,117 +90,37 @@ def test_post_anime_invalid_query_params(mocked_anime_db):
                 "method": "POST"
             }
         },
-        "queryStringParameters": {
-            "aa": "123"
-        }
+        "body": '{ "api_name": "bad_name", "api_id": "123"}'
     }
-
     res = handle(event, None)
 
     exp = {
         "statusCode": 400,
         "body": json.dumps({
-            "error": "Please specify the 'mal_id' query parameter"
+            "message": "Invalid post schema",
+            "error": "\'bad_name\' is not one of [\'mal\']",
         })
     }
     assert res == exp
 
 
-@mock.patch("mal.MalApi")
-def test_search(mocked_mal, mocked_anime_db):
-    exp_res = {
-        "items": [
-            {
-                "id": "123"
-            }
-        ],
-    }
-    mocked_mal.return_value.search.return_value = exp_res
-
-    mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
+def test_unsupported_method(mocked_anime_db, mocked_anime):
     event = {
         "requestContext": {
             "http": {
-                "method": "GET"
+                "method": "AA"
             }
         },
         "queryStringParameters": {
-            "search": "naruto"
+            "mal_id": "123"
         }
     }
 
-    res = handle(event, None)
-
-    exp_res["id_map"] = {}
-    exp = {
-        "statusCode": 200,
-        "body": json.dumps(exp_res),
-    }
-    assert res == exp
+    with pytest.raises(mocked_anime.UnsupportedMethod):
+        handle(event, None)
 
 
-@mock.patch("mal.MalApi")
-def test_search_found_id(mocked_mal, mocked_anime_db):
-    exp_res = {
-        "items": [
-            {
-                "id": "123"
-            }
-        ],
-    }
-    mocked_mal.return_value.search.return_value = exp_res
-
-    mocked_anime_db.table.query.return_value = {
-        "Items": [
-            {"id": "ANIME_ID"}
-        ]
-    }
-
-    event = {
-        "requestContext": {
-            "http": {
-                "method": "GET"
-            }
-        },
-        "queryStringParameters": {
-            "search": "naruto"
-        }
-    }
-
-    res = handle(event, None)
-
-    exp_res["id_map"] = {"123": "ANIME_ID"}
-    exp = {
-        "statusCode": 200,
-        "body": json.dumps(exp_res),
-    }
-    assert res == exp
-
-
-@mock.patch("mal.MalApi")
-def test_search_http_error(mocked_mal_api):
-    mocked_mal_api.return_value.search.side_effect = mal.HTTPError("TEST MESSAGE")
-    event = {
-        "requestContext": {
-            "http": {
-                "method": "GET"
-            }
-        },
-        "queryStringParameters": {
-            "search": "naruto"
-        }
-    }
-
-    res = handle(event, None)
-
-    exp = {
-        "statusCode": 503,
-        "body": "TEST MESSAGE"
-    }
-    assert res == exp
-
-
-def test_search_mal_id_in_db(mocked_anime_db):
+def test_get_mal_id_in_db(mocked_anime_db):
     exp_res = {
         "id": "123"
     }
@@ -242,37 +149,8 @@ def test_search_mal_id_in_db(mocked_anime_db):
     assert res == exp
 
 
-@mock.patch("mal.MalApi")
-def test_search_mal_id_not_found_in_db(mocked_mal_api, mocked_anime_db):
-    exp_res = {
-        "id": "123"
-    }
+def test_get_mal_id_not_found(mocked_anime_db):
     mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
-    mocked_mal_api.return_value.get_anime.return_value = exp_res
-    event = {
-        "requestContext": {
-            "http": {
-                "method": "GET"
-            }
-        },
-        "queryStringParameters": {
-            "mal_id": "123"
-        }
-    }
-
-    res = handle(event, None)
-
-    exp = {
-        "statusCode": 200,
-        "body": json.dumps(exp_res)
-    }
-    assert res == exp
-
-
-@mock.patch("mal.MalApi")
-def test_search_mal_id_not_found(mocked_mal_api, mocked_anime_db):
-    mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
-    mocked_mal_api.return_value.get_anime.side_effect = mal.NotFoundError
     event = {
         "requestContext": {
             "http": {
@@ -292,30 +170,7 @@ def test_search_mal_id_not_found(mocked_mal_api, mocked_anime_db):
     assert res == exp
 
 
-@mock.patch("mal.MalApi")
-def test_search_mal_id_http_error(mocked_mal_api, mocked_anime_db):
-    mocked_anime_db.table.query.side_effect = mocked_anime_db.NotFoundError
-    mocked_mal_api.return_value.get_anime.side_effect = mal.HTTPError
-    event = {
-        "requestContext": {
-            "http": {
-                "method": "GET"
-            }
-        },
-        "queryStringParameters": {
-            "mal_id": "123"
-        }
-    }
-
-    res = handle(event, None)
-
-    exp = {
-        "statusCode": 503,
-    }
-    assert res == exp
-
-
-def test_search_no_query_params():
+def test_get_no_query_params():
     event = {
         "requestContext": {
             "http": {
@@ -335,7 +190,7 @@ def test_search_no_query_params():
     assert res == exp
 
 
-def test_search_invalid_query_params():
+def test_get_invalid_query_params():
     event = {
         "requestContext": {
             "http": {
@@ -351,22 +206,6 @@ def test_search_invalid_query_params():
 
     exp = {
         "statusCode": 400,
-        "body": json.dumps({"error": "Please specify either 'search' or 'mal_id' query parameter"})
+        "body": json.dumps({"error": "Unsupported query param"})
     }
     assert res == exp
-
-
-def test_unsupported_method(mocked_anime_db, mocked_anime):
-    event = {
-        "requestContext": {
-            "http": {
-                "method": "AA"
-            }
-        },
-        "queryStringParameters": {
-            "mal_id": "123"
-        }
-    }
-
-    with pytest.raises(mocked_anime.UnsupportedMethod):
-        handle(event, None)

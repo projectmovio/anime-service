@@ -68,15 +68,16 @@ def update_anime(anime_id, data):
     )
 
 
-def get_anime_by_mal_id(mal_id):
+def get_anime_by_api_id(api_name, api_id):
+    api_id_name = f"{api_name}_id"
     res = _get_table().query(
-        IndexName='mal_id',
-        KeyConditionExpression=Key('mal_id').eq(mal_id)
+        IndexName=api_id_name,
+        KeyConditionExpression=Key(api_id_name).eq(api_id)
     )
     log.debug(f"get_anime_by_mal_id res: {res}")
 
     if not res["Items"]:
-        raise NotFoundError(f"Anime with mal_id: {mal_id} not found")
+        raise NotFoundError(f"Anime with {api_id_name}: {api_id} not found")
 
     return res["Items"][0]
 
@@ -88,38 +89,6 @@ def get_anime_by_id(anime_id):
         raise NotFoundError(f"Anime with id: {anime_id} not found")
 
     return res["Item"]
-
-
-def get_anime_by_ids(anime_ids):
-    ret = {}
-
-    res = _get_client().batch_get_item(
-        RequestItems={
-            DATABASE_NAME: {
-                "Keys": [{"id": {"S": anime_id}} for anime_id in anime_ids],
-                "AttributesToGet": ["id", "title", "main_picture", "start_date"]
-            }
-        }
-    )
-
-    for item in res["Responses"][DATABASE_NAME]:
-        anime_id = item.pop("id")["S"]
-        ret[anime_id] = json_util.loads(item)
-
-    return ret
-
-
-def get_ids(mal_items):
-    id_map = {}
-    for mal_item in mal_items:
-        mal_id = mal_item["id"]
-        try:
-            res = get_anime_by_mal_id(mal_item["id"])
-            id_map[mal_id] = res["id"]
-        except NotFoundError:
-            pass
-
-    return id_map
 
 
 def anime_by_broadcast_generator(day_of_week, limit=100):

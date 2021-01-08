@@ -29,19 +29,6 @@ class MalApi:
 
         log.debug("MAL base_url: {}".format(self.base_url))
 
-    def search(self, search_str):
-        url = f"{self.base_url}/anime"
-        url_params = {"q": search_str}
-
-        ret = requests.get(url, params=url_params, headers=self.default_headers)
-        if ret.status_code != 200:
-            raise HTTPError(f"Unexpected status code: {ret.status_code}")
-
-        res = []
-        for a in ret.json()["data"]:
-            res.append(a["node"])
-        return {"items": res, "total_pages": "1"} # TODO: Implement pagination
-
     def get_anime(self, anime_id):
         url = f"{self.base_url}/anime/{anime_id}"
         fields = [
