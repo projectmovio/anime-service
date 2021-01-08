@@ -97,7 +97,7 @@ def _get_anime_by_api_id(query_params):
 
     if "mal_id" in query_params:
         try:
-            res = anime_db.get_anime_by_api_id("mal", query_params["mal_id"])
+            res = anime_db.get_anime_by_api_id("mal", int(query_params["mal_id"]))
             return {"statusCode": 200, "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
         except anime_db.NotFoundError:
             return {"statusCode": 404}
