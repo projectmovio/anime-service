@@ -75,7 +75,7 @@ def _post_mal(mal_id):
     else:
         return {
             "statusCode": 202,
-            "body": json.dumps({"anime_id": anime_db.create_anime_uuid(mal_id)})
+            "body": json.dumps({"id": anime_db.create_anime_uuid(mal_id)})
         }
 
     _get_sqs_queue().send_message(
@@ -84,7 +84,7 @@ def _post_mal(mal_id):
 
     return {
         "statusCode": 202,
-        "body": json.dumps({"anime_id": anime_db.create_anime_uuid(mal_id)})
+        "body": json.dumps({"id": anime_db.create_anime_uuid(mal_id)})
     }
 
 
