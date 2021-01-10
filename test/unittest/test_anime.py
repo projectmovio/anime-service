@@ -24,7 +24,7 @@ def test_post_anime(mocked_anime_db, mocked_anime):
     res = handle(POST_EVENT, None)
 
     exp = {
-        "body": json.dumps({"anime_id": "7e2c8ee2-66cf-598f-aedf-cdfba825613b"}),
+        "body": json.dumps({"id": "7e2c8ee2-66cf-598f-aedf-cdfba825613b"}),
         "statusCode": 202
     }
     assert res == exp
@@ -42,7 +42,7 @@ def test_post_anime_already_exist(mocked_anime_db):
     res = handle(POST_EVENT, None)
 
     exp = {
-        "body": json.dumps({"anime_id": "7e2c8ee2-66cf-598f-aedf-cdfba825613b"}),
+        "body": json.dumps({"id": "7e2c8ee2-66cf-598f-aedf-cdfba825613b"}),
         "statusCode": 202
     }
     assert res == exp
