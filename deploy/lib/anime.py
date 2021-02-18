@@ -84,6 +84,10 @@ class Anime(core.Stack):
             sort_key=Attribute(name="id", type=AttributeType.STRING),
             index_name="episode_id"
         )
+        self.anime_episodes.add_global_secondary_index(
+            partition_key=Attribute(name="mal_id", type=AttributeType.NUMBER),
+            index_name="mal_id"
+        )
 
         self.anime_params = Table(
             self,
