@@ -42,6 +42,9 @@ def _anime_airing(anime):
     if anime["end_date"] is None:
         return False
 
+    if anime["end_date"] == "Null":
+        return True
+
     if datetime.today() > datetime.strptime(anime["end_date"], "%Y-%m-%d"):
         return False
 
