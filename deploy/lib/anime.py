@@ -85,8 +85,8 @@ class Anime(core.Stack):
             index_name="episode_id"
         )
         self.anime_episodes.add_global_secondary_index(
-            partition_key=Attribute(name="mal_id", type=AttributeType.NUMBER),
-            index_name="mal_id"
+            partition_key=Attribute(name="anidb_id", type=AttributeType.NUMBER),
+            index_name="anidb_id"
         )
 
         self.anime_params = Table(
