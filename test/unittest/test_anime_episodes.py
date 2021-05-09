@@ -24,7 +24,8 @@ def test_handler(mocked_episodes_db):
     event = {
         "pathParameters": {
             "id": "123"
-        }
+        },
+        "queryStringParameters": {}
     }
 
     res = handle(event, None)
@@ -46,7 +47,8 @@ def test_handler_not_found(mocked_episodes_db):
     event = {
         "pathParameters": {
             "id": "123"
-        }
+        },
+        "queryStringParameters": {}
     }
 
     res = handle(event, None)
