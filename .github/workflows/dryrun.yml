@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: cdk diff
-        uses: youyo/aws-cdk-github-actions@v1.1.10
+        uses: UpperCampus/aws-cdk-github-actions@master
         with:
           cdk_stack: anime
           cdk_version: 1.49.1
@@ -31,7 +31,7 @@ jobs:
           PIP_NO_CACHE_DIR: off
 
       - name: cdk synth
-        uses: youyo/aws-cdk-github-actions@v1.1.10
+        uses: UpperCampus/aws-cdk-github-actions@master
         with:
           cdk_stack: anime
           cdk_version: 1.49.1
