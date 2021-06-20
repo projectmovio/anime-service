@@ -57,18 +57,15 @@ def _post(body):
         return {"statusCode": 400, "body": json.dumps(
             {"message": "Invalid post schema", "error": str(e)})}
 
-    if body["api_name"] == "anidb_id":
+    if body["api_name"] == "anidb":
         log.debug("Anidb episodes added during mal item post, getting ep")
         try:
-            res = episodes_db.get_episode_by_api_id("anidb",
+            res = episodes_db.get_episode_by_api_id(body["api_name"],
                                                     int(body["api_id"]))
             return {"statusCode": 200,
                     "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
         except (episodes_db.NotFoundError, episodes_db.InvalidAmountOfEpisodes):
             return {"statusCode": 404}
-    else:
-        return {"statusCode": 400,
-                "body": json.dumps({"error": "Unsupported query param"})}
 
 
 def _get(anime_id, query_params):

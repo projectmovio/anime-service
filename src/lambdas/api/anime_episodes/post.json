@@ -22,7 +22,7 @@
       "$id": "#/properties/api_name",
       "type": "string",
       "title": "API name",
-      "enum": ["mal"],
+      "enum": ["anidb"],
       "description": "An enum value for one of the supported third party APIs"
     }
   }

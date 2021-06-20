@@ -1,7 +1,132 @@
 import json
 from unittest.mock import MagicMock
 
-from api.anime_episodes import handle
+import pytest
+
+from api.anime_episodes import handle, UnsupportedMethod
+
+POST_EVENT = {
+    "pathParameters": {
+        "id": "123"
+    },
+    "requestContext": {
+        "http": {
+            "method": "POST"
+        }
+    },
+    "body": '{ "api_name": "anidb", "api_id": "456"}'
+}
+
+
+def test_post_episode(mocked_episodes_db, mocked_anime):
+    mocked_episodes_db.table.query.return_value = {
+        "Items": [
+            {
+                "anidb_id": "456"
+            }
+        ],
+        "Count": 1
+    }
+    mocked_anime.sqs_queue.send_message.return_value = True
+
+    res = handle(POST_EVENT, None)
+
+    exp = {
+        "body": json.dumps({"anidb_id": "456"}),
+        "statusCode": 200
+    }
+    assert res == exp
+
+
+def test_post_episode_not_found(mocked_episodes_db, mocked_anime):
+    mocked_episodes_db.table.query.side_effect = mocked_episodes_db.NotFoundError
+    mocked_anime.sqs_queue.send_message.return_value = True
+
+    res = handle(POST_EVENT, None)
+
+    exp = {
+        "statusCode": 404
+    }
+    assert res == exp
+
+
+def test_post_episode_no_body(mocked_anime_db):
+    mocked_anime_db.table.query.return_value = {
+        "Items": [
+            {
+                "mal_id": "123"
+            }
+        ]
+    }
+    event = {
+        "requestContext": {
+            "http": {
+                "method": "POST"
+            }
+        },
+        "pathParameters": {
+            "id": "123"
+        },
+        "body": {}
+    }
+
+    res = handle(event, None)
+
+    exp = {
+        "statusCode": 400,
+        "body": "Invalid post body"
+    }
+    assert res == exp
+
+
+def test_post_episode_invalid_api_name(mocked_anime_db):
+    mocked_anime_db.table.query.return_value = {
+        "Items": [
+            {
+                "mal_id": 123
+            }
+        ]
+    }
+    event = {
+        "requestContext": {
+            "http": {
+                "method": "POST"
+            }
+        },
+        "pathParameters": {
+            "id": "123"
+        },
+        "body": '{ "api_name": "bad_name", "api_id": "123"}'
+    }
+    res = handle(event, None)
+
+    exp = {
+        "statusCode": 400,
+        "body": json.dumps({
+            "message": "Invalid post schema",
+            "error": "\'bad_name\' is not one of [\'anidb\']",
+        })
+    }
+    assert res == exp
+
+
+def test_unsupported_method(mocked_anime_db):
+    event = {
+        "requestContext": {
+            "http": {
+                "method": "AA"
+            }
+        },
+        "pathParameters": {
+            "id": "123"
+        },
+        "queryStringParameters": {
+            "mal_id": "123"
+        }
+    }
+
+    with pytest.raises(UnsupportedMethod):
+        handle(event, None)
 
 
 def test_handler(mocked_episodes_db):
