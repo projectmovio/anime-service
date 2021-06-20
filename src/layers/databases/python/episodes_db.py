@@ -69,7 +69,8 @@ def get_episode(anime_id, episode_id):
         raise NotFoundError(f"Episode with ID: {episode_id} and anime_id: {anime_id} not found")
 
     if res["Count"] != 1:
-        raise InvalidAmountOfEpisodes(f"Episode with ID: {episode_id} and anime_id: {anime_id} has {res['Count']} results")
+        raise InvalidAmountOfEpisodes(
+            f"Episode with ID: {episode_id} and anime_id: {anime_id} has {res['Count']} results")
 
     episode_data = res["Items"][0]
 
@@ -85,6 +86,23 @@ def get_episode(anime_id, episode_id):
         episode_data["id_links"]["next"] = _create_episode_uuid(anime_id, episode_data["episode_number"] + 1)
 
     return episode_data
+
+
+def get_episode_by_api_id(api_name, api_id):
+    key_name = f"{api_name}_id"
+    res = _get_table().query(
+        IndexName=key_name,
+        KeyConditionExpression=Key(key_name).eq(api_id)
+    )
+    log.debug(f"get_episode_by_api_id res: {res}")
+
+    if not res["Items"]:
+        raise NotFoundError(f"Episode with {key_name}: {api_id} not found")
+
+    if res["Count"] != 1:
+        raise InvalidAmountOfEpisodes(f"Episode with {key_name}: {api_id} has {res['Count']} results")
+
+    return res["Items"][0]
 
 
 def get_episodes(anime_id, limit=100, start=1):

@@ -84,6 +84,10 @@ class Anime(core.Stack):
             sort_key=Attribute(name="id", type=AttributeType.STRING),
             index_name="episode_id"
         )
+        self.anime_episodes.add_global_secondary_index(
+            partition_key=Attribute(name="anidb_id", type=AttributeType.NUMBER),
+            index_name="anidb_id"
+        )
 
         self.anime_params = Table(
             self,
@@ -379,29 +383,34 @@ class Anime(core.Stack):
         routes = {
             "get_anime": {
                 "method": "GET",
-                "route": "/v1/anime",
+                "route": "/anime",
                 "target_lambda": self.lambdas["api-anime"]
             },
             "post_anime": {
                 "method": "POST",
-                "route": "/v1/anime",
+                "route": "/anime",
                 "target_lambda": self.lambdas["api-anime"]
             },
             "get_anime_by_id": {
                 "method": "GET",
-                "route": "/v1/anime/{id}",
+                "route": "/anime/{id}",
                 "target_lambda": self.lambdas["api-anime_by_id"]
             },
             "get_anime_episodes": {
                 "method": "GET",
-                "route": "/v1/anime/{id}/episodes",
+                "route": "/anime/{id}/episodes",
+                "target_lambda": self.lambdas["api-anime_episodes"]
+            },
+            "post_anime_episode": {
+                "method": "POST",
+                "route": "/anime/{id}/episodes",
                 "target_lambda": self.lambdas["api-anime_episodes"]
             },
             "get_anime_episode": {
                 "method": "GET",
-                "route": "/v1/anime/{id}/episode/{episode_id}",
+                "route": "/anime/{id}/episode/{episode_id}",
                 "target_lambda": self.lambdas["api-anime_episode"]
-            }
+            },
         }
 
         for r in routes:
