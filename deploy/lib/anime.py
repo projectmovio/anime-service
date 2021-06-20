@@ -401,11 +401,16 @@ class Anime(core.Stack):
                 "route": "/anime/{id}/episodes",
                 "target_lambda": self.lambdas["api-anime_episodes"]
             },
+            "post_anime_episode": {
+                "method": "POST",
+                "route": "/anime/{id}/episodes",
+                "target_lambda": self.lambdas["api-anime_episodes"]
+            },
             "get_anime_episode": {
                 "method": "GET",
                 "route": "/anime/{id}/episode/{episode_id}",
                 "target_lambda": self.lambdas["api-anime_episode"]
-            }
+            },
         }
 
         for r in routes:
