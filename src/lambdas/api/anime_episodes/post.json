@@ -6,7 +6,7 @@
   "default": {},
   "examples": [
     {
-      "api_name": "mal",
+      "api_name": "anidb",
       "api_id": "21"
     }
   ],
