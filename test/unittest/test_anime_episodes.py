@@ -25,7 +25,12 @@ def test_handler(mocked_episodes_db):
         "pathParameters": {
             "id": "123"
         },
-        "queryStringParameters": {}
+        "queryStringParameters": {},
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
+        }
     }
 
     res = handle(event, None)
@@ -48,7 +53,12 @@ def test_handler_not_found(mocked_episodes_db):
         "pathParameters": {
             "id": "123"
         },
-        "queryStringParameters": {}
+        "queryStringParameters": {},
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
+        }
     }
 
     res = handle(event, None)
@@ -83,6 +93,11 @@ def test_handler_with_limit(mocked_episodes_db):
         },
         "queryStringParameters": {
             "limit": 1
+        },
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
         }
     }
 
@@ -119,6 +134,11 @@ def test_handler_with_start(mocked_episodes_db):
         },
         "queryStringParameters": {
             "start": 2
+        },
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
         }
     }
 
@@ -156,6 +176,11 @@ def test_handler_with_limit_and_start(mocked_episodes_db):
         "queryStringParameters": {
             "limit": 1,
             "start": 2
+        },
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
         }
     }
 
@@ -193,6 +218,11 @@ def test_handler_with_invalid_limit_type(mocked_episodes_db):
         "queryStringParameters": {
             "limit": "abc",
             "start": 2
+        },
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
         }
     }
 
@@ -230,6 +260,11 @@ def test_handler_with_invalid_start_type(mocked_episodes_db):
         "queryStringParameters": {
             "limit": 1,
             "start": "abc"
+        },
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
         }
     }
 
@@ -267,6 +302,11 @@ def test_handler_invalid_offset(mocked_episodes_db):
         "queryStringParameters": {
             "limit": 1,
             "start": 0
+        },
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
         }
     }
 
