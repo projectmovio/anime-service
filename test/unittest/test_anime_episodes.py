@@ -368,3 +368,58 @@ class TestGetEpisodes:
             "body": json.dumps({"message": "Invalid offset"})
         }
         assert res == exp
+
+
+class TestGetEpisodeByApiId:
+    event = {
+        "requestContext": {
+            "http": {
+                "method": "GET"
+            }
+        },
+        "queryStringParameters": {
+            "api_id": "123",
+            "api_name": "anidb",
+        },
+        "pathParameters": {
+            "id": "123"
+        },
+    }
+
+    def test_success(self, mocked_episodes_db):
+        mocked_episodes_db.table.query.return_value = {
+            "Items": [
+                {
+                    "anidb_id": "456"
+                }
+            ],
+            "Count": 1
+        }
+
+        res = handle(self.event, None)
+
+        exp = {
+            "body": json.dumps({"anidb_id": "456"}),
+            "statusCode": 200
+        }
+        assert res == exp
+
+    def test_not_found(self, mocked_episodes_db):
+        mocked_episodes_db.table.query.side_effect = mocked_episodes_db.NotFoundError
+
+        res = handle(self.event, None)
+
+        exp = {
+            "statusCode": 404,
+        }
+        assert res == exp
+
+    def test_invalid_api_name(self):
+        event = self.event.copy()
+        event["queryStringParameters"]["api_name"] = "invalid"
+
+        res = handle(self.event, None)
+
+        exp = {"body": '{"error": "Unsupported query param"}',
+               "statusCode": 400}
+        assert res == exp

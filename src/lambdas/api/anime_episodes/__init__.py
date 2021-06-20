@@ -76,13 +76,7 @@ def _get(anime_id, query_params):
 
 
 def _get_episode_by_api_id(query_params):
-    if not query_params:
-        return {
-            "statusCode": 400,
-            "body": json.dumps({"error": "Please specify query parameters"})
-        }
-
-    if query_params["api_name"] == "anidb_id":
+    if query_params["api_name"] == "anidb":
         try:
             res = episodes_db.get_episode_by_api_id("anidb",
                                                     int(query_params["api_id"]))
