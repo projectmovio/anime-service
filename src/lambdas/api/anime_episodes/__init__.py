@@ -69,24 +69,25 @@ def _post(body):
 
 
 def _get(anime_id, query_params):
-    if "api_id" in query_params:
-        return _get_episode_by_api_id(query_params)
+    if "api_id" in query_params and "api_name" in query_params:
+        api_id = int(query_params["api_id"])
+        api_name = query_params["api_name"]
+        return _get_episode_by_api_id(api_id, api_name)
     else:
         return _get_episodes(anime_id, query_params)
 
 
-def _get_episode_by_api_id(query_params):
-    if query_params["api_name"] == "anidb":
+def _get_episode_by_api_id(api_id, api_name):
+    if api_name in ["anidb"]:
         try:
-            res = episodes_db.get_episode_by_api_id("anidb",
-                                                    int(query_params["api_id"]))
+            res = episodes_db.get_episode_by_api_id(api_name, api_id)
             return {"statusCode": 200,
                     "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
         except (episodes_db.NotFoundError, episodes_db.InvalidAmountOfEpisodes):
             return {"statusCode": 404}
     else:
         return {"statusCode": 400,
-                "body": json.dumps({"error": "Unsupported query param"})}
+                "body": json.dumps({"error": "Unsupported api_name"})}
 
 
 def _get_episodes(anime_id, query_params):
