@@ -420,6 +420,6 @@ class TestGetEpisodeByApiId:
 
         res = handle(self.event, None)
 
-        exp = {"body": '{"error": "Unsupported query param"}',
+        exp = {"body": '{"error": "Unsupported api_name"}',
                "statusCode": 400}
         assert res == exp

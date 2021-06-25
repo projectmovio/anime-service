@@ -136,7 +136,8 @@ def test_get_mal_id_in_db(mocked_anime_db):
             }
         },
         "queryStringParameters": {
-            "mal_id": "123"
+            "api_id": "123",
+            "api_name": "mal"
         }
     }
 
@@ -158,7 +159,8 @@ def test_get_mal_id_not_found(mocked_anime_db):
             }
         },
         "queryStringParameters": {
-            "mal_id": "123"
+            "api_id": "123",
+            "api_name": "mal",
         }
     }
 
@@ -206,6 +208,6 @@ def test_get_invalid_query_params():
 
     exp = {
         "statusCode": 400,
-        "body": json.dumps({"error": "Unsupported query param"})
+        "body": json.dumps({"error": "Missing api_id query parameter"})
     }
     assert res == exp
