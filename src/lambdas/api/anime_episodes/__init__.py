@@ -70,7 +70,7 @@ def _post(body):
 
 def _get(anime_id, query_params):
     if "api_id" in query_params and "api_name" in query_params:
-        api_id = int(query_params["api_id"])
+        api_id = query_params["api_id"]
         api_name = query_params["api_name"]
         return _get_episode_by_api_id(api_id, api_name)
     else:
