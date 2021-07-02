@@ -80,7 +80,7 @@ def _get(anime_id, query_params):
 def _get_episode_by_api_id(api_id, api_name):
     if api_name in ["anidb"]:
         try:
-            res = episodes_db.get_episode_by_api_id(api_name, api_id)
+            res = episodes_db.get_episode_by_api_id(api_name, int(api_id))
             return {"statusCode": 200,
                     "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
         except (episodes_db.NotFoundError, episodes_db.InvalidAmountOfEpisodes):
