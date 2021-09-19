@@ -80,7 +80,7 @@ class AniDbApi:
 
             epno = episode.find("./epno", namespaces=self.nsmap)
             epno_type = int(epno.attrib.get("type"))
-            if epno_type != 1 and epno_type != 2 and epno_type != 6:
+            if epno_type not in [1, 2, 6]:
                 # Include only real episodes, specials and others
                 continue
 
