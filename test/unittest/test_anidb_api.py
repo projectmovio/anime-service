@@ -58,9 +58,9 @@ def test_get_anime(mocked_get):
 
     found_exp_eps = 0
     for ep in ret["anime"]["episodes"]:
-        if ep["episode_number"] == "10":
+        if ep["episode_number"] == 10:
             found_exp_eps += 1
-        if ep["episode_number"] == "S2":
+        if ep["episode_number"] == -2:
             found_exp_eps += 1
     assert found_exp_eps == 2
 
