@@ -91,7 +91,7 @@ class AniDbApi:
 
             ep = {
                 "anidb_id": int(episode.attrib.get("id")),
-                "episode_number": epno.text,
+                "episode_number": int(epno.text.replace("S", "-")),
                 "length": self._get_property(episode, "length"),
                 "air_date": self._get_property(episode, "airdate"),
                 "title": title
