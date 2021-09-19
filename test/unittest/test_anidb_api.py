@@ -53,7 +53,16 @@ def test_get_anime(mocked_get):
 
     assert "anime" in ret
     assert "anidb_id" in ret["anime"]
-    assert ret["anime"]["anidb_id"] == "1"
+    assert ret["anime"]["anidb_id"] == "11123"
+    assert "episodes" in ret["anime"]
+
+    found_exp_eps = 0
+    for ep in ret["anime"]["episodes"]:
+        if ep["episode_number"] == "10":
+            found_exp_eps += 1
+        if ep["episode_number"] == "S2":
+            found_exp_eps += 1
+    assert found_exp_eps == 2
 
 
 @mock.patch.dict(os.environ, ENV)
