@@ -80,8 +80,8 @@ class AniDbApi:
 
             epno = episode.find("./epno", namespaces=self.nsmap)
             epno_type = int(epno.attrib.get("type"))
-            if epno_type == 1 or epno_type == 2 or epno_type == 6:
-                # Include real episodes, specials and others
+            if epno_type != 1 and epno_type != 2 and epno_type != 6:
+                # Include only real episodes, specials and others
                 continue
 
             title = episode.find("./title[@xml:lang='en']", namespaces=self.nsmap)
