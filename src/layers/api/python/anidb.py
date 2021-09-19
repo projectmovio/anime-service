@@ -80,9 +80,8 @@ class AniDbApi:
 
             epno = episode.find("./epno", namespaces=self.nsmap)
             epno_type = int(epno.attrib.get("type"))
-            if epno_type > 2:
-                # Skip all endings, openings "episodes"
-                # But include real episodes and specials
+            if epno_type not in [1, 2, 6]:
+                # Include only real episodes, specials and others
                 continue
 
             title = episode.find("./title[@xml:lang='en']", namespaces=self.nsmap)
@@ -91,7 +90,7 @@ class AniDbApi:
 
             ep = {
                 "anidb_id": int(episode.attrib.get("id")),
-                "episode_number": int(epno.text.replace("S", "-")),
+                "episode_number": int(epno.text.replace("S", "-").replace("O", "-")),
                 "length": self._get_property(episode, "length"),
                 "air_date": self._get_property(episode, "airdate"),
                 "title": title
