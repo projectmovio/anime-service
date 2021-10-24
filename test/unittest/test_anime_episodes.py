@@ -42,7 +42,8 @@ class TestPostEpisode:
         mocked_episodes_db.table.query.return_value = {
             "Items": [
                 {
-                    "anidb_id": "456"
+                    "anidb_id": "456",
+                    "episode_number": 1,
                 }
             ],
             "Count": 1
@@ -52,7 +53,11 @@ class TestPostEpisode:
         res = handle(self.post_event, None)
 
         exp = {
-            "body": json.dumps({"anidb_id": "456"}),
+            "body": json.dumps({
+                "anidb_id": "456",
+                "episode_number": 1,
+                "is_special": False,
+            }),
             "statusCode": 200
         }
         assert res == exp

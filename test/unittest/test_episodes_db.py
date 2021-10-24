@@ -132,7 +132,8 @@ def test_get_episode_with_previous_link(mocked_episodes_db):
     assert ret == {
         "ep_name": "ep_1",
         "episode_number": 2,
-        "id_links": {"previous": "fe94c8c6-1b4a-56c2-ad8e-2d779562fbb0"}
+        "id_links": {"previous": "fe94c8c6-1b4a-56c2-ad8e-2d779562fbb0"},
+        "is_special": False
     }
 
 
@@ -154,7 +155,8 @@ def test_get_episode_with_next_link(mocked_episodes_db):
         "ep_name": "ep_1",
         "episode_number": 1,
         "air_date": date_today_str,
-        "id_links": {"next": "ad200b86-369c-5215-9895-b56c53bfd743"}
+        "id_links": {"next": "ad200b86-369c-5215-9895-b56c53bfd743"},
+        "is_special": False,
     }
 
 
