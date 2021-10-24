@@ -62,6 +62,7 @@ def _post(body):
         try:
             res = episodes_db.get_episode_by_api_id(body["api_name"],
                                                     int(body["api_id"]))
+            res["is_special"] = res["episode_number"] < 0
             return {"statusCode": 200,
                     "body": json.dumps(res, cls=decimal_encoder.DecimalEncoder)}
         except (episodes_db.NotFoundError, episodes_db.InvalidAmountOfEpisodes):

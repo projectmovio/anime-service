@@ -78,6 +78,7 @@ def get_episode(anime_id, episode_id):
         return episode_data
 
     episode_data["id_links"] = {}
+    episode_data["is_special"] = episode_data["episode_number"] < 0
 
     if episode_data["episode_number"] != 1:
         episode_data["id_links"]["previous"] = _create_episode_uuid(anime_id, episode_data["episode_number"] - 1)
