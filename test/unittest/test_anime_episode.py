@@ -8,8 +8,9 @@ def test_handler(mocked_episodes_db):
     exp_ep = {
         "Items": [
             {
-                "id": "1",
+                "id": "0cb444d6-1509-452d-acdd-b344cc7254a0",
                 "title": "ep1",
+                "episode_number": 2,
             }
         ],
         "Count": 1
@@ -17,7 +18,7 @@ def test_handler(mocked_episodes_db):
     mocked_episodes_db.table.query.return_value = exp_ep
     event = {
         "pathParameters": {
-            "id": "123",
+            "id": "0cb444d6-1509-452d-acdd-b344cc7254a0",
             "episode_id": "345"
         }
     }

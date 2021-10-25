@@ -18,7 +18,6 @@ def handle(event, context):
 
     try:
         res = anime_db.get_anime_by_id(anime_id)
-        res["is_special"] = res["episode_number"] < 0
     except anime_db.NotFoundError:
         return {"statusCode": 404}
 
